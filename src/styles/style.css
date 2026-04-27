@@ -229,9 +229,9 @@ h1, h2, h3, h4, h5, h6 {
 /* REVIEWS */
 
 .reviews {
-  padding: 100px 8%;
-  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
   text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
 .reviews h2 {
@@ -244,53 +244,40 @@ h1, h2, h3, h4, h5, h6 {
 
 .review-container {
   display: flex;
-  gap: 24px;
-  margin-top: 48px;
   justify-content: center;
+  gap: 25px;
   flex-wrap: wrap;
   max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 48px auto 0;
 }
 
 .card {
-  background: white;
+  width: 260px;
   padding: 20px;
-  width: 230px;
   border-radius: 12px;
+  background: white;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
-  font-family: 'Lato', sans-serif;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   text-align: center;
-  align-items: center;
+  transition: 0.3s;
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  transform: translateY(-5px);
 }
 
 .reviews .card p {
-  font-family: 'Lato', sans-serif;
-  font-size: 15px;
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 10px;
   line-height: 1.5;
-  font-weight: 400;
-  color: #4b5563;
-  margin: 0 0 16px 0;
-  text-align: center;
 }
 
 .reviews .card h4 {
-  font-family: 'Lato', sans-serif;
-  font-size: 15px;
-  font-weight: 400;
+  font-weight: 600;
   color: #111827;
+  font-size: 15px;
   margin: 0;
-  text-align: center;
 }
 
 /* FEATURES */

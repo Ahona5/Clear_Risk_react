@@ -192,7 +192,7 @@ body {
   width: 100%;
   max-width: 100%;
   background: white;
-  padding: 30px 20px;
+  padding: 30px 50px; /* INCREASED LEFT/RIGHT PADDING FOR AXIS LABELS */
   border-radius: 24px;
   border: 1px solid #f1f5f9;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
@@ -207,11 +207,11 @@ body {
 }
 
 /* COLOR STATES - MAXIMUM VIBRANCY */
-/* UPDATE THIS: EXACT COLOR PALETTE (NO TRANSPARENCY) */
-.heat-low { background: #22c55e !important; }
-.heat-medium-yellow { background: #facc15 !important; }
-.heat-medium-orange { background: #fb923c !important; }
-.heat-critical { background: #ef4444 !important; }
+/* COLOR STATES - PROFESSIONAL SAAS PALETTE */
+.heat-low { background: #86efac !important; }
+.heat-medium-yellow { background: #fef08a !important; }
+.heat-medium-orange { background: #fdba74 !important; }
+.heat-critical { background: #fca5a5 !important; }
 
 .heatmap-layout-main {
   display: flex;
@@ -221,19 +221,19 @@ body {
 
 /* ================= GRID AXIS WRAPPER ================= */
 .heatmap-grid-wrapper {
-  display: grid;
-  grid-template-columns: 40px 1fr;
-  grid-template-rows: 1fr 40px;
-  gap: 15px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
   width: 100%;
-  max-width: 440px; /* UPDATE THIS: Compact container */
+  max-width: 520px; /* Grid width */
   margin: 0 auto;
   align-items: center;
-  overflow: visible !important; /* 🔥 CRITICAL */
+  justify-content: center;
+  overflow: visible !important;
 }
 
 .y-axis-label, .x-axis-label {
-  font-size: 13px; /* UPDATE THIS: Smaller labels */
+  font-size: 13px; /* Smaller labels */
   font-weight: 800;
   color: #0f172a !important;
   text-transform: uppercase;
@@ -243,38 +243,30 @@ body {
 }
 
 .y-axis-label {
-  grid-column: 1;
-  grid-row: 1;
-  transform: rotate(-90deg);
-  transform-origin: center;
-  justify-self: center;
+  position: absolute;
+  left: -50px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
 }
 
 .x-axis-label {
-  grid-column: 2;
-  grid-row: 2;
-  justify-self: center;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 /* ================= THE HEATMAP GRID ================= */
 .heatmap-grid {
-  grid-column: 2;
-  grid-row: 1;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(5, 1fr);
-  gap: 6px; /* UPDATE THIS: Tighter gap */
+  gap: 10px; /* Professional cell gap */
   width: 100%;
-  max-width: 400px;
   aspect-ratio: 1 / 1; /* FORCES SQUARE GRID */
-  margin: 0 auto;
 }
 
 .heat-cell {
   aspect-ratio: 1 / 1;
   width: 100%;
-  border-radius: 12px;
+  border-radius: 8px; /* Professional 8px instead of large 12px */
   display: flex;
   align-items: center;
   justify-content: center;

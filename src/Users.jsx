@@ -21,8 +21,10 @@ import {
 } from "lucide-react";
 import "./styles/dashboard.css";
 import "./styles/user_profile.css";
+import Layout from "./Layout";
 
 const Users = () => {
+
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [collapsed, setCollapsed] = useState(false);
@@ -125,93 +127,7 @@ const Users = () => {
   };
 
   return (
-    <>
-      {/* TOPBAR */}
-      <div className="topbar">
-        <div className="top-left">
-          <div className="sidebar-toggle" onClick={() => setCollapsed(!collapsed)}>
-            <Menu size={20} />
-          </div>
-          <img src="/images/logo.png" alt="Clear Risk Logo" className="nav-logo" />
-        </div>
-
-        <div className="top-right" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <div className="notification-bell">
-            <Bell size={24} color="#64748b" />
-          </div>
-
-          <div className="user-dropdown">
-            <div className="profile-avatar" onClick={() => setOpen(!open)}>
-              <div className="avatar-small">
-                {currentUser.profileImage ? (
-                  <img src={currentUser.profileImage} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                ) : (
-                  currentUser.username.charAt(0).toUpperCase()
-                )}
-              </div>
-              <div className="user-info-brief">
-                <span className="username-label">{currentUser.username}</span>
-                <span className="role-label">{currentUser.role}</span>
-              </div>
-              <ChevronDown size={14} color="#64748b" />
-            </div>
-
-            {open && (
-              <div className="dropdown-content show">
-                <div className="dropdown-item" onClick={() => { navigate("/profile"); setOpen(false); }}>
-                  <User size={16} />
-                  <span>Profile</span>
-                </div>
-                <div className="dropdown-item" onClick={() => setOpen(false)}>
-                  <Settings size={16} />
-                  <span>Settings</span>
-                </div>
-                <div className="dropdown-item logout" onClick={handleLogout}>
-                  <LogOut size={16} />
-                  <span>Logout</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="dashboard-container">
-        {/* SIDEBAR */}
-        <div className="sidebar">
-          <ul>
-            <li onClick={() => navigate("/dashboard")}>
-              <LayoutDashboard size={20} />
-              <span>Dashboard</span>
-            </li>
-            <li onClick={() => navigate("/risk-profile")}>
-              <Folder size={20} />
-              <span>Risk Profiles</span>
-            </li>
-            <li>
-              <AlertCircle size={20} />
-              <span>Risks</span>
-            </li>
-            <li className="active" onClick={() => navigate("/users")}>
-              <UsersIcon size={20} />
-              <span>Users</span>
-            </li>
-            <li onClick={() => navigate("/activity")}>
-              <Clock size={20} />
-              <span>Activity</span>
-            </li>
-            <li>
-              <FileText size={20} />
-              <span>Report Incident</span>
-            </li>
-            <li>
-              <Clock size={20} />
-              <span>Activity</span>
-            </li>
-          </ul>
-        </div>
-
-        <div className="main">
+    <Layout>
           <div className="dashboard-header">
             <div>
               <h1>User Management</h1>
@@ -275,8 +191,6 @@ const Users = () => {
               </table>
             </div>
           </div>
-        </div>
-      </div>
 
       {/* ADD USER MODAL */}
       {showAddModal && (
@@ -409,7 +323,7 @@ const Users = () => {
           </div>
         </div>
       )}
-    </>
+    </Layout>
   );
 };
 

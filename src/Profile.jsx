@@ -17,14 +17,86 @@ import {
   Settings,
   LogOut,
   ChevronDown,
-  Menu
+  Menu,
+  ArrowUpRight,
+  ChevronUp
 } from "lucide-react";
+import Layout from "./Layout";
 
 /* 🔥 CHART IMPORTS */
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
+
+const KpiCardModern = ({ title, value, bgColor, iconColor, trend, subtext }) => {
+  return (
+    <div style={{
+      position: "relative",
+      overflow: "hidden",
+      background: bgColor || "#ffffff",
+      borderRadius: "16px",
+      padding: "20px",
+      boxShadow: "0 2px 10px rgba(0,0,0,0.03)",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      minHeight: "135px",
+      color: "#1e293b",
+      border: `1px solid ${iconColor}20` // Subtle tinted border
+    }}>
+      {/* Decorative Half-Circle Lines */}
+      <div style={{
+        position: "absolute",
+        bottom: "-30px",
+        right: "-30px",
+        width: "100px",
+        height: "100px",
+        borderRadius: "50%",
+        border: `2px solid ${iconColor}20`,
+        background: "transparent",
+        pointerEvents: "none"
+      }} />
+      <div style={{
+        position: "absolute",
+        bottom: "-50px",
+        right: "-50px",
+        width: "150px",
+        height: "150px",
+        borderRadius: "50%",
+        border: `2px solid ${iconColor}15`,
+        background: "transparent",
+        pointerEvents: "none"
+      }} />
+
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative", zIndex: 1 }}>
+        <h3 style={{ fontSize: "14px", fontWeight: "600", margin: 0, color: "#475569" }}>{title}</h3>
+      </div>
+      
+      <div style={{ fontSize: "32px", fontWeight: "700", margin: "10px 0 6px 0", lineHeight: "1", position: "relative", zIndex: 1 }}>
+        {value}
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", position: "relative", zIndex: 1 }}>
+        {trend && (
+          <div style={{
+            display: "flex", alignItems: "center", gap: "2px",
+            padding: "2px 6px", borderRadius: "6px",
+            border: "1px solid #bbf7d0",
+            background: "rgba(34, 197, 94, 0.05)",
+            color: "#16a34a"
+          }}>
+            <span style={{ fontWeight: "600" }}>{trend}</span>
+            <ChevronUp size={12} strokeWidth={3} />
+          </div>
+        )}
+        <span style={{ color: "#64748b" }}>
+          {subtext}
+        </span>
+      </div>
+    </div>
+  );
+};
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -277,100 +349,22 @@ export default function Profile() {
   };
 
   return (
-    <>
-      {/* TOPBAR */}
-      <div className="topbar">
-        <div className="top-left">
-          <div className="sidebar-toggle" onClick={() => setCollapsed(!collapsed)}>
-            <Menu size={20} />
-          </div>
-          <button className="topbar-back-btn" onClick={() => navigate("/dashboard")}>← Back</button>
-        </div>
-
-        <div className="top-right" style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative', paddingRight: '20px' }}>
-          <div className="notification-bell" onClick={() => setShowNotifs(!showNotifs)} style={{ cursor: 'pointer', position: 'relative' }}>
-            <Bell size={22} color="#64748b" />
-            {unreadCount > 0 && <span className="bell-badge">{unreadCount}</span>}
-          </div>
-
-          {showNotifs && (
-            <div className="notification-dropdown">
-              <div className="notification-header">
-                <h4>Notifications</h4>
-                {unreadCount > 0 && <button onClick={markAllAsRead}>Mark all as read</button>}
-              </div>
-              <div className="notification-body">
-                {notifications.length === 0 ? <div className="notif-empty">No notifications</div> : notifications.map(n => (
-                  <div key={n.id} className={`notification-item ${n.read ? 'read' : 'unread'}`} onClick={() => markAsRead(n.id)}>
-                    <p className="notification-message">{n.message}</p>
-                    <p className="notification-time">{n.time}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="user-dropdown">
-            <div className="profile-avatar" onClick={() => setOpen(!open)}>
-              <div className="avatar-small">
-                {user.profileImage ? (
-                  <img src={user.profileImage} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                ) : (
-                  user.username.charAt(0).toUpperCase()
-                )}
-              </div>
-              <div className="user-info-brief">
-                <span className="username-label">{user.username}</span>
-                <span className="role-label">{user.role}</span>
-              </div>
-              <ChevronDown size={14} color="#64748b" />
-            </div>
-
-            {open && (
-              <div className="dropdown-content show">
-                <div className="dropdown-item" onClick={() => { navigate("/profile"); setOpen(false); }}>
-                  <User size={16} /> <span>Profile</span>
-                </div>
-                <div className="dropdown-item" onClick={() => setOpen(false)}>
-                  <Settings size={16} /> <span>Settings</span>
-                </div>
-                <div className="dropdown-item logout" onClick={handleLogout}>
-                  <LogOut size={16} /> <span>Logout</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="dashboard-container">
-        <div className="sidebar">
-          <ul className="menu">
-            <li onClick={() => handleSidebarClick("/dashboard")}>
-              <LayoutDashboard size={20} /> <span>Dashboard</span>
-            </li>
-            <li className="active" onClick={() => handleSidebarClick("/risk-profile")}>
-              <Folder size={20} /> <span>Risk Profiles</span>
-            </li>
-            <li onClick={() => handleSidebarClick("/users")}>
-              <Users size={20} /> <span>Users</span>
-            </li>
-            <li onClick={() => handleSidebarClick("/activity")}>
-              <Clock size={20} /> <span>Activity</span>
-            </li>
-          </ul>
-        </div>
-
-        <div className="main">
+    <Layout>
           <div className="dashboard-header">
             <h1>Risk Profile: {profileName}</h1>
             <button className="pill-btn" onClick={() => setShowModal(true)}>+ Add Risk</button>
           </div>
 
-          <div className="cards">
-            <div className="card total-card"><h3>Total Risks</h3><p>{total}</p></div>
-            <div className="card high-card" style={{ borderLeftColor: "#ef4444" }}><h3>High Risk</h3><p>{high}</p></div>
-            <div className="card medium-card" style={{ borderLeftColor: "#eab308" }}><h3>Medium Risk</h3><p>{medium}</p></div>
-            <div className="card low-card" style={{ borderLeftColor: "#22c55e" }}><h3>Low Risk</h3><p>{low}</p></div>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "16px",
+            marginBottom: "24px",
+          }}>
+            <KpiCardModern title="Total Risks" value={total} bgColor="#e0f2fe" iconColor="#0284c7" trend="5" subtext="Increased from last month" />
+            <KpiCardModern title="High Risk" value={high} bgColor="#fee2e2" iconColor="#dc2626" trend="2" subtext="Increased from last month" />
+            <KpiCardModern title="Medium Risk" value={medium} bgColor="#fef3c7" iconColor="#d97706" trend="1" subtext="Increased from last month" />
+            <KpiCardModern title="Low Risk" value={low} bgColor="#dcfce3" iconColor="#16a34a" subtext={<span style={{ color: "#16a34a", fontWeight: "500" }}>Under control</span>} />
           </div>
 
           <div className="analytics-container">
@@ -488,8 +482,6 @@ export default function Profile() {
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
 
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
@@ -516,6 +508,6 @@ export default function Profile() {
           </div>
         </div>
       )}
-    </>
+    </Layout>
   );
 }

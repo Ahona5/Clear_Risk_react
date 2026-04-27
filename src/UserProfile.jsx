@@ -21,6 +21,8 @@ import {
 } from "lucide-react";
 import "./styles/dashboard.css";
 import "./styles/user_profile.css";
+import Layout from "./Layout";
+
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -116,120 +118,7 @@ const UserProfile = () => {
   };
 
   return (
-    <>
-      {/* TOPBAR */}
-      <div className="topbar">
-        <div className="top-left">
-          <div className="sidebar-toggle" onClick={() => setCollapsed(!collapsed)}>
-            <Menu size={20} />
-          </div>
-          <button className="topbar-back-btn" onClick={() => navigate("/dashboard")}>
-            <ArrowLeft size={16} />
-            <span>Back</span>
-          </button>
-          <img src="/images/logo.png" alt="Clear Risk Logo" className="nav-logo" />
-        </div>
-
-        <div className="top-right" style={{ display: 'flex', gap: '20px', alignItems: 'center', position: 'relative' }}>
-          <div className="notification-bell" onClick={() => setShowNotifs(!showNotifs)} style={{ cursor: 'pointer', position: 'relative' }}>
-            <Bell size={24} color="#64748b" />
-            <span className="bell-badge">3</span>
-          </div>
-
-          {showNotifs && (
-            <div className="notification-dropdown">
-              <div className="notification-header">
-                <h4>Notifications</h4>
-                <button className="notification-mark-read">Mark all as read</button>
-              </div>
-              <div className="notification-body">
-                <div className="notification-item unread">
-                  <p className="notification-message">New risk detected in Cloud Infrastructure</p>
-                  <p className="notification-time">2 mins ago</p>
-                </div>
-                <div className="notification-item unread">
-                  <p className="notification-message">Admin updated the Security Policy</p>
-                  <p className="notification-time">1 hour ago</p>
-                </div>
-                <div className="notification-item">
-                  <p className="notification-message">Monthly report is ready for download</p>
-                  <p className="notification-time">Yesterday</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="user-dropdown">
-            <div className="profile-avatar" onClick={() => setOpen(!open)}>
-              <div className="avatar-small">
-                {profileImage ? (
-                  <img src={profileImage} alt="Avatar" />
-                ) : (
-                  user.username.charAt(0).toUpperCase()
-                )}
-              </div>
-              <div className="user-info-brief">
-                <span className="username-label">{user.username}</span>
-                <span className="role-label">{user.role}</span>
-              </div>
-              <ChevronDown size={14} color="#64748b" />
-            </div>
-
-            {open && (
-              <div className="dropdown-content show">
-                <div className="dropdown-item" onClick={() => { navigate("/profile"); setOpen(false); }}>
-                  <UserIcon size={16} />
-                  <span>Profile</span>
-                </div>
-                <div className="dropdown-item" onClick={() => setOpen(false)}>
-                  <Settings size={16} />
-                  <span>Settings</span>
-                </div>
-                <div className="dropdown-item logout" onClick={handleLogout}>
-                  <LogOut size={16} />
-                  <span>Logout</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* DASHBOARD CONTAINER */}
-      <div className="dashboard-container">
-        
-        {/* SIDEBAR */}
-        <div className="sidebar">
-          <ul>
-            <li onClick={() => handleSidebarClick("/dashboard")}>
-              <LayoutDashboard size={20} />
-              <span>Dashboard</span>
-            </li>
-            <li onClick={() => handleSidebarClick("/risk-profile")}>
-              <Folder size={20} />
-              <span>Risk Profiles</span>
-            </li>
-            <li onClick={() => handleSidebarClick()}>
-              <AlertCircle size={20} />
-              <span>Risks</span>
-            </li>
-            <li onClick={() => handleSidebarClick("/users")}>
-              <UsersIcon size={20} />
-              <span>Users</span>
-            </li>
-            <li onClick={() => handleSidebarClick()}>
-              <FileText size={20} />
-              <span>Report Incident</span>
-            </li>
-            <li onClick={() => handleSidebarClick()}>
-              <Clock size={20} />
-              <span>Activity</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* MAIN */}
-        <div className="main">
+    <Layout>
           <div className="content-wrapper">
             <h1 style={{ marginBottom: '24px' }}>User Profile</h1>
 
@@ -370,9 +259,7 @@ const UserProfile = () => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </>
+    </Layout>
   );
 };
 

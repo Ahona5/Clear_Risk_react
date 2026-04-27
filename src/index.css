@@ -1,9 +1,14 @@
-*, *::before, *::after {
+@import "tailwindcss";
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
 #root {
