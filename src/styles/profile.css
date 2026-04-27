@@ -1,0 +1,686 @@
+/* ================= MODAL OVERLAY ================= */
+body {
+  background: #f1f5f9;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(6px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 999;
+}
+
+/* ================= MODAL BOX ================= */
+
+.modal-box {
+  background: #ffffff;
+  padding: 32px 30px;
+  border-radius: 16px;
+  width: 380px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.15s ease;
+  margin: auto;
+}
+
+.modal-box h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 24px;
+  color: #0f172a;
+  text-align: center;
+}
+
+/* ================= FORM ================= */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-box input,
+.modal-box select,
+.modal-box textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f1f5f9;
+  font-size: 14px;
+  color: #1e293b;
+  outline: none;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.modal-box textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.modal-box input:focus,
+.modal-box select:focus,
+.modal-box textarea:focus {
+  background: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ================= BUTTONS ================= */
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-primary {
+  flex: 1;
+  background: #2563eb;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.btn-secondary {
+  flex: 1;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+/* ================= NEW DASHBOARD HIERARCHY ================= */
+
+.analytics-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.heatmap-section-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.analytics-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: stretch;
+}
+
+/* Responsiveness */
+@media (max-width: 1024px) {
+  .analytics-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .heatmap-layout-main {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* ================= PIE CHART (RISK DISTRIBUTION) ================= */
+.chart-box {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  border: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-shadow: 
+  0 10px 30px rgba(0, 0, 0, 0.05),
+  0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.chart-box h3 {
+  font-size: 20px;
+  font-weight: 700;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 25px; /* Match heatmap header spacing */
+}
+
+.chart-box:hover,
+.heatmap-box:hover,
+.heatmap-ranking-panel:hover {
+  transform: translateY(-3px);
+  transition: all 0.2s ease;
+}
+
+/* ================= HEATMAP (PRIMARY) ================= */
+.heatmap-box {
+  width: 100%;
+  max-width: 100%;
+  background: white;
+  padding: 30px 20px;
+  border-radius: 24px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  overflow: visible !important; /* 🔥 CRITICAL: Allow tooltips to show outside */
+}
+
+.heatmap-box h3 {
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+/* COLOR STATES - MAXIMUM VIBRANCY */
+/* UPDATE THIS: EXACT COLOR PALETTE (NO TRANSPARENCY) */
+.heat-low { background: #22c55e !important; }
+.heat-medium-yellow { background: #facc15 !important; }
+.heat-medium-orange { background: #fb923c !important; }
+.heat-critical { background: #ef4444 !important; }
+
+.heatmap-layout-main {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ================= GRID AXIS WRAPPER ================= */
+.heatmap-grid-wrapper {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  grid-template-rows: 1fr 40px;
+  gap: 15px;
+  width: 100%;
+  max-width: 440px; /* UPDATE THIS: Compact container */
+  margin: 0 auto;
+  align-items: center;
+  overflow: visible !important; /* 🔥 CRITICAL */
+}
+
+.y-axis-label, .x-axis-label {
+  font-size: 13px; /* UPDATE THIS: Smaller labels */
+  font-weight: 800;
+  color: #0f172a !important;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+  z-index: 20;
+}
+
+.y-axis-label {
+  grid-column: 1;
+  grid-row: 1;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  justify-self: center;
+}
+
+.x-axis-label {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: center;
+  margin-top: 10px;
+}
+
+/* ================= THE HEATMAP GRID ================= */
+.heatmap-grid {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 6px; /* UPDATE THIS: Tighter gap */
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1 / 1; /* FORCES SQUARE GRID */
+  margin: 0 auto;
+}
+
+.heat-cell {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.25s ease;
+  overflow: visible !important; /* 🔥 Allow tooltips */
+  cursor: pointer;
+  z-index: 1; /* Base z-index */
+}
+
+.heat-cell:hover {
+  transform: scale(1.05);
+  z-index: 9999 !important; /* 🔥 FORCE TO FRONT */
+  box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+}
+
+.cell-number {
+  font-weight: 500;
+  font-size: 18px; /* UPDATE THIS: Clean centered number */
+  color: #1e293b;
+  user-select: none;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* UPDATE THIS: Marker Stack for Stacking Multiple Risks */
+.marker-stack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: -8px; /* UPDATE THIS: Slight overlap to show multiplicity */
+  z-index: 5;
+}
+
+/* ================= RANKING PANEL (TOP RISKS) ================= */
+.heatmap-ranking-panel {
+  background: #ffffff;
+  padding: 24px; /* UPDATE THIS: More compact */
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.heatmap-ranking-panel h3 {
+  font-size: 17px; /* UPDATE THIS: Slightly smaller title */
+  font-weight: 700;
+  margin: 0;
+  color: #0f172a;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* UPDATE THIS: Tighter gap */
+  width: 100%;
+  max-height: 400px; /* UPDATE THIS: Constrained height */
+  overflow-y: auto;
+  padding: 4px; /* Less interior padding */
+}
+
+.ranking-card {
+  display: flex;
+  align-items: center; /* UPDATE THIS: Horizontal center */
+  justify-content: space-between; /* Rank/Name on left, Score on right */
+  
+  background: #f8fafc;
+  padding: 12px 14px; /* UPDATE THIS: Tight padding */
+  border-radius: 12px; /* Professional rounding */
+  border: 1px solid #e2e8f0;
+  
+  transition: all 0.2s ease;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.ranking-card:hover {
+  background: white;
+  transform: translateY(-2px); /* Subtle lift */
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+}
+
+.rank-main-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rank-idx {
+  font-size: 12px; /* UPDATE THIS: Small muted rank */
+  font-weight: 800;
+  color: #94a3b8;
+  width: 24px;
+}
+
+.ranking-card .legend-badge {
+  width: 20px; /* UPDATE THIS: Compact icons */
+  height: 20px;
+  font-size: 10px;
+  box-shadow: none;
+}
+
+.rank-card-name {
+  font-size: 14px; /* UPDATE THIS: Medium bold name */
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.rank-card-score {
+  font-size: 12px; /* UPDATE THIS: Small secondary score */
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* ================= TOP LEGEND ================= */
+.heatmap-legend-top {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.legend-item-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.legend-text-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.legend-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  cursor: grab;
+}
+
+/* ================= RISK MARKERS ================= */
+
+.risk-marker {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffffff; /* UPDATE THIS: Default background so 'C' etc. pops */
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 13px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: grab;
+  position: relative; 
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 10;
+}
+
+/* ADD THIS (Rank Overlay Badge Hook) */
+.rank-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ef4444; 
+  color: white;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 9px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid white;
+  box-shadow: 0 3px 6px rgba(239, 68, 68, 0.4);
+  z-index: 10;
+}
+
+/* UPDATE THIS: Clean Marker Colors */
+.marker-g { background: #000000; color: #ffffff; }
+.marker-n { background: #3b82f6; color: #ffffff; }
+.marker-t { background: #ffffff; color: #000000; border: 1.5px solid #d1d5db; }
+
+.risk-marker:active {
+  cursor: grabbing;
+}
+
+.risk-marker:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  z-index: 20;
+}
+
+.risk-marker.dragging {
+  opacity: 0.5;
+  transform: scale(0.9);
+}
+
+/* TOOLTIP (MODERN COMPACT STYLE) */
+.risk-tooltip {
+  visibility: hidden;
+  position: absolute;
+  bottom: calc(100% + 12px); /* Slightly more space */
+  left: 50%;
+  transform: translateX(-50%) translateY(4px); /* Smaller movement */
+  
+  background: rgba(17, 24, 39, 0.94); /* Softer dark */
+  backdrop-filter: blur(6px); /* Premium touch */
+  color: #f8fafc;
+  
+  padding: 8px 12px; /* Tighter padding */
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+  
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  
+  text-align: left;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* Soft shadow */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+}
+
+.risk-tooltip strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 2px;
+  color: #fff;
+}
+
+.risk-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(17, 24, 39, 0.94) transparent transparent transparent;
+}
+
+.risk-marker:hover .risk-tooltip {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ================= LEVEL BADGES IN TABLE ================= */
+
+.badge-level {
+  padding: 4px 12px;
+  border-radius: 12px; /* pill shape */
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+  text-align: center;
+}
+
+.level-high { background: #fee2e2; color: #ef4444; }
+.level-medium { background: #ffedd5; color: #f97316; }
+.level-low { background: #dcfce7; color: #22c55e; }
+
+/* ================= MODERN RISK TABLE ================= */
+
+.risk-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 10px;
+}
+
+.risk-table th {
+  text-align: left;
+  padding: 14px 16px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.risk-table td {
+  padding: 16px;
+  font-size: 14px;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.risk-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.risk-table tbody tr:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+/* ================= ANIMATION ================= */
+
+@keyframes fadeIn {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ================= NOTIFICATION DROPDOWN (FIXED) ================= */
+
+.notification-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+
+  width: 270px;              /* 🔥 COMPACT */
+  max-height: 260px;
+
+  background: #ffffff;
+  border-radius: 12px;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+/* HEADER */
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.notification-header h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.notification-header button {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #2563eb;
+  cursor: pointer;
+}
+
+/* LIST */
+.notification-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* ITEM */
+.notification-item {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* 🔥 TEXT FIX */
+.notification-item p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+
+  line-height: 1.3;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;      /* 🔥 stops breaking */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* TIME */
+.notification-item span {
+  font-size: 11px;
+  color: #6b7280;
+}

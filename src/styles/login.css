@@ -1,0 +1,165 @@
+/* LOGIN PAGE */
+
+.login-page {
+  display: flex;
+  height: 85vh;
+  margin: 20px;
+  margin-top: 80px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+  background: #232936; /* Dark background as seen in the screenshot */
+  
+  /* Slide-in Animation */
+  animation: slideIn 0.8s ease-out forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.login-page.slide-out {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: all 0.5s ease-in;
+}
+
+/* LEFT IMAGE WITH CURVED EDGE */
+.login-image {
+  flex: 1.1;
+  background-image: url("/images/danger.png");
+  background-size: cover;
+  background-position: center;
+  border-radius: 0 100px 100px 0; /* Creates the curved boundary */
+  position: relative;
+  z-index: 1;
+}
+
+/* RIGHT BOX - DARK THEMED */
+.login-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #232936;
+  padding: 40px;
+  z-index: 0;
+}
+
+.login-box h2 {
+  color: #ffffff !important;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 28px;
+  display: block;
+}
+
+.login-box p {
+  color: rgba(255, 255, 255, 0.6) !important;
+  margin-bottom: 24px;
+  display: block;
+  font-size: 15px;
+}
+
+.password-wrapper {
+  position: relative;
+  width: 260px;
+  margin-bottom: 15px;
+}
+
+.login-input {
+  width: 260px; /* Fixed width for both Email and Password wrapper */
+  padding: 12px;
+  padding-right: 40px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1); /* Translucent dark background */
+  color: #ffffff;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.login-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.login-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+}
+
+/* Hide default browser eye icon for password inputs (Edge/IE) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input::-webkit-credentials-auto-fill-button {
+  display: none;
+}
+
+/* CUSTOM EYE BUTTON */
+.eye-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  transition: color 0.3s;
+}
+
+.eye-btn:hover {
+  color: #ffffff;
+}
+
+/* LOGIN BUTTON */
+.login-button {
+  width: 260px;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed); /* Purple gradient */
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.login-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* FORGOT PASSWORD LINK */
+.forgot {
+  margin-top: 20px;
+  color: #3b82f6; /* Bright blue link */
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.forgot:hover {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+/* Ensure the wrapper doesn't break layout */
+.password-wrapper .login-input {
+  width: 100%;
+}
