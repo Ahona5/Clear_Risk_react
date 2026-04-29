@@ -9,40 +9,60 @@ import {
 function NotifPanel({ items, onRead, onReadAll }) {
   return (
     <div style={{
-      position: "absolute", right: 0, top: 44, zIndex: 50, width: 288,
-      background: "#fff", borderRadius: 16, boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
-      border: "1px solid #f1f5f9", overflow: "hidden"
+      position: "absolute", right: 0, top: "48px", zIndex: 9999, 
+      width: "320px", minWidth: "320px",
+      background: "#fff", borderRadius: "12px", 
+      boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
+      border: "1px solid #e2e8f0", overflow: "hidden",
+      display: "flex", flexDirection: "column"
     }}>
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "12px 16px", borderBottom: "1px solid #f1f5f9"
+        padding: "16px", borderBottom: "1px solid #f1f5f9",
+        background: "#fff", flexShrink: 0
       }}>
-        <span style={{ fontSize: 14, fontWeight: 600, color: "#1e293b" }}>Notifications</span>
+        <span style={{ fontSize: "14px", fontWeight: 600, color: "#1e293b" }}>Notifications</span>
         {items.some(n => !n.read) && (
           <button onClick={onReadAll}
             style={{
-              fontSize: 12, fontWeight: 600, color: "#3b82f6", background: "none",
+              fontSize: "12px", fontWeight: 600, color: "#3b82f6", background: "none",
               border: "none", cursor: "pointer", padding: 0
-            }}>
+            }}
+            onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
+            onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}
+          >
             Mark all read
           </button>
         )}
       </div>
-      <div style={{ maxHeight: 256, overflowY: "auto" }}>
+      <div style={{ maxHeight: "320px", overflowY: "auto", overflowX: "hidden", background: "#fff" }}>
         {items.length === 0 ? (
-          <p style={{ fontSize: 13, color: "#94a3b8", textAlign: "center", padding: "32px 0" }}>No notifications</p>
+          <p style={{ fontSize: "13px", color: "#94a3b8", textAlign: "center", padding: "32px 0", margin: 0 }}>No new notifications</p>
         ) : items.map(n => (
           <div key={n.id} onClick={() => onRead(n.id)}
             style={{
-              padding: "12px 16px", cursor: "pointer", borderBottom: "1px solid #f8fafc",
-              background: !n.read ? "#eff6ff" : "transparent"
+              padding: "16px", cursor: "pointer", borderBottom: "1px solid #f8fafc",
+              background: !n.read ? "#f0fbf8" : "#fff",
+              display: "flex", gap: "12px", alignItems: "flex-start",
+              width: "100%", boxSizing: "border-box", transition: "background 0.2s"
             }}
             onMouseEnter={e => e.currentTarget.style.background = !n.read ? "#e0f2fe" : "#f8fafc"}
-            onMouseLeave={e => e.currentTarget.style.background = !n.read ? "#eff6ff" : "transparent"}
+            onMouseLeave={e => e.currentTarget.style.background = !n.read ? "#f0fbf8" : "#fff"}
           >
-            {!n.read && <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#3b82f6", marginBottom: 4 }} />}
-            <p style={{ fontSize: 13, color: "#334155", margin: 0 }}>{n.message}</p>
-            <p style={{ fontSize: 11, color: "#94a3b8", marginTop: 4, margin: 0 }}>{n.time}</p>
+            {!n.read ? (
+              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#3b82f6", flexShrink: 0, marginTop: "6px" }} />
+            ) : (
+              <div style={{ width: "8px", height: "8px", flexShrink: 0 }} /> // Placeholder for alignment
+            )}
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px", flex: 1, minWidth: 0 }}>
+              <p style={{ 
+                fontSize: "13px", color: "#334155", margin: 0, 
+                lineHeight: "1.4", wordWrap: "break-word", whiteSpace: "normal" 
+              }}>
+                {n.message}
+              </p>
+              <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>{n.time}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -222,25 +242,29 @@ export default function Layout({ children }) {
 
             {showUserMenu && (
               <div style={{
-                position: "absolute", right: 0, top: 44, zIndex: 50, width: 176,
-                background: "#fff", borderRadius: 16, boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
-                border: "1px solid #f1f5f9", padding: "4px 0", overflow: "hidden"
+                position: "absolute", right: 0, top: "calc(100% + 8px)", zIndex: 9999, width: "200px",
+                background: "#fff", borderRadius: "12px", boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
+                border: "1px solid #e2e8f0", padding: "8px", overflow: "hidden",
+                display: "flex", flexDirection: "column", gap: "2px"
               }}>
                 <button onClick={() => { navigate("/profile"); setShowUserMenu(false); }}
-                  style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", fontSize: 13, color: "#334155", background: "none", border: "none", cursor: "pointer" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                  <User size={14} /> Profile
+                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, color: "#334155", background: "none", border: "none", cursor: "pointer", transition: "background 0.2s" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                  <User size={15} color="#64748b" /> 
+                  <span>Profile</span>
                 </button>
                 <button onClick={() => setShowUserMenu(false)}
-                  style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", fontSize: 13, color: "#334155", background: "none", border: "none", cursor: "pointer" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                  <Settings size={14} /> Settings
+                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, color: "#334155", background: "none", border: "none", cursor: "pointer", transition: "background 0.2s" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                  <Settings size={15} color="#64748b" /> 
+                  <span>Settings</span>
                 </button>
-                <div style={{ margin: "4px 0", borderTop: "1px solid #f1f5f9" }} />
+                <div style={{ margin: "4px 0", borderTop: "1px solid #e2e8f0" }} />
                 <button onClick={handleLogout}
-                  style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", fontSize: 13, color: "#ef4444", background: "none", border: "none", cursor: "pointer" }}
+                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, color: "#ef4444", background: "none", border: "none", cursor: "pointer", transition: "background 0.2s" }}
                   onMouseEnter={e => e.currentTarget.style.background = "#fef2f2"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                  <LogOut size={14} /> Logout
+                  <LogOut size={15} color="#ef4444" /> 
+                  <span>Logout</span>
                 </button>
               </div>
             )}
