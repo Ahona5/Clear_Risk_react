@@ -15,8 +15,54 @@ const THEMES = {
   green: { grad: ["#6ee7b7","#10b981"], bar: "#10b981", light: "#f0fdf4" },
 };
 
-function KpiCard({ label, value, subtext, color, icon: Icon }) {
+/* ─── ANIMATED COUNTER ─── */
+function AnimatedCounter({ value, duration = 1500 }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let startTime = null;
+    let animationFrame;
+
+    const step = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      // easeOutQuart
+      const easeProgress = 1 - Math.pow(1 - progress, 4);
+      
+      setCount(Math.floor(easeProgress * value));
+
+      if (progress < 1) {
+        animationFrame = window.requestAnimationFrame(step);
+      }
+    };
+
+    animationFrame = window.requestAnimationFrame(step);
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [value, duration]);
+
+  return <>{count}</>;
+}
+
+/* ─── KPI CARD ─── */
+function KpiCard({ label, value, subtext, color, icon: Icon, isLoading }) {
   const t = THEMES[color] || THEMES.blue;
+
+  if (isLoading) {
+    return (
+      <div style={{
+        background: "#fff", borderRadius: 20, boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
+        overflow: "hidden", display: "flex", flexDirection: "column", minHeight: 160,
+      }}>
+        <div style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column", gap: 16 }}>
+          <div className="skeleton-box" style={{ width: "40%", height: 14 }} />
+          <div className="skeleton-box" style={{ width: "30%", height: 46 }} />
+          <div className="skeleton-box" style={{ width: "70%", height: 14 }} />
+        </div>
+        <div className="skeleton-box" style={{ height: 5, borderRadius: 0 }} />
+      </div>
+    );
+  }
+
   return (
     <div style={{
       background: "#fff",
@@ -33,7 +79,6 @@ function KpiCard({ label, value, subtext, color, icon: Icon }) {
     onMouseEnter={e => { e.currentTarget.style.transform="translateY(-4px)"; e.currentTarget.style.boxShadow="0 12px 32px rgba(0,0,0,0.12)"; }}
     onMouseLeave={e => { e.currentTarget.style.transform="translateY(0)";   e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,0.07)";  }}
     >
-      {/* Large gradient bubble — fills the right half */}
       <div style={{
         position: "absolute",
         width: 180, height: 180,
@@ -44,7 +89,6 @@ function KpiCard({ label, value, subtext, color, icon: Icon }) {
         zIndex: 0,
       }} />
 
-      {/* Icon box — floating on the bubble */}
       <div style={{
         position: "absolute",
         top: 20, right: 20,
@@ -59,7 +103,6 @@ function KpiCard({ label, value, subtext, color, icon: Icon }) {
         <Icon size={24} color="#fff" strokeWidth={2.2} />
       </div>
 
-      {/* Text content */}
       <div style={{ padding: "24px 24px 20px", flex: 1, position: "relative", zIndex: 1 }}>
         <p style={{
           fontSize: 10.5, fontWeight: 700, letterSpacing: "0.12em",
@@ -68,11 +111,12 @@ function KpiCard({ label, value, subtext, color, icon: Icon }) {
         <p style={{
           fontSize: 46, fontWeight: 800, color: "#0f172a",
           lineHeight: 1, marginBottom: 10, letterSpacing: "-1px",
-        }}>{value}</p>
+        }}>
+          <AnimatedCounter value={value} />
+        </p>
         <p style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>{subtext}</p>
       </div>
 
-      {/* Accent bottom bar */}
       <div style={{ height: 5, background: t.bar, flexShrink: 0 }} />
     </div>
   );
@@ -218,6 +262,7 @@ import Layout from "./Layout";
 export default function Dashboard() {
   const navigate = useNavigate();
 
+  const [isLoading,        setIsLoading]        = useState(true);
   const [profiles,         setProfiles]         = useState([]);
   const [showModal,        setShowModal]         = useState(false);
 
@@ -230,6 +275,12 @@ export default function Dashboard() {
     const u = JSON.parse(localStorage.getItem("currentUser"));
     if (!u) { navigate("/login"); return; }
     
+    // Simulate API fetch delay for demonstrating performance optimizations
+    setTimeout(() => {
+      setProfiles(JSON.parse(localStorage.getItem("riskProfiles")) || []);
+      setIsLoading(false);
+    }, 1200);
+
     // Poll data for dashboard specific updates
     const poll = setInterval(() => {
       setProfiles(JSON.parse(localStorage.getItem("riskProfiles")) || []);
@@ -253,9 +304,19 @@ export default function Dashboard() {
 
   return (
     <Layout>
-
-
-          {/* ── HEADER CARD ── */}
+      <style>
+        {`
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
+          .skeleton-box {
+            background: #e2e8f0;
+            border-radius: 8px;
+            animation: pulse 1.5s infinite ease-in-out;
+          }
+        `}
+      </style>          {/* ── HEADER CARD ── */}
           <div style={{
             background: "#fff",
             borderRadius: 20,
@@ -333,10 +394,10 @@ export default function Dashboard() {
             gap: 20,
             marginBottom: 28,
           }}>
-            <KpiCard label="Total Risks"  value={total}  subtext="All registered profiles"   color="blue"  icon={Shield}       />
-            <KpiCard label="High Risk"    value={high}   subtext="Needs immediate attention" color="red"   icon={ShieldAlert}  />
-            <KpiCard label="Medium Risk"  value={medium} subtext="Monitor closely"           color="amber" icon={TrendingUp}   />
-            <KpiCard label="Low Risk"     value={low}    subtext="Under control"             color="green" icon={TrendingDown} />
+            <KpiCard label="Total Risks"  value={total}  subtext="All registered profiles"   color="blue"  icon={Shield}       isLoading={isLoading} />
+            <KpiCard label="High Risk"    value={high}   subtext="Needs immediate attention" color="red"   icon={ShieldAlert}  isLoading={isLoading} />
+            <KpiCard label="Medium Risk"  value={medium} subtext="Monitor closely"           color="amber" icon={TrendingUp}   isLoading={isLoading} />
+            <KpiCard label="Low Risk"     value={low}    subtext="Under control"             color="green" icon={TrendingDown} isLoading={isLoading} />
           </div>
 
           {/* ── RISK PROFILE SUMMARY TABLE ── */}
@@ -406,7 +467,23 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {profiles.length === 0 ? (
+                  {isLoading ? (
+                    // Skeleton rows
+                    Array.from({ length: 3 }).map((_, i) => (
+                      <tr key={i} style={{ borderBottom: "1px solid #f8fafc" }}>
+                        <td style={{ padding: "13px 20px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <div className="skeleton-box" style={{ width: 34, height: 34, borderRadius: 10 }} />
+                            <div className="skeleton-box" style={{ width: 120, height: 16 }} />
+                          </div>
+                        </td>
+                        <td style={{ padding: "13px 20px" }}><div className="skeleton-box" style={{ width: 80, height: 16 }} /></td>
+                        <td style={{ padding: "13px 20px" }}><div className="skeleton-box" style={{ width: 24, height: 16 }} /></td>
+                        <td style={{ padding: "13px 20px" }}><div className="skeleton-box" style={{ width: 60, height: 22, borderRadius: 999 }} /></td>
+                        <td style={{ padding: "13px 20px" }}><div className="skeleton-box" style={{ width: 140, height: 14 }} /></td>
+                      </tr>
+                    ))
+                  ) : profiles.length === 0 ? (
                     <tr>
                       <td colSpan={5} style={{ padding: "60px 24px", textAlign: "center" }}>
                         <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap: 10 }}>
