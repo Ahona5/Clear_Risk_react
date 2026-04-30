@@ -113,31 +113,16 @@ export default function RiskDetail() {
 
   const [kris, setKris] = useState(() => {
     const saved = localStorage.getItem(`kris_${id}`);
-    if (saved) return JSON.parse(saved);
-    return [
-      {
-        id: 1,
-        title: "Revenue",
-        type: "Line",
-        owner: "Admin",
-        comment: "Cyclical pattern with peak in summer, focus should be on dampening the troughs in colder months",
-        date: "27/06/2026",
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        data: [7, 7, 10, 15, 18, 22, 25, 26, 23, 18, 14, 10],
-        isPinned: false
-      },
-      {
-        id: 2,
-        title: "Online revenue growth",
-        type: "Column",
-        owner: "John Doe",
-        comment: "Numbers going down, need some actions",
-        date: "27/06/2026",
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        data: [7, 7, 10, 14, 18, 21, 25, 26, 23, 18, 14, 10],
-        isPinned: false
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Clean up legacy mock data if it exists
+      const filtered = parsed.filter(k => k.title !== "Revenue" && k.title !== "Online revenue growth");
+      if (filtered.length !== parsed.length) {
+        localStorage.setItem(`kris_${id}`, JSON.stringify(filtered));
       }
-    ];
+      return filtered;
+    }
+    return [];
   });
 
   const [showKriModal, setShowKriModal] = useState(false);
@@ -645,19 +630,54 @@ export default function RiskDetail() {
               <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#0f172a", margin: 0 }}>Key Risk Indicator</h2>
               <span style={{ background: "#f1f5f9", color: "#64748b", padding: "2px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700 }}>{kris.length} KRI</span>
             </div>
-            <button 
-              onClick={() => {
-                setEditingKri(null);
-                setShowKriModal(true);
-              }}
-              style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#3b82f6", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 12px rgba(59, 130, 246, 0.25)" }}
-            >
-              <Plus size={18} /> Add KRI
-            </button>
+            {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
+              <button 
+                onClick={() => {
+                  setEditingKri(null);
+                  setShowKriModal(true);
+                }}
+                style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#3b82f6", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 12px rgba(59, 130, 246, 0.25)" }}
+              >
+                <Plus size={18} /> Add KRI
+              </button>
+            )}
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(450px, 1fr))", gap: "24px" }}>
-            {kris.map(kri => (
+          {kris.length === 0 ? (
+            <div style={{ 
+              background: "#fff", 
+              borderRadius: "16px", 
+              padding: "60px 40px", 
+              textAlign: "center", 
+              border: "2px dashed #e2e8f0",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "16px"
+            }}>
+              <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8" }}>
+                <Activity size={32} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#1e293b", margin: "0 0 8px" }}>No KRI added yet</h3>
+                <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
+                  {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") 
+                    ? "Click 'Add KRI' to create your first indicator and start tracking performance." 
+                    : "There are currently no Key Risk Indicators defined for this profile."}
+                </p>
+              </div>
+              {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
+                <button 
+                  onClick={() => setShowKriModal(true)}
+                  style={{ marginTop: "8px", padding: "10px 20px", borderRadius: "10px", border: "1px solid #3b82f6", background: "transparent", color: "#3b82f6", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <Plus size={18} /> Add First KRI
+                </button>
+              )}
+            </div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(450px, 1fr))", gap: "24px" }}>
+              {kris.map(kri => (
               <div key={kri.id} style={styles.card}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -690,32 +710,37 @@ export default function RiskDetail() {
                           <Pin size={16} color="#10b981" style={{ minWidth: "16px", flexShrink: 0 }} /> 
                           <span style={{ whiteSpace: "nowrap", flex: 1 }}>{kri.isPinned ? "Unpin" : "Pin"}</span>
                         </div>
-                        <div 
-                          style={{ ...styles.dropdownItem, color: "#334155" }} 
-                          onClick={() => handleEditKri(kri)}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = "#f1f5f9";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = "transparent";
-                          }}
-                        >
-                          <Edit size={16} color="#3b82f6" style={{ minWidth: "16px", flexShrink: 0 }} /> 
-                          <span style={{ whiteSpace: "nowrap", flex: 1 }}>Edit</span>
-                        </div>
-                        <div 
-                          style={{ ...styles.dropdownItem, color: "#ef4444" }} 
-                          onClick={() => handleDeleteKri(kri.id)}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = "#fef2f2";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = "transparent";
-                          }}
-                        >
-                          <Trash2 size={16} color="#ef4444" style={{ minWidth: "16px", flexShrink: 0 }} /> 
-                          <span style={{ whiteSpace: "nowrap", flex: 1 }}>Delete</span>
-                        </div>
+                        
+                        {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
+                          <>
+                            <div 
+                              style={{ ...styles.dropdownItem, color: "#334155" }} 
+                              onClick={() => handleEditKri(kri)}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = "#f1f5f9";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background = "transparent";
+                              }}
+                            >
+                              <Edit size={16} color="#3b82f6" style={{ minWidth: "16px", flexShrink: 0 }} /> 
+                              <span style={{ whiteSpace: "nowrap", flex: 1 }}>Edit</span>
+                            </div>
+                            <div 
+                              style={{ ...styles.dropdownItem, color: "#ef4444" }} 
+                              onClick={() => handleDeleteKri(kri.id)}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = "#fef2f2";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background = "transparent";
+                              }}
+                            >
+                              <Trash2 size={16} color="#ef4444" style={{ minWidth: "16px", flexShrink: 0 }} /> 
+                              <span style={{ whiteSpace: "nowrap", flex: 1 }}>Delete</span>
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
@@ -775,10 +800,10 @@ export default function RiskDetail() {
                     <div style={{ height: "200px", display: "flex", justifyContent: "center" }}>
                       <Pie 
                         data={{
-                          labels: ["Online", "Retail", "Partners"],
+                          labels: kri.labels || ["No Data"],
                           datasets: [{
-                            data: [40, 30, 30],
-                            backgroundColor: ["#10b981", "#f59e0b", "#3b82f6"],
+                            data: kri.data || [100],
+                            backgroundColor: ["#10b981", "#f59e0b", "#3b82f6", "#ef4444", "#8b5cf6", "#3b82f6"],
                             borderWidth: 0
                           }]
                         }}
@@ -798,8 +823,9 @@ export default function RiskDetail() {
               </div>
             ))}
           </div>
-        </div>
+        )}
       </div>
+    </div>
 
       <KRIModal 
         isOpen={showKriModal} 
