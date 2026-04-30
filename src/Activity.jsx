@@ -111,7 +111,6 @@ const Activity = () => {
                 <span className="user-role">{role} • {email}</span>
               </div>
               <div className="user-avatar-circle">{initials}</div>
-              <ChevronDown size={16} className="text-muted" />
             </div>
           </div>
 

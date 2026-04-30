@@ -242,10 +242,9 @@ const Modal = ({ title, form, onChange, onImgUpload, onSave, onClose, fileRef, s
         <div style={{ display:"flex", gap:"10px" }}>
           {[
             { name:"role", opts:[["moderator","Moderator"],["subscriber","Subscriber"],["suspended","Suspended"]] },
-            { name:"tier", opts:[["Premium","Premium"],["Pro","Pro"],["Free","Free"]] },
           ].map(sel => (
             <select key={sel.name} name={sel.name} value={form[sel.name]} onChange={onChange}
-              style={{ flex:1, padding:"9px 13px", border:"1px solid #d1d5db", borderRadius:"8px", fontSize:"13px", color:"#374151", outline:"none" }}>
+              style={{ width:"100%", padding:"9px 13px", border:"1px solid #d1d5db", borderRadius:"8px", fontSize:"13px", color:"#374151", outline:"none" }}>
               {sel.opts.map(([v,l]) => <option key={v} value={v}>{l}</option>)}
             </select>
           ))}
@@ -272,7 +271,7 @@ const Users = () => {
   const [showEdit,     setShowEdit]     = useState(false);
   const [selUser,      setSelUser]      = useState(null);
 
-  const blank = { name:"", email:"", password:"", role:"subscriber", tier:"Free", avatar:null };
+  const blank = { name:"", email:"", password:"", role:"subscriber", avatar:null };
   const [form, setForm] = useState(blank);
 
   const [usersList, setUsersList] = useState(() => {
@@ -334,14 +333,16 @@ const Users = () => {
 
   const handleAdd = () => {
     if (!form.name || !form.email) return alert("Name and Email are required");
-    setUsersList(p => [...p, { ...form, id:Date.now(), joinedDate:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) }]);
+    // System automatically assigns 'Free' tier during internal creation
+    setUsersList(p => [...p, { ...form, tier: "Free", id:Date.now(), joinedDate:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) }]);
     setShowAdd(false); setForm(blank);
     addActivityLog(currentUser, "CREATE", `Created user "${form.name}"`, "success", "info");
   };
 
-  const handleEdit = u => { setSelUser(u); setForm({ name:u.name, email:u.email, password:"", role:u.role, tier:u.tier, avatar:u.avatar }); setShowEdit(true); };
+  const handleEdit = u => { setSelUser(u); setForm({ name:u.name, email:u.email, password:"", role:u.role, avatar:u.avatar }); setShowEdit(true); };
   const handleSave = () => {
-    setUsersList(p => p.map(u => u.id===selUser.id ? { ...form, id:u.id, joinedDate:u.joinedDate, avatar:form.avatar||u.avatar } : u));
+    // Preserve the original 'tier' as it is now managed internally/separately
+    setUsersList(p => p.map(u => u.id===selUser.id ? { ...u, ...form, password: form.password || u.password, avatar:form.avatar||u.avatar } : u));
     setShowEdit(false); setForm(blank);
     addActivityLog(currentUser, "UPDATE", `Updated user "${form.name}"`, "success", "info");
   };
