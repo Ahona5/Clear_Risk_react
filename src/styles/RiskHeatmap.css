@@ -143,7 +143,8 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 0;
   min-height: 0; /* Prevents cell height expansion beyond square aspect */
-  overflow: hidden; /* Prevents content from stretching the box */
+  position: relative;
+  z-index: 1;
 }
 
 .heatmap-cell:hover {
@@ -233,33 +234,75 @@
 .risk-tooltip {
   visibility: hidden;
   position: absolute;
-  bottom: calc(100% + 14px);
   left: 50%;
-  transform: translateX(-50%) translateY(5px);
-  background: #0f172a;
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(4px);
   color: #fff;
-  padding: 12px 16px;
-  border-radius: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
   font-size: 12px;
+  width: auto;
+  min-width: 140px;
+  max-width: 200px;
+  display: block;
   white-space: nowrap;
   opacity: 0;
   transition: all 0.2s ease;
   pointer-events: none;
-  z-index: 100;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  text-align: left;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.risk-tooltip strong {
+  font-weight: 600;
+  color: #fff;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.risk-tooltip > div {
+  white-space: nowrap;
+  opacity: 0.9;
+}
+
+.risk-tooltip.tooltip-top {
+  bottom: calc(100% + 14px);
+}
+
+.risk-tooltip.tooltip-bottom {
+  top: calc(100% + 14px);
+  transform: translateX(-50%) translateY(-10px);
 }
 
 .risk-tooltip::after {
   content: '';
   position: absolute;
-  top: 100%;
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
+}
+
+.risk-tooltip.tooltip-top::after {
+  top: 100%;
   border-top-color: #0f172a;
 }
 
-.heat-risk-marker:hover .risk-tooltip {
+.risk-tooltip.tooltip-bottom::after {
+  bottom: 100%;
+  border-bottom-color: #0f172a;
+}
+
+.heat-risk-marker:hover .risk-tooltip.tooltip-top {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.heat-risk-marker:hover .risk-tooltip.tooltip-bottom {
   visibility: visible;
   opacity: 1;
   transform: translateX(-50%) translateY(0);

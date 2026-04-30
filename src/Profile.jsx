@@ -443,8 +443,10 @@ export default function Profile() {
                                 <div key={r.id} className={`risk-marker ${getMarkerSpecificClass(r.title)}`} draggable onDragStart={(e) => onDragStart(e, r.id)}>
                                   {r.title.charAt(0).toUpperCase()}
                                   <div className="rank-badge">{r.rank}</div>
-                                  <div className="risk-tooltip">
-                                    <strong>{r.title}</strong><br/>Score: {r.score}<br/>Impact: {r.impact} | Likelihood: {r.likelihood}
+                                  <div className={`risk-tooltip ${r.impact >= 4 ? 'tooltip-bottom' : 'tooltip-top'}`}>
+                                    <strong>{r.title}</strong>
+                                    <div>Score: <strong>{r.score}</strong> ({r.level})</div>
+                                    <div>Impact: {r.impact} | Likelihood: {r.likelihood}</div>
                                   </div>
                                 </div>
                               ))}

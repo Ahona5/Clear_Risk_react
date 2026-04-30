@@ -486,50 +486,84 @@ body {
 .risk-tooltip {
   visibility: hidden;
   position: absolute;
-  bottom: calc(100% + 12px); /* Slightly more space */
   left: 50%;
-  transform: translateX(-50%) translateY(4px); /* Smaller movement */
-  
-  background: rgba(17, 24, 39, 0.94); /* Softer dark */
-  backdrop-filter: blur(6px); /* Premium touch */
-  color: #f8fafc;
-  
-  padding: 8px 12px; /* Tighter padding */
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  padding: 8px 12px;
   border-radius: 8px;
   font-size: 12px;
-  font-weight: 500;
-  line-height: 1.5;
+  width: auto;
+  min-width: 140px;
+  max-width: 200px;
+  display: block;
   white-space: nowrap;
-  
-  z-index: 1000;
   opacity: 0;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
   pointer-events: none;
-  
+  z-index: 1000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   text-align: left;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* Soft shadow */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.risk-tooltip strong {
+  font-weight: 600;
+  color: #fff;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.risk-tooltip > div {
+  white-space: nowrap;
+  opacity: 0.9;
+}
+
+.risk-tooltip.tooltip-top {
+  bottom: calc(100% + 14px);
+}
+
+.risk-tooltip.tooltip-bottom {
+  top: calc(100% + 14px);
+  transform: translateX(-50%) translateY(-10px);
 }
 
 .risk-tooltip strong {
   display: block;
   font-size: 13px;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 4px;
 }
 
 .risk-tooltip::after {
   content: '';
   position: absolute;
-  top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  border-width: 5px;
-  border-style: solid;
-  border-color: rgba(17, 24, 39, 0.94) transparent transparent transparent;
+  border: 6px solid transparent;
 }
 
-.risk-marker:hover .risk-tooltip {
+.risk-tooltip.tooltip-top::after {
+  top: 100%;
+  border-top-color: #0f172a;
+}
+
+.risk-tooltip.tooltip-bottom::after {
+  bottom: 100%;
+  border-bottom-color: #0f172a;
+}
+
+.risk-marker:hover .risk-tooltip.tooltip-top {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.risk-marker:hover .risk-tooltip.tooltip-bottom {
   visibility: visible;
   opacity: 1;
   transform: translateX(-50%) translateY(0);

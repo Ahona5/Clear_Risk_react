@@ -152,9 +152,9 @@ const RiskHeatmap = () => {
                         {/* Render Rank Badge attached to Marker */}
                         <div className="rank-badge">{risk.rank}</div>
                         
-                        <div className="risk-tooltip">
+                        <div className={`risk-tooltip ${risk.impact >= 4 ? 'tooltip-bottom' : 'tooltip-top'}`}>
                           <span className="tooltip-title">{risk.title} ({risk.type})</span>
-                          <span className="tooltip-detail">Score: {risk.score} ({risk.level})</span>
+                          <span className="tooltip-detail">Score: <strong>{risk.score}</strong> ({risk.level})</span>
                           <span className="tooltip-detail">Impact: {risk.impact} | Likelihood: {risk.likelihood}</span>
                         </div>
                       </div>
