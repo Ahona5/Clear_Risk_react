@@ -149,15 +149,17 @@ export default function Layout({ children }) {
   };
 
   const SIDEBAR_W = collapsed ? 72 : 240;
+  
+  const isAdmin = user.role === "admin" || user.role === "moderator";
 
   const nav = [
     { label: "Dashboard",       path: "/dashboard",    icon: LayoutDashboard, active: location.pathname === "/dashboard" },
     { label: "Risk Profiles",   path: "/risk-profile", icon: Folder,          badge: profiles.length, active: location.pathname === "/risk-profile" },
     { label: "Risks",           path: null,            icon: ShieldAlert,     badge: 0 },
-    { label: "Users",           path: "/users",        icon: UsersIcon,       badge: 0, active: location.pathname === "/users" },
+    isAdmin && { label: "Users",           path: "/users",        icon: UsersIcon,       badge: 0, active: location.pathname === "/users" },
     { label: "Report Incident", path: null,            icon: FileText,        badge: 0 },
-    { label: "Activity",        path: "/activity",     icon: Clock,           badge: 0, active: location.pathname === "/activity" },
-  ];
+    isAdmin && { label: "Activity",        path: "/activity",     icon: Clock,           badge: 0, active: location.pathname === "/activity" },
+  ].filter(Boolean);
 
   return (
     <div style={{ display:"flex", flexDirection:"column", height:"100vh", overflow:"hidden", background:"#f1f5f9", fontFamily:"'Inter','Segoe UI',sans-serif" }}>

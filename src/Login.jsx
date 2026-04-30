@@ -18,19 +18,14 @@ function Login() {
     // Small delay to trigger the transition
     const timer = setTimeout(() => setIsEntering(true), 100);
 
-    /* INIT DEFAULT USER */
-    let existingUsers = JSON.parse(localStorage.getItem("users"));
+    /* INIT DEFAULT USER DATABASE IF EMPTY */
+    let existingUsers = JSON.parse(localStorage.getItem("adminUsersList"));
     if (!existingUsers || existingUsers.length === 0) {
-      let defaultAdmin = [
-        {
-          id: 1,
-          email: "admin@gmail.com",
-          password: "123456",
-          role: "admin",
-          username: "admin",
-        },
+      let defaultUsers = [
+        { id:1, name:"Admin User", email:"admin@clearrisk.com", password: "password", role:"moderator" },
+        { id:2, name:"Standard User", email:"user@clearrisk.com", password: "password", role:"subscriber" }
       ];
-      localStorage.setItem("users", JSON.stringify(defaultAdmin));
+      localStorage.setItem("adminUsersList", JSON.stringify(defaultUsers));
     }
 
     return () => clearTimeout(timer);
@@ -42,9 +37,12 @@ function Login() {
       return;
     }
 
-    let users = JSON.parse(localStorage.getItem("users")) || [];
+    // Pull from the actual user management database (adminUsersList)
+    let users = JSON.parse(localStorage.getItem("adminUsersList")) || [];
+
+    // Ensure email match is case-insensitive, and compare passwords
     let foundUser = users.find(
-      (user) => user.email === email && user.password === password
+      (user) => user.email?.toLowerCase() === email.toLowerCase() && user.password === password
     );
 
     if (!foundUser) {
@@ -52,7 +50,13 @@ function Login() {
       return;
     }
 
-    localStorage.setItem("currentUser", JSON.stringify(foundUser));
+    // Map the 'name' field to 'username' to maintain compatibility with the rest of the application
+    const activeUser = {
+      ...foundUser,
+      username: foundUser.name || foundUser.username || "User"
+    };
+
+    localStorage.setItem("currentUser", JSON.stringify(activeUser));
     setAnimate(true);
 
     setTimeout(() => {

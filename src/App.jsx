@@ -6,6 +6,7 @@ import Profile from "./Profile";
 import UserProfile from "./UserProfile";
 import Users from "./Users";
 import Activity from "./Activity";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
   return (
@@ -13,11 +14,15 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/profile" element={<UserProfile />} />
-        <Route path="/risk-profile" element={<Profile />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/activity" element={<Activity />} />
+        
+        {/* Standard User Protected Routes */}
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+        <Route path="/risk-profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        
+        {/* Admin-Only Protected Routes */}
+        <Route path="/users" element={<ProtectedRoute requireAdmin={true}><Users /></ProtectedRoute>} />
+        <Route path="/activity" element={<ProtectedRoute requireAdmin={true}><Activity /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

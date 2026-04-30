@@ -175,7 +175,6 @@ export default function Profile() {
   }, [profileName]);
 
   const filteredTableRisks = risks.filter((r) => {
-    if (user.role !== "admin" && r.owner !== user.username) return false;
     if (escalatedOnly && !r.isEscalated) return false;
     if (controlFilter !== "All Controls") {
       if (r.controlEffectiveness !== controlFilter) return false;
