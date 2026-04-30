@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { addActivityLog } from "./logger";
 import { useNavigate } from "react-router-dom";
 import { Search, Filter, Camera, X } from "lucide-react";
 import Layout from "./Layout";
@@ -262,6 +263,7 @@ const Modal = ({ title, form, onChange, onImgUpload, onSave, onClose, fileRef, s
 const Users = () => {
   const navigate    = useNavigate();
   const fileRef     = useRef(null);
+  const currentUser = JSON.parse(localStorage.getItem("currentUser")) || { username: "Admin" };
 
   const [activeTab,    setActiveTab]    = useState("All Users");
   const [searchQuery,  setSearchQuery]  = useState("");
@@ -334,16 +336,27 @@ const Users = () => {
     if (!form.name || !form.email) return alert("Name and Email are required");
     setUsersList(p => [...p, { ...form, id:Date.now(), joinedDate:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) }]);
     setShowAdd(false); setForm(blank);
+    addActivityLog(currentUser, "CREATE", `Created user "${form.name}"`, "success", "info");
   };
 
   const handleEdit = u => { setSelUser(u); setForm({ name:u.name, email:u.email, password:"", role:u.role, tier:u.tier, avatar:u.avatar }); setShowEdit(true); };
   const handleSave = () => {
     setUsersList(p => p.map(u => u.id===selUser.id ? { ...form, id:u.id, joinedDate:u.joinedDate, avatar:form.avatar||u.avatar } : u));
     setShowEdit(false); setForm(blank);
+    addActivityLog(currentUser, "UPDATE", `Updated user "${form.name}"`, "success", "info");
   };
 
-  const suspend = id => setUsersList(p => p.map(u => u.id===id ? { ...u, role:"suspended"  } : u));
-  const restore = id => setUsersList(p => p.map(u => u.id===id ? { ...u, role:"subscriber" } : u));
+  const suspend = id => {
+    const userToSuspend = usersList.find(u => u.id === id);
+    if(userToSuspend) addActivityLog(currentUser, "UPDATE", `Suspended user "${userToSuspend.name}"`, "success", "warning");
+    setUsersList(p => p.map(u => u.id===id ? { ...u, role:"suspended"  } : u));
+  };
+  
+  const restore = id => {
+    const userToRestore = usersList.find(u => u.id === id);
+    if(userToRestore) addActivityLog(currentUser, "UPDATE", `Restored user "${userToRestore.name}"`, "success", "info");
+    setUsersList(p => p.map(u => u.id===id ? { ...u, role:"subscriber" } : u));
+  };
 
   /* ── FILTERING ── */
   const filtered = usersList.filter(u => {

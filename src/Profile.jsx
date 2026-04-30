@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { addActivityLog } from "./logger";
 import { useNavigate } from "react-router-dom";
 import "./styles/dashboard.css";
 import "./styles/profile.css";
@@ -175,28 +176,26 @@ export default function Profile() {
   });
 
   const escalateRisk = (id) => {
-    setRisks(prev => {
-      const updated = prev.map(r => {
-        if (r.id === id) {
-          const escalated = { ...r, isEscalated: true, escalatedTo: "admin" };
-          const notifs = JSON.parse(localStorage.getItem("notifications")) || [];
-          notifs.unshift({
-            id: Date.now(),
-            message: `Risk "${r.title}" escalated by ${user.username}`,
-            time: new Date().toLocaleTimeString(),
-            read: false
-          });
-          localStorage.setItem("notifications", JSON.stringify(notifs));
-          return escalated;
-        }
-        return r;
-      });
+    const allRisks = JSON.parse(localStorage.getItem("risks")) || [];
+    const targetRisk = allRisks.find(r => r.id === id);
+    if (!targetRisk) return;
 
-      const all = JSON.parse(localStorage.getItem("risks")) || [];
-      const newAll = all.map(r => r.id === id ? updated.find(u => u.id === id) : r);
-      localStorage.setItem("risks", JSON.stringify(newAll));
-      return updated;
+    // Perform side-effects outside of setState to prevent React StrictMode double-execution
+    const notifs = JSON.parse(localStorage.getItem("notifications")) || [];
+    notifs.unshift({
+      id: Date.now(),
+      message: `Risk "${targetRisk.title}" escalated by ${user.username}`,
+      time: new Date().toLocaleTimeString(),
+      read: false
     });
+    localStorage.setItem("notifications", JSON.stringify(notifs));
+    
+    addActivityLog(user, "ESCALATE", `Escalated risk "${targetRisk.title}"`, "success", "critical");
+
+    const newAllRisks = allRisks.map(r => r.id === id ? { ...r, isEscalated: true, escalatedTo: "admin" } : r);
+    localStorage.setItem("risks", JSON.stringify(newAllRisks));
+
+    setRisks(prev => prev.map(r => r.id === id ? { ...r, isEscalated: true, escalatedTo: "admin" } : r));
   };
 
   const handleLogout = () => {
@@ -207,9 +206,11 @@ export default function Profile() {
   const deleteRisk = (id) => {
     if (!window.confirm("Delete this risk?")) return;
     const all = JSON.parse(localStorage.getItem("risks")) || [];
+    const riskToDelete = all.find(r => r.id === id);
     const newAll = all.filter(r => r.id !== id);
     localStorage.setItem("risks", JSON.stringify(newAll));
     setRisks(newAll.filter((r) => r.profile === profileName));
+    if (riskToDelete) addActivityLog(user, "DELETE", `Deleted risk "${riskToDelete.title}"`, "success", "warning");
   };
 
   const getLevel = (score) => {
@@ -338,6 +339,7 @@ export default function Profile() {
     setTitle("");
     setImpact(1);
     setLikelihood(1);
+    addActivityLog(user, "CREATE", `Created risk "${title}"`, "success", "info");
   };
 
   const handleSidebarClick = (path) => {
