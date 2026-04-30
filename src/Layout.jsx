@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { 
-  Menu, Bell, ChevronDown, User, Settings, LogOut, 
+  Menu, Bell, User, LogOut, 
   LayoutDashboard, Folder, ShieldAlert, Users as UsersIcon, FileText, Clock 
 } from "lucide-react";
 
@@ -102,7 +102,6 @@ export default function Layout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifs, setShowNotifs] = useState(false);
   
   const user = JSON.parse(localStorage.getItem("currentUser")) || { username: "Admin", role: "admin" };
@@ -191,7 +190,7 @@ export default function Layout({ children }) {
           {/* Bell */}
           <div style={{ position:"relative" }}>
             <button
-              onClick={() => { setShowNotifs(!showNotifs); setShowUserMenu(false); }}
+              onClick={() => { setShowNotifs(!showNotifs); }}
               style={{
                 width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center",
                 borderRadius: 10, border: "1px solid #e2e8f0", background: "#f8fafc", color: "#64748b",
@@ -216,7 +215,7 @@ export default function Layout({ children }) {
           {/* User */}
           <div style={{ position:"relative" }}>
             <button
-              onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifs(false); }}
+              onClick={() => { navigate("/profile"); setShowNotifs(false); }}
               style={{
                 display: "flex", alignItems: "center", gap: 8, padding: "6px 12px",
                 borderRadius: 12, background: "transparent", border: "1px solid transparent",
@@ -239,38 +238,7 @@ export default function Layout({ children }) {
                 <p style={{ fontSize: 13, fontWeight: 600, color: "#1e293b", margin: 0, lineHeight: 1 }}>{user.username}</p>
                 <p style={{ fontSize: 11, color: "#94a3b8", margin: 0, marginTop: 2, textTransform: "capitalize" }}>{user.role}</p>
               </div>
-              <ChevronDown size={13} color="#94a3b8" />
             </button>
-
-            {showUserMenu && (
-              <div style={{
-                position: "absolute", right: 0, top: "calc(100% + 8px)", zIndex: 9999, 
-                width: "180px", minWidth: "180px",
-                background: "#fff", borderRadius: "12px", boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
-                border: "1px solid #e2e8f0", padding: "8px", overflow: "hidden",
-                display: "flex", flexDirection: "column", gap: "2px"
-              }}>
-                <button onClick={() => { navigate("/profile"); setShowUserMenu(false); }}
-                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, color: "#334155", background: "none", border: "none", cursor: "pointer", transition: "background 0.2s", whiteSpace: "nowrap" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                  <User size={15} color="#64748b" /> 
-                  <span>Profile</span>
-                </button>
-                <button onClick={() => setShowUserMenu(false)}
-                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, color: "#334155", background: "none", border: "none", cursor: "pointer", transition: "background 0.2s", whiteSpace: "nowrap" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                  <Settings size={15} color="#64748b" /> 
-                  <span>Settings</span>
-                </button>
-                <div style={{ margin: "4px 0", borderTop: "1px solid #e2e8f0" }} />
-                <button onClick={handleLogout}
-                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, color: "#ef4444", background: "none", border: "none", cursor: "pointer", transition: "background 0.2s", whiteSpace: "nowrap" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "#fef2f2"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                  <LogOut size={15} color="#ef4444" /> 
-                  <span>Logout</span>
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -283,12 +251,28 @@ export default function Layout({ children }) {
           background:"#0b1220",
           overflowY:"auto", overflowX:"hidden",
           transition:"width 0.25s ease",
-          padding:"16px 10px",
           display:"flex", flexDirection:"column", gap:4,
+          padding:"16px 10px",
         }}>
           {nav.map(item => (
             <NavItem key={item.label} {...item} collapsed={collapsed} onClick={handleNav} />
           ))}
+          <div style={{ flex: 1 }} />
+          
+          <button onClick={handleLogout}
+            style={{
+              width: "100%", display: "flex", alignItems: "center", gap: 12,
+              padding: "10px 12px", borderRadius: 12, fontSize: 14, fontWeight: 600,
+              background: "transparent", color: "#ef4444", border: "none", cursor: "pointer",
+              transition: "all 0.15s", justifyContent: collapsed ? "center" : "flex-start",
+              marginTop: "auto"
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(239, 68, 68, 0.1)"}
+            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+          >
+            <LogOut size={19} color="#ef4444" style={{ flexShrink: 0 }} />
+            {!collapsed && <span>Logout</span>}
+          </button>
         </div>
 
         {/* ── MAIN CONTENT ── */}

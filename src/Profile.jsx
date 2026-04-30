@@ -492,7 +492,7 @@ export default function Profile() {
               </thead>
               <tbody>
                 {filteredTableRisks.map((r, i) => (
-                  <tr key={r.id}>
+                  <tr key={r.id} onClick={() => navigate(`/risk/${r.id}`)} style={{ cursor: "pointer" }} className="hover-row">
                     <td>RISK-{i+1}</td>
                     <td>{r.title} {r.isEscalated && <span className="escalated-tag">ESCALATED</span>}</td>
                     <td>{r.owner || "Unassigned"}</td>
@@ -501,7 +501,7 @@ export default function Profile() {
                     <td>{r.score}</td>
                     <td><span className={`badge-level level-${r.level?.toLowerCase()}`}>{r.level}</span></td>
                     <td>{r.date}</td>
-                    <td>
+                    <td onClick={(e) => e.stopPropagation()}>
                       <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                         {r.isEscalated ? (
                           <button onClick={() => removeEscalation(r.id)} style={{ fontSize:"12px", fontWeight:600, color:"#64748b", background:"#f1f5f9", border:"1px solid #e2e8f0", borderRadius:"6px", padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap", transition:"all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e2e8f0"; e.currentTarget.style.color = "#334155"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#64748b"; }}>
