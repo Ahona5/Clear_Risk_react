@@ -116,6 +116,7 @@ export default function Profile() {
   const [modalRiskLevel, setModalRiskLevel] = useState("Low");
   const [modalControlEff, setModalControlEff] = useState("Effective");
 
+  const [showLegend, setShowLegend] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [draggedRisk, setDraggedRisk] = useState(null);
 
@@ -400,7 +401,21 @@ export default function Profile() {
           <div className="analytics-container">
             <div className="heatmap-section-wrapper">
               <div className="heatmap-box">
-                <h3>Risk Heatmap</h3>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+                  <h3 style={{ margin: 0 }}>Risk Heatmap</h3>
+                  <button 
+                    onClick={() => setShowLegend(!showLegend)}
+                    style={{
+                      padding: "6px 14px", borderRadius: "8px", border: "1px solid #e2e8f0", background: "#fff",
+                      color: "#64748b", fontSize: "12px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", transition: "all 0.2s"
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
+                    onMouseLeave={e => e.currentTarget.style.background = "#fff"}
+                  >
+                    {showLegend ? <ChevronUp size={14} /> : <FileText size={14} />}
+                    {showLegend ? "Hide Legend" : "Show Legend"}
+                  </button>
+                </div>
                 <div className="heatmap-legend-top">
                   {['G', 'N', 'T'].map(id => (
                     <div key={id} className="legend-item-pill">
@@ -439,6 +454,78 @@ export default function Profile() {
                       }))}
                     </div>
                     <div className="x-axis-label">Likelihood</div>
+                  </div>
+                </div>
+
+                {/* COLLAPSIBLE LEGEND */}
+                <div style={{ 
+                  maxHeight: showLegend ? "1200px" : "0", 
+                  overflow: "hidden", 
+                  transition: "max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+                  marginTop: showLegend ? "24px" : "0",
+                  borderTop: showLegend ? "1px solid #f1f5f9" : "none",
+                  paddingTop: showLegend ? "24px" : "0"
+                }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "32px" }}>
+                    {/* IMPACT LEGEND */}
+                    <div>
+                      <h4 style={{ fontSize: "14px", fontWeight: 800, color: "#1e293b", margin: "0 0 16px", textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <AlertTriangle size={16} color="#ef4444" /> Impact Definitions
+                      </h4>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                        {[
+                          { score: 5, label: "Very High", color: "#ef4444", desc: { fin: ">£20m", ops: "Total loss of key location", safe: "Death with implied negligence", rep: "Lasting global media attention" } },
+                          { score: 4, label: "High", color: "#f97316", desc: { fin: "£5m - £20m", ops: "Serious disruption to key location", safe: "Major injury / long-term disability", rep: "Significant national media coverage" } },
+                          { score: 3, label: "Medium", color: "#eab308", desc: { fin: "£1m - £5m", ops: "Disruption to part of a location", safe: "Minor injury / short-term disability", rep: "Local media coverage" } },
+                          { score: 2, label: "Low", color: "#22c55e", desc: { fin: "£100k - £1m", ops: "Minor disruption to workflow", safe: "First aid required", rep: "Minimal public awareness" } },
+                          { score: 1, label: "Very Low", color: "#64748b", desc: { fin: "<£100k", ops: "Negligible disruption", safe: "No injury", rep: "No impact" } }
+                        ].map(item => (
+                          <div key={item.score} style={{ background: "#f8fafc", borderRadius: "12px", border: "1px solid #f1f5f9", padding: "16px", display: "flex", gap: "16px" }}>
+                            <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: item.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 800, flexShrink: 0 }}>
+                              {item.score}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontWeight: 700, fontSize: "13px", color: item.color, marginBottom: "8px", textTransform: "uppercase" }}>{item.label}</div>
+                              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                                <div style={{ fontSize: "11px" }}><strong style={{ color: "#64748b" }}>Fin:</strong> <span style={{ color: "#334155" }}>{item.desc.fin}</span></div>
+                                <div style={{ fontSize: "11px" }}><strong style={{ color: "#64748b" }}>Ops:</strong> <span style={{ color: "#334155" }}>{item.desc.ops}</span></div>
+                                <div style={{ fontSize: "11px" }}><strong style={{ color: "#64748b" }}>Safe:</strong> <span style={{ color: "#334155" }}>{item.desc.safe}</span></div>
+                                <div style={{ fontSize: "11px" }}><strong style={{ color: "#64748b" }}>Rep:</strong> <span style={{ color: "#334155" }}>{item.desc.rep}</span></div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* LIKELIHOOD LEGEND */}
+                    <div>
+                      <h4 style={{ fontSize: "14px", fontWeight: 800, color: "#1e293b", margin: "0 0 16px", textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <Clock size={16} color="#3b82f6" /> Likelihood Definitions
+                      </h4>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                        {[
+                          { score: 5, label: "Very High", color: "#ef4444", prob: ">60%", freq: "1 in 1 year event" },
+                          { score: 4, label: "High", color: "#f97316", prob: "40% - 60%", freq: "1 in 3 years event" },
+                          { score: 3, label: "Medium", color: "#eab308", prob: "20% - 40%", freq: "1 in 5 years event" },
+                          { score: 2, label: "Low", color: "#22c55e", prob: "5% - 20%", freq: "1 in 10 years event" },
+                          { score: 1, label: "Very Low", color: "#64748b", prob: "<5%", freq: "1 in 25 years event" }
+                        ].map(item => (
+                          <div key={item.score} style={{ background: "#f8fafc", borderRadius: "12px", border: "1px solid #f1f5f9", padding: "16px", display: "flex", gap: "16px", alignItems: "center" }}>
+                            <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: item.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 800, flexShrink: 0 }}>
+                              {item.score}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontWeight: 700, fontSize: "13px", color: item.color, marginBottom: "4px", textTransform: "uppercase" }}>{item.label}</div>
+                              <div style={{ display: "flex", gap: "16px" }}>
+                                <div style={{ fontSize: "12px", color: "#334155" }}><strong style={{ color: "#64748b" }}>Prob:</strong> {item.prob}</div>
+                                <div style={{ fontSize: "12px", color: "#334155" }}><strong style={{ color: "#64748b" }}>Freq:</strong> {item.freq}</div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

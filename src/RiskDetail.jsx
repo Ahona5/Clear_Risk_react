@@ -48,6 +48,9 @@ export default function RiskDetail() {
   const [escalateModalOpen, setEscalateModalOpen] = useState(false);
   const [isEditingSummary, setIsEditingSummary] = useState(false);
   const [tempSummary, setTempSummary] = useState("");
+  const [isEditingDetails, setIsEditingDetails] = useState(false);
+  const [tempForm, setTempForm] = useState(null);
+  const [saveStatus, setSaveStatus] = useState(null); // 'saving', 'success', null
   
   // Form State
   const [form, setForm] = useState({
@@ -69,14 +72,19 @@ export default function RiskDetail() {
       
       if (found) {
         setRisk(found);
-        setForm({
+        const initialForm = {
           summary: found.summary || "",
           riskEvent: found.riskEvent || "",
           rootCauses: found.rootCauses || "",
           consequences: found.consequences || "",
           appetite: found.appetite || "",
           status: found.status || "Open"
-        });
+        };
+        setForm(initialForm);
+        // Default to view mode if data exists, else edit mode
+        if (!found.riskEvent && !found.rootCauses) {
+          setIsEditingDetails(true);
+        }
       }
     } catch (err) {
       console.error("Error loading risk details:", err);
@@ -87,12 +95,18 @@ export default function RiskDetail() {
 
   const handleSave = () => {
     if (!risk) return;
-    const allRisks = JSON.parse(localStorage.getItem("risks")) || [];
-    const updated = allRisks.map(r => String(r.id) === String(id) ? { ...r, ...form } : r);
-    localStorage.setItem("risks", JSON.stringify(updated));
-    setRisk({ ...risk, ...form });
-    addActivityLog(user, "UPDATE", `Updated details for risk "${risk.title}"`, "success", "info");
-    alert("Changes saved successfully!");
+    setSaveStatus("saving");
+    
+    setTimeout(() => {
+      const allRisks = JSON.parse(localStorage.getItem("risks")) || [];
+      const updated = allRisks.map(r => String(r.id) === String(id) ? { ...r, ...form } : r);
+      localStorage.setItem("risks", JSON.stringify(updated));
+      setRisk({ ...risk, ...form });
+      addActivityLog(user, "UPDATE", `Updated details for risk "${risk.title}"`, "success", "info");
+      
+      setSaveStatus("success");
+      setTimeout(() => setSaveStatus(null), 3000);
+    }, 600);
   };
 
   const handleEscalate = (data) => {
@@ -335,61 +349,132 @@ export default function RiskDetail() {
 
         {activeTab === "Details" && (
           <div style={{ ...styles.card, marginBottom: "32px" }}>
-            <div style={{ marginBottom: "24px" }}>
-              <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", margin: "0 0 4px" }}>Details</h2>
-              <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>Provide detailed information about the identified risk, including the event, root causes, and potential consequences.</p>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px", marginBottom: "24px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
               <div>
-                <label style={styles.label}><AlertTriangle size={14} color="#3b82f6" /> RISK EVENT</label>
-                <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Describe the risk event — what could happen and what are you concerned about.</p>
-                <textarea 
-                  placeholder="Describe the risk event..."
-                  value={form.riskEvent} 
-                  onChange={(e) => setForm({...form, riskEvent: e.target.value})} 
-                  style={{ ...styles.input, height: "120px", resize: "none" }} 
-                />
+                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", margin: "0 0 4px" }}>Details</h2>
+                <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>Provide detailed information about the identified risk, including the event, root causes, and potential consequences.</p>
               </div>
-              <div>
-                <label style={styles.label}><Zap size={14} color="#3b82f6" /> ROOT CAUSES</label>
-                <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Explain the root causes of the risk. Why could this event occur?</p>
-                <textarea 
-                  placeholder="Describe the root causes..."
-                  value={form.rootCauses} 
-                  onChange={(e) => setForm({...form, rootCauses: e.target.value})} 
-                  style={{ ...styles.input, height: "120px", resize: "none" }} 
-                />
+              {!isEditingDetails && (
+                <button 
+                  onClick={() => {
+                    setTempForm({ ...form });
+                    setIsEditingDetails(true);
+                  }}
+                  style={{ padding: "8px 20px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#fff", color: "#3b82f6", fontSize: "13px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <Edit3 size={16} /> Edit Assessment
+                </button>
+              )}
+            </div>
+
+            {isEditingDetails ? (
+              <>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px", marginBottom: "24px" }}>
+                  <div>
+                    <label style={styles.label}><AlertTriangle size={14} color="#3b82f6" /> RISK EVENT</label>
+                    <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Describe the risk event — what could happen and what are you concerned about.</p>
+                    <textarea 
+                      placeholder="Describe the risk event..."
+                      value={form.riskEvent} 
+                      onChange={(e) => setForm({...form, riskEvent: e.target.value})} 
+                      style={{ ...styles.input, height: "120px", resize: "none" }} 
+                    />
+                  </div>
+                  <div>
+                    <label style={styles.label}><Zap size={14} color="#3b82f6" /> ROOT CAUSES</label>
+                    <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Explain the root causes of the risk. Why could this event occur?</p>
+                    <textarea 
+                      placeholder="Describe the root causes..."
+                      value={form.rootCauses} 
+                      onChange={(e) => setForm({...form, rootCauses: e.target.value})} 
+                      style={{ ...styles.input, height: "120px", resize: "none" }} 
+                    />
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: "24px" }}>
+                  <label style={styles.label}><Target size={14} color="#3b82f6" /> POTENTIAL CONSEQUENCES</label>
+                  <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Describe the potential impact if the risk occurs (financial, operational, reputational, etc.).</p>
+                  <textarea 
+                    placeholder="Describe the consequences..."
+                    value={form.consequences} 
+                    onChange={(e) => setForm({...form, consequences: e.target.value})} 
+                    style={{ ...styles.input, height: "100px", resize: "none" }} 
+                  />
+                </div>
+
+                <div style={{ marginBottom: "32px" }}>
+                  <label style={{ ...styles.label, textTransform: "none" }}>Risk Appetite Statement</label>
+                  <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Define the organization's willingness to accept this risk and how it should be managed.</p>
+                  <textarea 
+                    placeholder="Example: The organization has a moderate appetite for this risk due to potential strategic benefits..."
+                    value={form.appetite} 
+                    onChange={(e) => setForm({...form, appetite: e.target.value})} 
+                    style={{ ...styles.input, height: "80px", resize: "none" }} 
+                  />
+                </div>
+
+                <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+                  <button 
+                    disabled={saveStatus === "saving"}
+                    onClick={() => {
+                      handleSave();
+                      setIsEditingDetails(false);
+                    }} 
+                    style={{ flex: 1, padding: "14px", borderRadius: "12px", border: "none", background: "#3b82f6", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: saveStatus === "saving" ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", opacity: saveStatus === "saving" ? 0.7 : 1 }}
+                  >
+                    {saveStatus === "saving" ? <RefreshCw size={18} className="animate-spin" /> : <Save size={18} />} 
+                    {saveStatus === "saving" ? "Saving..." : "Save All Assessment Details"}
+                  </button>
+                  <button 
+                    disabled={saveStatus === "saving"}
+                    onClick={() => {
+                      setForm({ ...tempForm });
+                      setIsEditingDetails(false);
+                    }}
+                    style={{ padding: "14px 24px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: "14px", fontWeight: 700, cursor: "pointer" }}
+                  >
+                    Discard Changes
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+                {saveStatus === "success" && (
+                  <div style={{ padding: "12px 16px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "8px", color: "#166534", fontSize: "13px", fontWeight: 600, display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Shield size={16} /> Assessment details saved successfully!
+                  </div>
+                )}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "32px" }}>
+                  <div style={{ background: "#f8fafc", padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9" }}>
+                    <label style={{ ...styles.label, color: "#3b82f6" }}><AlertTriangle size={14} /> RISK EVENT</label>
+                    <p style={{ margin: 0, fontSize: "14px", color: "#334155", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                      {form.riskEvent || <span style={{ color: "#94a3b8", fontStyle: "italic" }}>No risk event described yet.</span>}
+                    </p>
+                  </div>
+                  <div style={{ background: "#f8fafc", padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9" }}>
+                    <label style={{ ...styles.label, color: "#3b82f6" }}><Zap size={14} /> ROOT CAUSES</label>
+                    <p style={{ margin: 0, fontSize: "14px", color: "#334155", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                      {form.rootCauses || <span style={{ color: "#94a3b8", fontStyle: "italic" }}>No root causes identified yet.</span>}
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ background: "#f8fafc", padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9" }}>
+                  <label style={{ ...styles.label, color: "#3b82f6" }}><Target size={14} /> POTENTIAL CONSEQUENCES</label>
+                  <p style={{ margin: 0, fontSize: "14px", color: "#334155", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                    {form.consequences || <span style={{ color: "#94a3b8", fontStyle: "italic" }}>No consequences described yet.</span>}
+                  </p>
+                </div>
+
+                <div style={{ background: "#f8fafc", padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9" }}>
+                  <label style={{ ...styles.label, textTransform: "none", color: "#3b82f6" }}>Risk Appetite Statement</label>
+                  <p style={{ margin: 0, fontSize: "14px", color: "#334155", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                    {form.appetite || <span style={{ color: "#94a3b8", fontStyle: "italic" }}>No appetite statement defined yet.</span>}
+                  </p>
+                </div>
               </div>
-            </div>
-
-            <div style={{ marginBottom: "24px" }}>
-              <label style={styles.label}><Target size={14} color="#3b82f6" /> POTENTIAL CONSEQUENCES</label>
-              <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Describe the potential impact if the risk occurs (financial, operational, reputational, etc.).</p>
-              <textarea 
-                placeholder="Describe the consequences..."
-                value={form.consequences} 
-                onChange={(e) => setForm({...form, consequences: e.target.value})} 
-                style={{ ...styles.input, height: "100px", resize: "none" }} 
-              />
-            </div>
-
-            <div style={{ marginBottom: "32px" }}>
-              <label style={{ ...styles.label, textTransform: "none" }}>Risk Appetite Statement</label>
-              <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Define the organization's willingness to accept this risk and how it should be managed.</p>
-              <textarea 
-                placeholder="Example: The organization has a moderate appetite for this risk due to potential strategic benefits..."
-                value={form.appetite} 
-                onChange={(e) => setForm({...form, appetite: e.target.value})} 
-                style={{ ...styles.input, height: "80px", resize: "none" }} 
-              />
-            </div>
-
-            <div style={{ display: "flex", gap: "16px" }}>
-              <button onClick={handleSave} style={{ flex: 1, padding: "14px", borderRadius: "12px", border: "none", background: "#3b82f6", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-                <Save size={18} /> Save All Assessment Details
-              </button>
-            </div>
+            )}
           </div>
         )}
 

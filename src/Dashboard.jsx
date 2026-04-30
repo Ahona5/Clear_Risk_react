@@ -275,13 +275,13 @@ export default function Dashboard() {
     const u = JSON.parse(localStorage.getItem("currentUser"));
     if (!u) { navigate("/login"); return; }
     
-    // Simulate API fetch delay for demonstrating performance optimizations
+    // Simulate API fetch delay
     setTimeout(() => {
       setProfiles(JSON.parse(localStorage.getItem("riskProfiles")) || []);
       setIsLoading(false);
     }, 1200);
 
-    // Poll data for dashboard specific updates
+    // Poll data
     const poll = setInterval(() => {
       setProfiles(JSON.parse(localStorage.getItem("riskProfiles")) || []);
     }, 3000);
@@ -518,18 +518,25 @@ export default function Dashboard() {
                     </tr>
                   ) : (
                     profiles.map((p, i) => {
+                      const allRisks = JSON.parse(localStorage.getItem("risks")) || [];
+                      const profileRisks = allRisks.filter(r => r.profile === p.name);
+                      const isEscalated = profileRisks.some(r => r.isEscalated);
+                      
                       const riskColors = {
                         High:   { bg: "#fef2f2", color: "#ef4444", dot: "#ef4444" },
                         Medium: { bg: "#fffbeb", color: "#f59e0b", dot: "#f59e0b" },
                         Low:    { bg: "#f0fdf4", color: "#10b981", dot: "#10b981" },
                       };
                       const rc = riskColors[p.risk] || { bg:"#f1f5f9", color:"#64748b", dot:"#94a3b8" };
+                      
                       const trendMap = {
                         "↑": { icon: <TrendingUp  size={14} />, color: "#ef4444" },
                         "↓": { icon: <TrendingDown size={14} />, color: "#10b981" },
                         "→": { icon: <Minus        size={14} />, color: "#94a3b8" },
                       };
-                      const tr = trendMap[p.trend] || trendMap["→"];
+                      
+                      // Override trend if escalated
+                      const tr = isEscalated ? trendMap["↑"] : (trendMap[p.trend] || trendMap["→"]);
 
                       return (
                         <tr
@@ -544,15 +551,22 @@ export default function Dashboard() {
                             <div style={{ display:"flex", alignItems:"center", gap: 10 }}>
                               <div style={{
                                 width: 34, height: 34, borderRadius: 10,
-                                background: "linear-gradient(135deg,#e0e7ff,#c7d2fe)",
+                                background: isEscalated ? "linear-gradient(135deg,#fee2e2,#fecaca)" : "linear-gradient(135deg,#e0e7ff,#c7d2fe)",
                                 display:"flex", alignItems:"center", justifyContent:"center",
                                 flexShrink: 0,
                               }}>
-                                <Folder size={15} color="#6366f1" />
+                                <Folder size={15} color={isEscalated ? "#ef4444" : "#6366f1"} />
                               </div>
-                              <span style={{ fontSize: 14, fontWeight: 600, color: "#0f172a" }}>
-                                {p.name}
-                              </span>
+                              <div style={{ display: "flex", flexDirection: "column" }}>
+                                <span style={{ fontSize: 14, fontWeight: 600, color: "#0f172a" }}>
+                                  {p.name}
+                                </span>
+                                {isEscalated && (
+                                  <span style={{ fontSize: "10px", fontWeight: 800, color: "#ef4444", textTransform: "uppercase", marginTop: "2px" }}>
+                                    ● Escalated
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </td>
 
