@@ -31,7 +31,7 @@ const FilterPanel = ({ filters, setFilters, onClose }) => {
 
   return (
     <div ref={ref} style={{
-      position: "absolute", top: "44px", right: 0, zIndex: 200,
+      position: "absolute", top: "44px", right: 0, zIndex: 9999,
       background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px",
       boxShadow: "0 8px 30px rgba(0,0,0,0.12)", padding: "18px 22px", width: "260px", minWidth: "260px",
     }}>

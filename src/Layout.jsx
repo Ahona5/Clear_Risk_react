@@ -244,26 +244,27 @@ export default function Layout({ children }) {
 
             {showUserMenu && (
               <div style={{
-                position: "absolute", right: 0, top: "calc(100% + 8px)", zIndex: 9999, width: "200px",
+                position: "absolute", right: 0, top: "calc(100% + 8px)", zIndex: 9999, 
+                width: "180px", minWidth: "180px",
                 background: "#fff", borderRadius: "12px", boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
                 border: "1px solid #e2e8f0", padding: "8px", overflow: "hidden",
                 display: "flex", flexDirection: "column", gap: "2px"
               }}>
                 <button onClick={() => { navigate("/profile"); setShowUserMenu(false); }}
-                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, color: "#334155", background: "none", border: "none", cursor: "pointer", transition: "background 0.2s" }}
+                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, color: "#334155", background: "none", border: "none", cursor: "pointer", transition: "background 0.2s", whiteSpace: "nowrap" }}
                   onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                   <User size={15} color="#64748b" /> 
                   <span>Profile</span>
                 </button>
                 <button onClick={() => setShowUserMenu(false)}
-                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, color: "#334155", background: "none", border: "none", cursor: "pointer", transition: "background 0.2s" }}
+                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, color: "#334155", background: "none", border: "none", cursor: "pointer", transition: "background 0.2s", whiteSpace: "nowrap" }}
                   onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                   <Settings size={15} color="#64748b" /> 
                   <span>Settings</span>
                 </button>
                 <div style={{ margin: "4px 0", borderTop: "1px solid #e2e8f0" }} />
                 <button onClick={handleLogout}
-                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, color: "#ef4444", background: "none", border: "none", cursor: "pointer", transition: "background 0.2s" }}
+                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, color: "#ef4444", background: "none", border: "none", cursor: "pointer", transition: "background 0.2s", whiteSpace: "nowrap" }}
                   onMouseEnter={e => e.currentTarget.style.background = "#fef2f2"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                   <LogOut size={15} color="#ef4444" /> 
                   <span>Logout</span>
