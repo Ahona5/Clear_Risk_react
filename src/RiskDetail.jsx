@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { 
-  AlertTriangle, Pin, User, ChevronDown, Save, X, 
-  Target, Zap, Shield, FileText, Activity, MessageSquare, 
+import {
+  AlertTriangle, Pin, User, ChevronDown, Save, X,
+  Target, Zap, Shield, FileText, Activity, MessageSquare,
   History, PieChart, Info, Edit3, ArrowLeft, RefreshCw, Clock, Plus, Trash2, Edit, MoreVertical
 } from "lucide-react";
 import Layout from "./Layout";
@@ -10,26 +10,26 @@ import EscalateModal from "./EscalateModal";
 import KRIModal from "./KRIModal";
 import { addActivityLog } from "./logger";
 import { Doughnut, Line, Bar, Pie } from "react-chartjs-2";
-import { 
-  Chart as ChartJS, 
-  ArcElement, 
-  Tooltip, 
-  Legend, 
-  CategoryScale, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
-  BarElement 
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement
 } from "chart.js";
 
 ChartJS.register(
-  ArcElement, 
-  Tooltip, 
-  Legend, 
-  CategoryScale, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
   BarElement
 );
 
@@ -72,8 +72,8 @@ const styles = {
 /* ─── MATRIX LOGIC ─── */
 const getMatrixColor = (score) => {
   if (score >= 12) return "#ef4444"; // Critical/Red
-  if (score >= 8)  return "#f97316"; // High/Orange
-  if (score >= 4)  return "#eab308"; // Medium/Yellow
+  if (score >= 8) return "#f97316"; // High/Orange
+  if (score >= 4) return "#eab308"; // Medium/Yellow
   return "#22c55e"; // Low/Green
 };
 
@@ -90,7 +90,7 @@ export default function RiskDetail() {
   const navigate = useNavigate();
   const [user, setUser] = useState({ username: "Admin", role: "admin" });
   const isAdmin = user?.role?.toLowerCase() === "admin";
-  
+
   const [loading, setLoading] = useState(true);
   const [risk, setRisk] = useState(null);
   const [activeTab, setActiveTab] = useState("Details");
@@ -99,8 +99,8 @@ export default function RiskDetail() {
   const [tempSummary, setTempSummary] = useState("");
   const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [tempForm, setTempForm] = useState(null);
-  const [saveStatus, setSaveStatus] = useState(null); 
-  
+  const [saveStatus, setSaveStatus] = useState(null);
+
   // Form State
   const [form, setForm] = useState({
     summary: "",
@@ -132,7 +132,7 @@ export default function RiskDetail() {
 
   useEffect(() => {
     localStorage.setItem(`kris_${id}`, JSON.stringify(kris));
-    
+
     // Update global pinned KRIs
     const allPinned = JSON.parse(localStorage.getItem("pinnedKris")) || [];
     const otherPinned = allPinned.filter(k => k.riskId !== id);
@@ -147,7 +147,7 @@ export default function RiskDetail() {
 
       const allRisks = JSON.parse(localStorage.getItem("risks")) || [];
       const found = allRisks.find(r => String(r.id) === String(id));
-      
+
       if (found) {
         setRisk(found);
         const initialForm = {
@@ -183,14 +183,14 @@ export default function RiskDetail() {
   const handleSave = () => {
     if (!risk) return;
     setSaveStatus("saving");
-    
+
     setTimeout(() => {
       const allRisks = JSON.parse(localStorage.getItem("risks")) || [];
       const updated = allRisks.map(r => String(r.id) === String(id) ? { ...r, ...form } : r);
       localStorage.setItem("risks", JSON.stringify(updated));
       setRisk({ ...risk, ...form });
       addActivityLog(user, "UPDATE", `Updated details for risk "${risk.title}"`, "success", "info");
-      
+
       setSaveStatus("success");
       setTimeout(() => setSaveStatus(null), 3000);
     }, 600);
@@ -276,7 +276,7 @@ export default function RiskDetail() {
   return (
     <Layout>
       <div style={{ padding: "0 10px 40px" }}>
-        
+
         {/* HEADER */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "32px", gap: "20px", flexWrap: "wrap" }}>
           <div style={{ flex: 1, minWidth: "300px" }}>
@@ -287,13 +287,13 @@ export default function RiskDetail() {
                 {risk.level || "MEDIUM"}
               </span>
             </div>
-            
+
             <div style={{ display: "flex", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <span style={{ fontSize: "13px", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Risk Status:</span>
-                <select 
-                  value={form.status} 
-                  onChange={(e) => setForm({...form, status: e.target.value})}
+                <select
+                  value={form.status}
+                  onChange={(e) => setForm({ ...form, status: e.target.value })}
                   style={{ border: "none", background: "#f1f5f9", padding: "4px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "#1e293b", cursor: "pointer", outline: "none" }}
                 >
                   <option>Open</option>
@@ -309,13 +309,13 @@ export default function RiskDetail() {
 
           <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
             <button style={{ padding: "10px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", color: "#64748b" }}><Pin size={18} /></button>
-            <button 
+            <button
               onClick={() => setEscalateModalOpen(true)}
               style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid #fee2e2", background: "#fff", color: "#ef4444", fontSize: "14px", fontWeight: 700, display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
             >
               <AlertTriangle size={16} /> Escalate
             </button>
-            
+
             <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "6px 16px", display: "flex", alignItems: "center", gap: "12px" }}>
               <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#3b82f6", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "12px" }}>
                 {risk.owner ? risk.owner.charAt(0).toUpperCase() : "A"}
@@ -354,7 +354,7 @@ export default function RiskDetail() {
               <FileText size={18} color="#3b82f6" /> Executive Summary
             </h3>
             {!isEditingSummary && (
-              <button 
+              <button
                 onClick={() => {
                   setTempSummary(form.summary);
                   setIsEditingSummary(true);
@@ -365,17 +365,17 @@ export default function RiskDetail() {
               </button>
             )}
           </div>
-          
+
           {isEditingSummary ? (
             <div>
-              <textarea 
+              <textarea
                 placeholder="Write executive summary here..."
                 value={tempSummary}
                 onChange={(e) => setTempSummary(e.target.value)}
                 style={{ ...styles.input, height: "120px", resize: "none", marginBottom: "16px" }}
               />
               <div style={{ display: "flex", gap: "12px" }}>
-                <button 
+                <button
                   onClick={() => {
                     setForm({ ...form, summary: tempSummary });
                     setIsEditingSummary(false);
@@ -384,7 +384,7 @@ export default function RiskDetail() {
                 >
                   Save
                 </button>
-                <button 
+                <button
                   onClick={() => setIsEditingSummary(false)}
                   style={{ padding: "8px 20px", borderRadius: "8px", border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}
                 >
@@ -413,7 +413,7 @@ export default function RiskDetail() {
               <Shield size={18} color="#3b82f6" /> Risk Assessment Matrix
             </h3>
           </div>
-          
+
           <div style={{ display: "flex", gap: "40px", alignItems: "center", padding: "0 10px", flexWrap: "wrap" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               {[
@@ -434,8 +434,8 @@ export default function RiskDetail() {
                 const isSelected = risk.impact === imp && risk.likelihood === lik;
                 return (
                   <div key={`${rIdx}-${cIdx}`}
-                    style={{ 
-                      width: "42px", height: "42px", borderRadius: "6px", 
+                    style={{
+                      width: "42px", height: "42px", borderRadius: "6px",
                       background: getMatrixColor(val), color: "#fff",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: "13px", fontWeight: 700,
@@ -476,7 +476,7 @@ export default function RiskDetail() {
                 <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>Provide detailed information about the identified risk, including the event, root causes, and potential consequences.</p>
               </div>
               {!isEditingDetails && (
-                <button 
+                <button
                   onClick={() => {
                     setTempForm({ ...form });
                     setIsEditingDetails(true);
@@ -494,21 +494,21 @@ export default function RiskDetail() {
                   <div>
                     <label style={styles.label}><AlertTriangle size={14} color="#3b82f6" /> RISK EVENT</label>
                     <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Describe the risk event — what could happen and what are you concerned about.</p>
-                    <textarea 
+                    <textarea
                       placeholder="Describe the risk event..."
-                      value={form.riskEvent} 
-                      onChange={(e) => setForm({...form, riskEvent: e.target.value})} 
-                      style={{ ...styles.input, height: "120px", resize: "none" }} 
+                      value={form.riskEvent}
+                      onChange={(e) => setForm({ ...form, riskEvent: e.target.value })}
+                      style={{ ...styles.input, height: "120px", resize: "none" }}
                     />
                   </div>
                   <div>
                     <label style={styles.label}><Zap size={14} color="#3b82f6" /> ROOT CAUSES</label>
                     <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Explain the root causes of the risk. Why could this event occur?</p>
-                    <textarea 
+                    <textarea
                       placeholder="Describe the root causes..."
-                      value={form.rootCauses} 
-                      onChange={(e) => setForm({...form, rootCauses: e.target.value})} 
-                      style={{ ...styles.input, height: "120px", resize: "none" }} 
+                      value={form.rootCauses}
+                      onChange={(e) => setForm({ ...form, rootCauses: e.target.value })}
+                      style={{ ...styles.input, height: "120px", resize: "none" }}
                     />
                   </div>
                 </div>
@@ -516,38 +516,38 @@ export default function RiskDetail() {
                 <div style={{ marginBottom: "24px" }}>
                   <label style={styles.label}><Target size={14} color="#3b82f6" /> POTENTIAL CONSEQUENCES</label>
                   <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Describe the potential impact if the risk occurs (financial, operational, reputational, etc.).</p>
-                  <textarea 
+                  <textarea
                     placeholder="Describe the consequences..."
-                    value={form.consequences} 
-                    onChange={(e) => setForm({...form, consequences: e.target.value})} 
-                    style={{ ...styles.input, height: "100px", resize: "none" }} 
+                    value={form.consequences}
+                    onChange={(e) => setForm({ ...form, consequences: e.target.value })}
+                    style={{ ...styles.input, height: "100px", resize: "none" }}
                   />
                 </div>
 
                 <div style={{ marginBottom: "32px" }}>
                   <label style={{ ...styles.label, textTransform: "none" }}>Risk Appetite Statement</label>
                   <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Define the organization's willingness to accept this risk and how it should be managed.</p>
-                  <textarea 
+                  <textarea
                     placeholder="Example: The organization has a moderate appetite for this risk due to potential strategic benefits..."
-                    value={form.appetite} 
-                    onChange={(e) => setForm({...form, appetite: e.target.value})} 
-                    style={{ ...styles.input, height: "80px", resize: "none" }} 
+                    value={form.appetite}
+                    onChange={(e) => setForm({ ...form, appetite: e.target.value })}
+                    style={{ ...styles.input, height: "80px", resize: "none" }}
                   />
                 </div>
 
                 <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-                  <button 
+                  <button
                     disabled={saveStatus === "saving"}
                     onClick={() => {
                       handleSave();
                       setIsEditingDetails(false);
-                    }} 
+                    }}
                     style={{ flex: 1, padding: "14px", borderRadius: "12px", border: "none", background: "#3b82f6", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: saveStatus === "saving" ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", opacity: saveStatus === "saving" ? 0.7 : 1 }}
                   >
-                    {saveStatus === "saving" ? <RefreshCw size={18} className="animate-spin" /> : <Save size={18} />} 
+                    {saveStatus === "saving" ? <RefreshCw size={18} className="animate-spin" /> : <Save size={18} />}
                     {saveStatus === "saving" ? "Saving..." : "Save All Assessment Details"}
                   </button>
-                  <button 
+                  <button
                     disabled={saveStatus === "saving"}
                     onClick={() => {
                       setForm({ ...tempForm });
@@ -631,7 +631,7 @@ export default function RiskDetail() {
               <span style={{ background: "#f1f5f9", color: "#64748b", padding: "2px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700 }}>{kris.length} KRI</span>
             </div>
             {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
-              <button 
+              <button
                 onClick={() => {
                   setEditingKri(null);
                   setShowKriModal(true);
@@ -644,11 +644,11 @@ export default function RiskDetail() {
           </div>
 
           {kris.length === 0 ? (
-            <div style={{ 
-              background: "#fff", 
-              borderRadius: "16px", 
-              padding: "60px 40px", 
-              textAlign: "center", 
+            <div style={{
+              background: "#fff",
+              borderRadius: "16px",
+              padding: "60px 40px",
+              textAlign: "center",
               border: "2px dashed #e2e8f0",
               display: "flex",
               flexDirection: "column",
@@ -661,13 +661,13 @@ export default function RiskDetail() {
               <div>
                 <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#1e293b", margin: "0 0 8px" }}>No KRI added yet</h3>
                 <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
-                  {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") 
-                    ? "Click 'Add KRI' to create your first indicator and start tracking performance." 
+                  {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator")
+                    ? "Click 'Add KRI' to create your first indicator and start tracking performance."
                     : "There are currently no Key Risk Indicators defined for this profile."}
                 </p>
               </div>
               {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
-                <button 
+                <button
                   onClick={() => setShowKriModal(true)}
                   style={{ marginTop: "8px", padding: "10px 20px", borderRadius: "10px", border: "1px solid #3b82f6", background: "transparent", color: "#3b82f6", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}
                 >
@@ -678,157 +678,157 @@ export default function RiskDetail() {
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(450px, 1fr))", gap: "24px" }}>
               {kris.map(kri => (
-              <div key={kri.id} style={styles.card}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#10b981", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: 700 }}>
-                      {kri.owner.charAt(0)}
+                <div key={kri.id} style={styles.card}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#10b981", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: 700 }}>
+                        {kri.owner.charAt(0)}
+                      </div>
+                      <span style={{ fontSize: "15px", fontWeight: 700, color: "#1e293b" }}>{kri.title}</span>
                     </div>
-                    <span style={{ fontSize: "15px", fontWeight: 700, color: "#1e293b" }}>{kri.title}</span>
-                  </div>
-                  
-                  <div style={{ position: "relative" }}>
-                    <button 
-                      onClick={() => setActiveMenu(activeMenu === kri.id ? null : kri.id)}
-                      style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", padding: "8px", borderRadius: "50%", transition: "background 0.2s", display: "flex", alignItems: "center", justifyContent: "center" }}
-                    >
-                      <MoreVertical size={20} />
-                    </button>
-                    
-                    {activeMenu === kri.id && (
-                      <div ref={menuRef} style={styles.dropdown}>
-                        <div 
-                          style={{ ...styles.dropdownItem, color: "#10b981" }} 
-                          onClick={() => handlePinKri(kri.id)}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = "#ecfdf5";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = "transparent";
-                          }}
-                        >
-                          <Pin size={16} color="#10b981" style={{ minWidth: "16px", flexShrink: 0 }} /> 
-                          <span style={{ whiteSpace: "nowrap", flex: 1 }}>{kri.isPinned ? "Unpin" : "Pin"}</span>
+
+                    <div style={{ position: "relative" }}>
+                      <button
+                        onClick={() => setActiveMenu(activeMenu === kri.id ? null : kri.id)}
+                        style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", padding: "8px", borderRadius: "50%", transition: "background 0.2s", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      >
+                        <MoreVertical size={20} />
+                      </button>
+
+                      {activeMenu === kri.id && (
+                        <div ref={menuRef} style={styles.dropdown}>
+                          <div
+                            style={{ ...styles.dropdownItem, color: "#10b981" }}
+                            onClick={() => handlePinKri(kri.id)}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = "#ecfdf5";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = "transparent";
+                            }}
+                          >
+                            <Pin size={16} color="#10b981" style={{ minWidth: "16px", flexShrink: 0 }} />
+                            <span style={{ whiteSpace: "nowrap", flex: 1 }}>{kri.isPinned ? "Unpin" : "Pin"}</span>
+                          </div>
+
+                          {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
+                            <>
+                              <div
+                                style={{ ...styles.dropdownItem, color: "#334155" }}
+                                onClick={() => handleEditKri(kri)}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background = "#f1f5f9";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background = "transparent";
+                                }}
+                              >
+                                <Edit size={16} color="#3b82f6" style={{ minWidth: "16px", flexShrink: 0 }} />
+                                <span style={{ whiteSpace: "nowrap", flex: 1 }}>Edit</span>
+                              </div>
+                              <div
+                                style={{ ...styles.dropdownItem, color: "#ef4444" }}
+                                onClick={() => handleDeleteKri(kri.id)}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background = "#fef2f2";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background = "transparent";
+                                }}
+                              >
+                                <Trash2 size={16} color="#ef4444" style={{ minWidth: "16px", flexShrink: 0 }} />
+                                <span style={{ whiteSpace: "nowrap", flex: 1 }}>Delete</span>
+                              </div>
+                            </>
+                          )}
                         </div>
-                        
-                        {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
-                          <>
-                            <div 
-                              style={{ ...styles.dropdownItem, color: "#334155" }} 
-                              onClick={() => handleEditKri(kri)}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background = "#f1f5f9";
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.background = "transparent";
-                              }}
-                            >
-                              <Edit size={16} color="#3b82f6" style={{ minWidth: "16px", flexShrink: 0 }} /> 
-                              <span style={{ whiteSpace: "nowrap", flex: 1 }}>Edit</span>
-                            </div>
-                            <div 
-                              style={{ ...styles.dropdownItem, color: "#ef4444" }} 
-                              onClick={() => handleDeleteKri(kri.id)}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background = "#fef2f2";
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.background = "transparent";
-                              }}
-                            >
-                              <Trash2 size={16} color="#ef4444" style={{ minWidth: "16px", flexShrink: 0 }} /> 
-                              <span style={{ whiteSpace: "nowrap", flex: 1 }}>Delete</span>
-                            </div>
-                          </>
-                        )}
+                      )}
+                    </div>
+                  </div>
+
+                  <div style={{ height: "240px", marginBottom: "24px", padding: "10px" }}>
+                    {kri.type === "Line" && (
+                      <Line
+                        data={{
+                          labels: kri.labels,
+                          datasets: [{
+                            label: kri.title,
+                            data: kri.data,
+                            borderColor: "#ef4444",
+                            backgroundColor: "rgba(239, 68, 68, 0.1)",
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: "#fff",
+                            pointBorderColor: "#ef4444",
+                            pointBorderWidth: 2
+                          }]
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: { legend: { display: false } },
+                          scales: {
+                            y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
+                            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                          }
+                        }}
+                      />
+                    )}
+                    {(kri.type === "Column" || kri.type === "Stacked") && (
+                      <Bar
+                        data={{
+                          labels: kri.labels,
+                          datasets: [{
+                            label: kri.title,
+                            data: kri.data,
+                            backgroundColor: "#ef4444",
+                            borderRadius: 4
+                          }]
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: { legend: { display: false } },
+                          scales: {
+                            y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
+                            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                          }
+                        }}
+                      />
+                    )}
+                    {kri.type === "Pie" && (
+                      <div style={{ height: "200px", display: "flex", justifyContent: "center" }}>
+                        <Pie
+                          data={{
+                            labels: kri.labels || ["No Data"],
+                            datasets: [{
+                              data: kri.data || [100],
+                              backgroundColor: ["#22C55E", "#F59E0B", "#EF4444", "#3b82f6", "#8b5cf6"],
+                              borderWidth: 0
+                            }]
+                          }}
+                          options={{ responsive: true, maintainAspectRatio: false }}
+                        />
                       </div>
                     )}
                   </div>
-                </div>
 
-                <div style={{ height: "240px", marginBottom: "24px", padding: "10px" }}>
-                  {kri.type === "Line" && (
-                    <Line 
-                      data={{
-                        labels: kri.labels,
-                        datasets: [{
-                          label: kri.title,
-                          data: kri.data,
-                          borderColor: "#ef4444",
-                          backgroundColor: "rgba(239, 68, 68, 0.1)",
-                          tension: 0.4,
-                          pointRadius: 4,
-                          pointBackgroundColor: "#fff",
-                          pointBorderColor: "#ef4444",
-                          pointBorderWidth: 2
-                        }]
-                      }}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                          y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
-                          x: { grid: { display: false }, ticks: { font: { size: 10 } } }
-                        }
-                      }}
-                    />
-                  )}
-                  {(kri.type === "Column" || kri.type === "Stacked") && (
-                    <Bar 
-                      data={{
-                        labels: kri.labels,
-                        datasets: [{
-                          label: kri.title,
-                          data: kri.data,
-                          backgroundColor: "#ef4444",
-                          borderRadius: 4
-                        }]
-                      }}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                          y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
-                          x: { grid: { display: false }, ticks: { font: { size: 10 } } }
-                        }
-                      }}
-                    />
-                  )}
-                  {kri.type === "Pie" && (
-                    <div style={{ height: "200px", display: "flex", justifyContent: "center" }}>
-                      <Pie 
-                        data={{
-                          labels: kri.labels || ["No Data"],
-                          datasets: [{
-                            data: kri.data || [100],
-                            backgroundColor: ["#10b981", "#f59e0b", "#3b82f6", "#ef4444", "#8b5cf6", "#3b82f6"],
-                            borderWidth: 0
-                          }]
-                        }}
-                        options={{ responsive: true, maintainAspectRatio: false }}
-                      />
+                  <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "16px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                      <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b" }}>Latest Comment</span>
+                      <span style={{ fontSize: "12px", color: "#94a3b8" }}>{kri.date}</span>
                     </div>
-                  )}
-                </div>
-
-                <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "16px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                    <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b" }}>Latest Comment</span>
-                    <span style={{ fontSize: "12px", color: "#94a3b8" }}>{kri.date}</span>
+                    <p style={{ fontSize: "13px", color: "#64748b", margin: 0, lineHeight: 1.5 }}>{kri.comment}</p>
                   </div>
-                  <p style={{ fontSize: "13px", color: "#64748b", margin: 0, lineHeight: 1.5 }}>{kri.comment}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
 
-      <KRIModal 
-        isOpen={showKriModal} 
+      <KRIModal
+        isOpen={showKriModal}
         initialData={editingKri}
         onClose={() => {
           setShowKriModal(false);
@@ -837,13 +837,13 @@ export default function RiskDetail() {
         onSave={handleSaveKri}
       />
 
-      <EscalateModal 
+      <EscalateModal
         isOpen={escalateModalOpen}
         onClose={() => setEscalateModalOpen(false)}
         onSubmit={handleEscalate}
         usersList={JSON.parse(localStorage.getItem("adminUsersList")) || []}
       />
-      
+
       <style>{`
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
