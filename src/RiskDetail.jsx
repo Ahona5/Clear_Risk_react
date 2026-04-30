@@ -111,33 +111,49 @@ export default function RiskDetail() {
     status: "Open"
   });
 
-  const [kris, setKris] = useState([
-    {
-      id: 1,
-      title: "Revenue",
-      type: "Line",
-      owner: "Admin",
-      comment: "Cyclical pattern with peak in summer, focus should be on dampening the troughs in colder months",
-      date: "27/06/2026",
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-      data: [7, 7, 10, 15, 18, 22, 25, 26, 23, 18, 14, 10]
-    },
-    {
-      id: 2,
-      title: "Online revenue growth",
-      type: "Column",
-      owner: "John Doe",
-      comment: "Numbers going down, need some actions",
-      date: "27/06/2026",
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-      data: [7, 7, 10, 14, 18, 21, 25, 26, 23, 18, 14, 10]
-    }
-  ]);
+  const [kris, setKris] = useState(() => {
+    const saved = localStorage.getItem(`kris_${id}`);
+    if (saved) return JSON.parse(saved);
+    return [
+      {
+        id: 1,
+        title: "Revenue",
+        type: "Line",
+        owner: "Admin",
+        comment: "Cyclical pattern with peak in summer, focus should be on dampening the troughs in colder months",
+        date: "27/06/2026",
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        data: [7, 7, 10, 15, 18, 22, 25, 26, 23, 18, 14, 10],
+        isPinned: false
+      },
+      {
+        id: 2,
+        title: "Online revenue growth",
+        type: "Column",
+        owner: "John Doe",
+        comment: "Numbers going down, need some actions",
+        date: "27/06/2026",
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        data: [7, 7, 10, 14, 18, 21, 25, 26, 23, 18, 14, 10],
+        isPinned: false
+      }
+    ];
+  });
 
   const [showKriModal, setShowKriModal] = useState(false);
   const [editingKri, setEditingKri] = useState(null);
   const [activeMenu, setActiveMenu] = useState(null);
   const menuRef = useRef(null);
+
+  useEffect(() => {
+    localStorage.setItem(`kris_${id}`, JSON.stringify(kris));
+    
+    // Update global pinned KRIs
+    const allPinned = JSON.parse(localStorage.getItem("pinnedKris")) || [];
+    const otherPinned = allPinned.filter(k => k.riskId !== id);
+    const myPinned = kris.filter(k => k.isPinned).map(k => ({ ...k, riskId: id, riskTitle: risk?.title }));
+    localStorage.setItem("pinnedKris", JSON.stringify([...otherPinned, ...myPinned]));
+  }, [kris, id, risk]);
 
   useEffect(() => {
     try {
@@ -217,6 +233,14 @@ export default function RiskDetail() {
   const handleEditKri = (kri) => {
     setEditingKri(kri);
     setShowKriModal(true);
+    setActiveMenu(null);
+  };
+
+  const handlePinKri = (kriId) => {
+    const updatedKris = kris.map(k => k.id === kriId ? { ...k, isPinned: !k.isPinned } : k);
+    setKris(updatedKris);
+    const kri = updatedKris.find(k => k.id === kriId);
+    addActivityLog(user, "UPDATE", `${kri.isPinned ? "Pinned" : "Unpinned"} KRI: ${kri.title}`, "success", "info");
     setActiveMenu(null);
   };
 
@@ -654,6 +678,19 @@ export default function RiskDetail() {
                     {activeMenu === kri.id && (
                       <div ref={menuRef} style={styles.dropdown}>
                         <div 
+                          style={{ ...styles.dropdownItem, color: "#10b981" }} 
+                          onClick={() => handlePinKri(kri.id)}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = "#ecfdf5";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = "transparent";
+                          }}
+                        >
+                          <Pin size={16} color="#10b981" style={{ minWidth: "16px", flexShrink: 0 }} /> 
+                          <span style={{ whiteSpace: "nowrap", flex: 1 }}>{kri.isPinned ? "Unpin" : "Pin"}</span>
+                        </div>
+                        <div 
                           style={{ ...styles.dropdownItem, color: "#334155" }} 
                           onClick={() => handleEditKri(kri)}
                           onMouseEnter={(e) => {
@@ -663,8 +700,8 @@ export default function RiskDetail() {
                             e.currentTarget.style.background = "transparent";
                           }}
                         >
-                          <Edit size={16} color="#3b82f6" /> 
-                          <span>Edit</span>
+                          <Edit size={16} color="#3b82f6" style={{ minWidth: "16px", flexShrink: 0 }} /> 
+                          <span style={{ whiteSpace: "nowrap", flex: 1 }}>Edit</span>
                         </div>
                         <div 
                           style={{ ...styles.dropdownItem, color: "#ef4444" }} 
@@ -676,8 +713,8 @@ export default function RiskDetail() {
                             e.currentTarget.style.background = "transparent";
                           }}
                         >
-                          <Trash2 size={16} color="#ef4444" /> 
-                          <span>Delete</span>
+                          <Trash2 size={16} color="#ef4444" style={{ minWidth: "16px", flexShrink: 0 }} /> 
+                          <span style={{ whiteSpace: "nowrap", flex: 1 }}>Delete</span>
                         </div>
                       </div>
                     )}

@@ -4,8 +4,31 @@ import {
   Bell, User, Settings, LogOut, ChevronDown, Menu,
   LayoutDashboard, Folder, Users as UsersIcon, Clock,
   ShieldAlert, FileText, Plus, X, TrendingUp, TrendingDown,
-  Minus, ExternalLink, Shield,
+  Minus, ExternalLink, Shield, Pin,
 } from "lucide-react";
+import { Line, Bar, Pie } from "react-chartjs-2";
+import { 
+  Chart as ChartJS, 
+  ArcElement, 
+  Tooltip, 
+  Legend, 
+  CategoryScale, 
+  LinearScale, 
+  PointElement, 
+  LineElement, 
+  BarElement 
+} from "chart.js";
+
+ChartJS.register(
+  ArcElement, 
+  Tooltip, 
+  Legend, 
+  CategoryScale, 
+  LinearScale, 
+  PointElement, 
+  LineElement, 
+  BarElement
+);
 
 /* ─── KPI CARD ─── */
 const THEMES = {
@@ -265,6 +288,7 @@ export default function Dashboard() {
   const [isLoading,        setIsLoading]        = useState(true);
   const [profiles,         setProfiles]         = useState([]);
   const [showModal,        setShowModal]         = useState(false);
+  const [pinnedKris,       setPinnedKris]       = useState([]);
 
   const [profileName,      setProfileName]       = useState("");
   const [profileOwner,     setProfileOwner]      = useState("");
@@ -278,12 +302,14 @@ export default function Dashboard() {
     // Simulate API fetch delay
     setTimeout(() => {
       setProfiles(JSON.parse(localStorage.getItem("riskProfiles")) || []);
+      setPinnedKris(JSON.parse(localStorage.getItem("pinnedKris")) || []);
       setIsLoading(false);
     }, 1200);
 
     // Poll data
     const poll = setInterval(() => {
       setProfiles(JSON.parse(localStorage.getItem("riskProfiles")) || []);
+      setPinnedKris(JSON.parse(localStorage.getItem("pinnedKris")) || []);
     }, 3000);
     return () => clearInterval(poll);
   }, [navigate]);
@@ -620,6 +646,104 @@ export default function Dashboard() {
               </table>
             </div>
           </div>
+
+          {/* ── PINNED KRIs ── */}
+          {pinnedKris.length > 0 && (
+            <div style={{ marginTop: 28 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+                <Pin size={20} color="#3b82f6" />
+                <h3 style={{ fontSize: 18, fontWeight: 700, color: "#0f172a", margin: 0 }}>
+                  Pinned Key Risk Indicators
+                </h3>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: 24 }}>
+                {pinnedKris.map(kri => (
+                  <div key={`${kri.riskId}-${kri.id}`} style={{
+                    background: "#fff",
+                    borderRadius: 20,
+                    padding: 24,
+                    boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
+                    border: "1px solid #f1f5f9",
+                  }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                          <span style={{ fontSize: 16, fontWeight: 700, color: "#0f172a" }}>{kri.title}</span>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: "#3b82f6", background: "#eff6ff", padding: "2px 8px", borderRadius: 999 }}>{kri.riskTitle || "Risk Profile"}</span>
+                        </div>
+                        <span style={{ fontSize: 12, color: "#64748b" }}>Owner: {kri.owner}</span>
+                      </div>
+                    </div>
+                    
+                    <div style={{ height: "200px", padding: "10px 0" }}>
+                      {kri.type === "Line" && (
+                        <Line 
+                          data={{
+                            labels: kri.labels,
+                            datasets: [{
+                              label: kri.title,
+                              data: kri.data,
+                              borderColor: "#ef4444",
+                              backgroundColor: "rgba(239, 68, 68, 0.1)",
+                              tension: 0.4,
+                              pointRadius: 4,
+                              pointBackgroundColor: "#fff",
+                              pointBorderColor: "#ef4444",
+                              pointBorderWidth: 2
+                            }]
+                          }}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                              y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
+                              x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                            }
+                          }}
+                        />
+                      )}
+                      {(kri.type === "Column" || kri.type === "Stacked") && (
+                        <Bar 
+                          data={{
+                            labels: kri.labels,
+                            datasets: [{
+                              label: kri.title,
+                              data: kri.data,
+                              backgroundColor: "#ef4444",
+                              borderRadius: 4
+                            }]
+                          }}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                              y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
+                              x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                            }
+                          }}
+                        />
+                      )}
+                      {kri.type === "Pie" && (
+                        <Pie 
+                          data={{
+                            labels: ["Online", "Retail", "Partners"],
+                            datasets: [{
+                              data: [40, 30, 30],
+                              backgroundColor: ["#10b981", "#f59e0b", "#3b82f6"],
+                              borderWidth: 0
+                            }]
+                          }}
+                          options={{ responsive: true, maintainAspectRatio: false }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
       {/* MODAL */}
       {showModal && (
