@@ -1,24 +1,72 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
   AlertTriangle, Pin, User, ChevronDown, Save, X, 
   Target, Zap, Shield, FileText, Activity, MessageSquare, 
-  History, PieChart, Info, Edit3, ArrowLeft, RefreshCw, Clock
+  History, PieChart, Info, Edit3, ArrowLeft, RefreshCw, Clock, Plus, Trash2, Edit, MoreVertical
 } from "lucide-react";
 import Layout from "./Layout";
 import EscalateModal from "./EscalateModal";
+import KRIModal from "./KRIModal";
 import { addActivityLog } from "./logger";
-import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut, Line, Bar, Pie } from "react-chartjs-2";
+import { 
+  Chart as ChartJS, 
+  ArcElement, 
+  Tooltip, 
+  Legend, 
+  CategoryScale, 
+  LinearScale, 
+  PointElement, 
+  LineElement, 
+  BarElement 
+} from "chart.js";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(
+  ArcElement, 
+  Tooltip, 
+  Legend, 
+  CategoryScale, 
+  LinearScale, 
+  PointElement, 
+  LineElement, 
+  BarElement
+);
 
 /* ─── STYLES ─── */
 const styles = {
-  card: { background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid #e2e8f0", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" },
+  card: { background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid #e2e8f0", boxShadow: "0 1px 4px rgba(0,0,0,0.05)", position: "relative" },
   badge: (bg, color) => ({ background: bg, color, padding: "4px 12px", borderRadius: "999px", fontSize: "12px", fontWeight: 700, textTransform: "uppercase" }),
   input: { width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#f8fafc", fontSize: "14px", outline: "none", transition: "all 0.2s" },
   label: { fontSize: "12px", fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" },
+  dropdown: {
+    position: "absolute",
+    top: "100%",
+    right: "0",
+    minWidth: "160px",
+    background: "#fff",
+    borderRadius: "10px",
+    boxShadow: "0 10px 25px -5px rgba(0,0,0,0.15)",
+    border: "1px solid #e2e8f0",
+    zIndex: 99999,
+    padding: "6px",
+    marginTop: "8px",
+    boxSizing: "border-box"
+  },
+  dropdownItem: {
+    padding: "10px 12px",
+    fontSize: "14px",
+    fontWeight: 600,
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    cursor: "pointer",
+    transition: "all 0.2s",
+    width: "100%",
+    boxSizing: "border-box",
+    borderRadius: "6px",
+    marginBottom: "2px"
+  }
 };
 
 /* ─── MATRIX LOGIC ─── */
@@ -41,6 +89,7 @@ export default function RiskDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [user, setUser] = useState({ username: "Admin", role: "admin" });
+  const isAdmin = user?.role?.toLowerCase() === "admin";
   
   const [loading, setLoading] = useState(true);
   const [risk, setRisk] = useState(null);
@@ -50,7 +99,7 @@ export default function RiskDetail() {
   const [tempSummary, setTempSummary] = useState("");
   const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [tempForm, setTempForm] = useState(null);
-  const [saveStatus, setSaveStatus] = useState(null); // 'saving', 'success', null
+  const [saveStatus, setSaveStatus] = useState(null); 
   
   // Form State
   const [form, setForm] = useState({
@@ -61,6 +110,34 @@ export default function RiskDetail() {
     appetite: "",
     status: "Open"
   });
+
+  const [kris, setKris] = useState([
+    {
+      id: 1,
+      title: "Revenue",
+      type: "Line",
+      owner: "Admin",
+      comment: "Cyclical pattern with peak in summer, focus should be on dampening the troughs in colder months",
+      date: "27/06/2026",
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      data: [7, 7, 10, 15, 18, 22, 25, 26, 23, 18, 14, 10]
+    },
+    {
+      id: 2,
+      title: "Online revenue growth",
+      type: "Column",
+      owner: "John Doe",
+      comment: "Numbers going down, need some actions",
+      date: "27/06/2026",
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      data: [7, 7, 10, 14, 18, 21, 25, 26, 23, 18, 14, 10]
+    }
+  ]);
+
+  const [showKriModal, setShowKriModal] = useState(false);
+  const [editingKri, setEditingKri] = useState(null);
+  const [activeMenu, setActiveMenu] = useState(null);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     try {
@@ -81,7 +158,6 @@ export default function RiskDetail() {
           status: found.status || "Open"
         };
         setForm(initialForm);
-        // Default to view mode if data exists, else edit mode
         if (!found.riskEvent && !found.rootCauses) {
           setIsEditingDetails(true);
         }
@@ -92,6 +168,16 @@ export default function RiskDetail() {
       setTimeout(() => setLoading(false), 300);
     }
   }, [id]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setActiveMenu(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSave = () => {
     if (!risk) return;
@@ -117,6 +203,32 @@ export default function RiskDetail() {
     setRisk({ ...risk, isEscalated: true, escalatedTo: data.taggedUser });
     addActivityLog(user, "ESCALATE", `Escalated risk "${risk.title}" to ${data.taggedUser}`, "success", "critical");
     setEscalateModalOpen(false);
+  };
+
+  const handleDeleteKri = (kriId) => {
+    if (window.confirm("Are you sure you want to delete this KRI?")) {
+      const updatedKris = kris.filter(k => k.id !== kriId);
+      setKris(updatedKris);
+      addActivityLog(user, "DELETE", "Deleted a Key Risk Indicator", "warning", "info");
+      setActiveMenu(null);
+    }
+  };
+
+  const handleEditKri = (kri) => {
+    setEditingKri(kri);
+    setShowKriModal(true);
+    setActiveMenu(null);
+  };
+
+  const handleSaveKri = (newKriData) => {
+    if (editingKri) {
+      setKris(kris.map(k => k.id === newKriData.id ? newKriData : k));
+      addActivityLog(user, "UPDATE", `Updated KRI: ${newKriData.title}`, "success", "info");
+    } else {
+      setKris([...kris, newKriData]);
+      addActivityLog(user, "CREATE", `Added new KRI: ${newKriData.title}`, "success", "info");
+    }
+    setEditingKri(null);
   };
 
   if (loading) {
@@ -190,7 +302,7 @@ export default function RiskDetail() {
             <button style={{ padding: "10px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", color: "#64748b" }}><Pin size={18} /></button>
             <button 
               onClick={() => setEscalateModalOpen(true)}
-              style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid #fee2e2", background: "#fff", color: "#ef4444", fontSize: "14px", fontWeight: 600, display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
+              style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid #fee2e2", background: "#fff", color: "#ef4444", fontSize: "14px", fontWeight: 700, display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
             >
               <AlertTriangle size={16} /> Escalate
             </button>
@@ -502,7 +614,165 @@ export default function RiskDetail() {
           </div>
         </div>
 
+        {/* KRI SECTION */}
+        <div style={{ marginTop: "40px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#0f172a", margin: 0 }}>Key Risk Indicator</h2>
+              <span style={{ background: "#f1f5f9", color: "#64748b", padding: "2px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700 }}>{kris.length} KRI</span>
+            </div>
+            <button 
+              onClick={() => {
+                setEditingKri(null);
+                setShowKriModal(true);
+              }}
+              style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#3b82f6", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 12px rgba(59, 130, 246, 0.25)" }}
+            >
+              <Plus size={18} /> Add KRI
+            </button>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(450px, 1fr))", gap: "24px" }}>
+            {kris.map(kri => (
+              <div key={kri.id} style={styles.card}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#10b981", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: 700 }}>
+                      {kri.owner.charAt(0)}
+                    </div>
+                    <span style={{ fontSize: "15px", fontWeight: 700, color: "#1e293b" }}>{kri.title}</span>
+                  </div>
+                  
+                  <div style={{ position: "relative" }}>
+                    <button 
+                      onClick={() => setActiveMenu(activeMenu === kri.id ? null : kri.id)}
+                      style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", padding: "8px", borderRadius: "50%", transition: "background 0.2s", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    >
+                      <MoreVertical size={20} />
+                    </button>
+                    
+                    {activeMenu === kri.id && (
+                      <div ref={menuRef} style={styles.dropdown}>
+                        <div 
+                          style={{ ...styles.dropdownItem, color: "#334155" }} 
+                          onClick={() => handleEditKri(kri)}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = "#f1f5f9";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = "transparent";
+                          }}
+                        >
+                          <Edit size={16} color="#3b82f6" /> 
+                          <span>Edit</span>
+                        </div>
+                        <div 
+                          style={{ ...styles.dropdownItem, color: "#ef4444" }} 
+                          onClick={() => handleDeleteKri(kri.id)}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = "#fef2f2";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = "transparent";
+                          }}
+                        >
+                          <Trash2 size={16} color="#ef4444" /> 
+                          <span>Delete</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div style={{ height: "240px", marginBottom: "24px", padding: "10px" }}>
+                  {kri.type === "Line" && (
+                    <Line 
+                      data={{
+                        labels: kri.labels,
+                        datasets: [{
+                          label: kri.title,
+                          data: kri.data,
+                          borderColor: "#ef4444",
+                          backgroundColor: "rgba(239, 68, 68, 0.1)",
+                          tension: 0.4,
+                          pointRadius: 4,
+                          pointBackgroundColor: "#fff",
+                          pointBorderColor: "#ef4444",
+                          pointBorderWidth: 2
+                        }]
+                      }}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                          y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
+                          x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                        }
+                      }}
+                    />
+                  )}
+                  {(kri.type === "Column" || kri.type === "Stacked") && (
+                    <Bar 
+                      data={{
+                        labels: kri.labels,
+                        datasets: [{
+                          label: kri.title,
+                          data: kri.data,
+                          backgroundColor: "#ef4444",
+                          borderRadius: 4
+                        }]
+                      }}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                          y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
+                          x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                        }
+                      }}
+                    />
+                  )}
+                  {kri.type === "Pie" && (
+                    <div style={{ height: "200px", display: "flex", justifyContent: "center" }}>
+                      <Pie 
+                        data={{
+                          labels: ["Online", "Retail", "Partners"],
+                          datasets: [{
+                            data: [40, 30, 30],
+                            backgroundColor: ["#10b981", "#f59e0b", "#3b82f6"],
+                            borderWidth: 0
+                          }]
+                        }}
+                        options={{ responsive: true, maintainAspectRatio: false }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "16px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b" }}>Latest Comment</span>
+                    <span style={{ fontSize: "12px", color: "#94a3b8" }}>{kri.date}</span>
+                  </div>
+                  <p style={{ fontSize: "13px", color: "#64748b", margin: 0, lineHeight: 1.5 }}>{kri.comment}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+
+      <KRIModal 
+        isOpen={showKriModal} 
+        initialData={editingKri}
+        onClose={() => {
+          setShowKriModal(false);
+          setEditingKri(null);
+        }}
+        onSave={handleSaveKri}
+      />
 
       <EscalateModal 
         isOpen={escalateModalOpen}
@@ -510,6 +780,10 @@ export default function RiskDetail() {
         onSubmit={handleEscalate}
         usersList={JSON.parse(localStorage.getItem("adminUsersList")) || []}
       />
+      
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+      `}</style>
     </Layout>
   );
 }
