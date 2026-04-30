@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { addActivityLog } from "./logger";
+import EscalateModal from "./EscalateModal";
 import { useNavigate } from "react-router-dom";
 import "./styles/dashboard.css";
 import "./styles/profile.css";
@@ -127,6 +128,13 @@ export default function Profile() {
   const [escalatedOnly, setEscalatedOnly] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("currentUser")) || { username: "Admin", role: "admin" };
+  const adminUsers = JSON.parse(localStorage.getItem("adminUsersList")) || [
+    { id: 1, name: "Admin User", role: "moderator" },
+    { id: 2, name: "John Doe", role: "subscriber" }
+  ];
+
+  const [escalateModalOpen, setEscalateModalOpen] = useState(false);
+  const [riskToEscalate, setRiskToEscalate] = useState(null);
 
   useEffect(() => {
     const n = JSON.parse(localStorage.getItem("notifications")) || [];
@@ -175,7 +183,13 @@ export default function Profile() {
     return true;
   });
 
-  const escalateRisk = (id) => {
+  const handleEscalateClick = (id) => {
+    setRiskToEscalate(id);
+    setEscalateModalOpen(true);
+  };
+
+  const performEscalation = (data) => {
+    const id = riskToEscalate;
     const allRisks = JSON.parse(localStorage.getItem("risks")) || [];
     const targetRisk = allRisks.find(r => r.id === id);
     if (!targetRisk) return;
@@ -184,18 +198,33 @@ export default function Profile() {
     const notifs = JSON.parse(localStorage.getItem("notifications")) || [];
     notifs.unshift({
       id: Date.now(),
-      message: `Risk "${targetRisk.title}" escalated by ${user.username}`,
+      message: `Risk "${targetRisk.title}" escalated to ${data.taggedUser} by ${user.username}`,
       time: new Date().toLocaleTimeString(),
       read: false
     });
     localStorage.setItem("notifications", JSON.stringify(notifs));
     
-    addActivityLog(user, "ESCALATE", `Escalated risk "${targetRisk.title}"`, "success", "critical");
+    addActivityLog(user, "ESCALATE", `Escalated risk "${targetRisk.title}" to ${data.taggedUser} (${data.priority} Priority)`, "success", "critical");
 
-    const newAllRisks = allRisks.map(r => r.id === id ? { ...r, isEscalated: true, escalatedTo: "admin" } : r);
+    const newAllRisks = allRisks.map(r => r.id === id ? { ...r, isEscalated: true, escalatedTo: data.taggedUser } : r);
     localStorage.setItem("risks", JSON.stringify(newAllRisks));
 
-    setRisks(prev => prev.map(r => r.id === id ? { ...r, isEscalated: true, escalatedTo: "admin" } : r));
+    setRisks(prev => prev.map(r => r.id === id ? { ...r, isEscalated: true, escalatedTo: data.taggedUser } : r));
+  };
+
+  const removeEscalation = (id) => {
+    if (!window.confirm("Are you sure you want to remove the escalation status for this risk?")) return;
+    
+    const allRisks = JSON.parse(localStorage.getItem("risks")) || [];
+    const targetRisk = allRisks.find(r => r.id === id);
+    if (!targetRisk) return;
+
+    addActivityLog(user, "UPDATE", `Removed escalation for risk "${targetRisk.title}"`, "success", "info");
+
+    const newAllRisks = allRisks.map(r => r.id === id ? { ...r, isEscalated: false, escalatedTo: null } : r);
+    localStorage.setItem("risks", JSON.stringify(newAllRisks));
+
+    setRisks(prev => prev.map(r => r.id === id ? { ...r, isEscalated: false, escalatedTo: null } : r));
   };
 
   const handleLogout = () => {
@@ -474,9 +503,17 @@ export default function Profile() {
                     <td><span className={`badge-level level-${r.level?.toLowerCase()}`}>{r.level}</span></td>
                     <td>{r.date}</td>
                     <td>
-                      <div style={{ display: 'flex', gap: '12px' }}>
-                        <AlertTriangle size={18} style={{ color: r.isEscalated ? '#cbd5e1' : '#f59e0b', cursor: 'pointer' }} onClick={() => !r.isEscalated && escalateRisk(r.id)} />
-                        <Trash2 size={18} style={{ color: '#ef4444', cursor: 'pointer' }} onClick={() => deleteRisk(r.id)} />
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        {r.isEscalated ? (
+                          <button onClick={() => removeEscalation(r.id)} style={{ fontSize:"12px", fontWeight:600, color:"#64748b", background:"#f1f5f9", border:"1px solid #e2e8f0", borderRadius:"6px", padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap", transition:"all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e2e8f0"; e.currentTarget.style.color = "#334155"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#64748b"; }}>
+                            Remove Escalation
+                          </button>
+                        ) : (
+                          <button onClick={() => handleEscalateClick(r.id)} style={{ fontSize:"12px", fontWeight:600, color:"#d97706", background:"#fef3c7", border:"1px solid #fde68a", borderRadius:"6px", padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap", display:"flex", alignItems:"center", gap:"4px", transition:"all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#fde68a"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#fef3c7"; }}>
+                            <AlertTriangle size={14} /> Escalate
+                          </button>
+                        )}
+                        <Trash2 size={18} style={{ color: '#ef4444', cursor: 'pointer', transition:"opacity 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.opacity = "0.7"} onMouseLeave={(e) => e.currentTarget.style.opacity = "1"} onClick={() => deleteRisk(r.id)} />
                       </div>
                     </td>
                   </tr>
@@ -510,6 +547,13 @@ export default function Profile() {
           </div>
         </div>
       )}
+
+      <EscalateModal 
+        isOpen={escalateModalOpen} 
+        onClose={() => setEscalateModalOpen(false)} 
+        onSubmit={performEscalation} 
+        usersList={adminUsers}
+      />
     </Layout>
   );
 }
