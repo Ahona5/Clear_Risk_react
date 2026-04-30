@@ -16,12 +16,7 @@ const RoleBadge = ({ role }) => {
   return <span style={s.pill("#f1f5f9","#475569")}>{role}</span>;
 };
 
-const TierBadge = ({ tier }) => {
-  const t = tier?.toLowerCase();
-  if (t === "premium") return <span style={s.pill("#f3e8ff","#7e22ce")}>Premium</span>;
-  if (t === "pro")     return <span style={s.pill("#fef9c3","#a16207")}>Pro</span>;
-  return <span style={s.pill("#f1f5f9","#64748b")}>Free</span>;
-};
+
 
 /* ── FILTER DROPDOWN ── */
 const FilterPanel = ({ filters, setFilters, onClose }) => {
@@ -33,40 +28,29 @@ const FilterPanel = ({ filters, setFilters, onClose }) => {
   }, [onClose]);
 
   const roles = ["All", "subscriber", "moderator", "suspended"];
-  const tiers = ["All", "Premium", "Pro", "Free"];
 
   return (
     <div ref={ref} style={{
       position: "absolute", top: "44px", right: 0, zIndex: 200,
       background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px",
-      boxShadow: "0 8px 30px rgba(0,0,0,0.12)", padding: "16px 18px", width: "220px",
+      boxShadow: "0 8px 30px rgba(0,0,0,0.12)", padding: "18px 22px", width: "260px", minWidth: "260px",
     }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"12px" }}>
         <span style={{ fontWeight:700, fontSize:"13px", color:"#0f172a" }}>Filters</span>
         <button onClick={onClose} style={{ background:"none", border:"none", cursor:"pointer", padding:2 }}><X size={15} color="#94a3b8"/></button>
       </div>
 
-      <p style={{ fontSize:"11px", fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", margin:"0 0 6px" }}>Role</p>
-      <div style={{ display:"flex", flexDirection:"column", gap:"4px", marginBottom:"14px" }}>
+      <p style={{ fontSize:"11px", fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", margin:"0 0 8px" }}>Role</p>
+      <div style={{ display:"flex", flexDirection:"column", gap:"6px" }}>
         {roles.map(r => (
-          <label key={r} style={{ display:"flex", alignItems:"center", gap:"8px", cursor:"pointer", fontSize:"13px", color: filters.role === r ? "#2563eb" : "#374151", fontWeight: filters.role === r ? 600 : 400 }}>
+          <label key={r} style={{ display:"flex", alignItems:"center", gap:"10px", cursor:"pointer", fontSize:"13px", color: filters.role === r ? "#2563eb" : "#374151", fontWeight: filters.role === r ? 600 : 400, whiteSpace: "nowrap" }}>
             <input type="radio" name="role" value={r} checked={filters.role === r} onChange={() => setFilters(f => ({ ...f, role: r }))} style={{ accentColor:"#2563eb" }} />
             {r === "All" ? "All Roles" : r.charAt(0).toUpperCase() + r.slice(1)}
           </label>
         ))}
       </div>
 
-      <p style={{ fontSize:"11px", fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", margin:"0 0 6px" }}>Tier</p>
-      <div style={{ display:"flex", flexDirection:"column", gap:"4px" }}>
-        {tiers.map(t => (
-          <label key={t} style={{ display:"flex", alignItems:"center", gap:"8px", cursor:"pointer", fontSize:"13px", color: filters.tier === t ? "#2563eb" : "#374151", fontWeight: filters.tier === t ? 600 : 400 }}>
-            <input type="radio" name="tier" value={t} checked={filters.tier === t} onChange={() => setFilters(f => ({ ...f, tier: t }))} style={{ accentColor:"#2563eb" }} />
-            {t === "All" ? "All Tiers" : t}
-          </label>
-        ))}
-      </div>
-
-      <button onClick={() => { setFilters({ role:"All", tier:"All" }); onClose(); }}
+      <button onClick={() => { setFilters({ role:"All" }); onClose(); }}
         style={{ marginTop:"14px", width:"100%", padding:"7px", borderRadius:"8px", border:"1px solid #e2e8f0", background:"#f8fafc", fontSize:"12px", fontWeight:600, color:"#64748b", cursor:"pointer" }}>
         Clear Filters
       </button>
@@ -117,10 +101,9 @@ const FiltersBar = ({ activeTab, setActiveTab, searchQuery, setSearchQuery, coun
   const tabs = [
     { id:"All Users",    label:`All (${counts.all})` },
     { id:"Subscribers", label:`Subscribers (${counts.subscribers})` },
-    { id:"Premium",     label:`Premium (${counts.premium})` },
     { id:"Suspended",   label:`Suspended (${counts.suspended})` },
   ];
-  const hasActiveFilter = panelFilters.role !== "All" || panelFilters.tier !== "All";
+  const hasActiveFilter = panelFilters.role !== "All";
 
   return (
     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"18px", flexWrap:"wrap", gap:"10px" }}>
@@ -176,7 +159,6 @@ const UserRow = ({ user, onEdit, onSuspend, onRestore }) => {
       </td>
       <td style={{ padding:"14px 20px", fontSize:"13px", color:"#475569" }}>{user.email}</td>
       <td style={{ padding:"14px 20px" }}><RoleBadge role={user.role}/></td>
-      <td style={{ padding:"14px 20px" }}><TierBadge tier={user.tier}/></td>
       <td style={{ padding:"14px 20px", fontSize:"13px", color:"#64748b" }}>{user.joinedDate}</td>
       <td style={{ padding:"14px 20px" }}>
         <div style={{ display:"flex", alignItems:"center", gap:"10px" }}>
@@ -197,7 +179,7 @@ const UserTable = ({ users, onEdit, onSuspend, onRestore }) => (
     <table style={{ width:"100%", borderCollapse:"collapse" }}>
       <thead>
         <tr style={{ background:"#f8fafc", borderBottom:"1px solid #e2e8f0" }}>
-          {["", "Name","Email","Role","Tier","Joined","Actions"].map((col, i) => (
+          {["", "Name","Email","Role","Joined","Actions"].map((col, i) => (
             <th key={i} style={{ padding:"13px 20px", textAlign:"left", fontSize:"11px", fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", width: i===0?"48px":"auto" }}>
               {i === 0 ? <input type="checkbox" style={{ width:"15px", height:"15px" }}/> : col}
             </th>
@@ -266,12 +248,12 @@ const Users = () => {
 
   const [activeTab,    setActiveTab]    = useState("All Users");
   const [searchQuery,  setSearchQuery]  = useState("");
-  const [panelFilters, setPanelFilters] = useState({ role:"All", tier:"All" });
+  const [panelFilters, setPanelFilters] = useState({ role:"All" });
   const [showAdd,      setShowAdd]      = useState(false);
   const [showEdit,     setShowEdit]     = useState(false);
   const [selUser,      setSelUser]      = useState(null);
 
-  const blank = { name:"", email:"", password:"", role:"subscriber", avatar:null };
+  const blank = { name:"", email:"", password:"", role:"subscriber", tier:"Free", avatar:null };
   const [form, setForm] = useState(blank);
 
   const [usersList, setUsersList] = useState(() => {
@@ -333,16 +315,14 @@ const Users = () => {
 
   const handleAdd = () => {
     if (!form.name || !form.email) return alert("Name and Email are required");
-    // System automatically assigns 'Free' tier during internal creation
-    setUsersList(p => [...p, { ...form, tier: "Free", id:Date.now(), joinedDate:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) }]);
+    setUsersList(p => [...p, { ...form, id:Date.now(), joinedDate:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) }]);
     setShowAdd(false); setForm(blank);
     addActivityLog(currentUser, "CREATE", `Created user "${form.name}"`, "success", "info");
   };
 
-  const handleEdit = u => { setSelUser(u); setForm({ name:u.name, email:u.email, password:"", role:u.role, avatar:u.avatar }); setShowEdit(true); };
+  const handleEdit = u => { setSelUser(u); setForm({ name:u.name, email:u.email, password:"", role:u.role, tier:u.tier, avatar:u.avatar }); setShowEdit(true); };
   const handleSave = () => {
-    // Preserve the original 'tier' as it is now managed internally/separately
-    setUsersList(p => p.map(u => u.id===selUser.id ? { ...u, ...form, password: form.password || u.password, avatar:form.avatar||u.avatar } : u));
+    setUsersList(p => p.map(u => u.id===selUser.id ? { ...form, id:u.id, joinedDate:u.joinedDate, avatar:form.avatar||u.avatar } : u));
     setShowEdit(false); setForm(blank);
     addActivityLog(currentUser, "UPDATE", `Updated user "${form.name}"`, "success", "info");
   };
@@ -362,10 +342,8 @@ const Users = () => {
   /* ── FILTERING ── */
   const filtered = usersList.filter(u => {
     if (activeTab === "Subscribers" && u.role !== "subscriber") return false;
-    if (activeTab === "Premium"     && u.tier?.toLowerCase() !== "premium") return false;
     if (activeTab === "Suspended"   && u.role !== "suspended") return false;
     if (panelFilters.role !== "All" && u.role !== panelFilters.role) return false;
-    if (panelFilters.tier !== "All" && u.tier !== panelFilters.tier) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       return u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
@@ -376,7 +354,6 @@ const Users = () => {
   const counts = {
     all:         usersList.length,
     subscribers: usersList.filter(u => u.role === "subscriber").length,
-    premium:     usersList.filter(u => u.tier?.toLowerCase() === "premium").length,
     suspended:   usersList.filter(u => u.role === "suspended").length,
   };
 
