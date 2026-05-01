@@ -26,7 +26,7 @@ import {
 import Layout from "./Layout";
 
 /* 🔥 CHART IMPORTS */
-import { Doughnut } from "react-chartjs-2";
+import { Doughnut, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -172,7 +172,13 @@ export default function Profile() {
       localStorage.setItem("risks", JSON.stringify(all));
     }
 
-    setRisks(all.filter((r) => r.profile === selected));
+    const profileRisks = all.filter((r) => r.profile === selected);
+    // Sync levels with new 4-level logic
+    const syncedRisks = profileRisks.map(r => ({
+      ...r,
+      level: getLevel(r.score)
+    }));
+    setRisks(syncedRisks);
   }, [profileName]);
 
   const filteredTableRisks = risks.filter((r) => {
@@ -243,32 +249,51 @@ export default function Profile() {
   };
 
   const getLevel = (score) => {
-    if (score >= 16) return "High";
+    if (score >= 16) return "Critical";
+    if (score >= 10) return "High";
     if (score >= 5) return "Medium";
     return "Low";
   };
 
   const total = risks.length;
+  const critical = risks.filter((r) => r.level === "Critical").length;
   const high = risks.filter((r) => r.level === "High").length;
   const medium = risks.filter((r) => r.level === "Medium").length;
   const low = risks.filter((r) => r.level === "Low").length;
+  const totalVal = risks.length || 0;
+  const getPct = (val) => totalVal > 0 ? ((val / totalVal) * 100).toFixed(1) : 0;
 
   const pieData = {
-    labels: ["Low", "Medium", "High"],
+    labels: ["Low", "Medium", "High", "Critical"],
     datasets: [
       {
-        data: [low, medium, high],
-        backgroundColor: ["#22C55E", "#F59E0B", "#EF4444"],
-        borderWidth: 0,
+        data: [low, medium, high, critical],
+        backgroundColor: ["#86efac", "#fef08a", "#fdba74", "#fca5a5"],
+        borderWidth: 2,
+        borderColor: '#ffffff',
       },
     ],
   };
 
   const pieOptions = {
     plugins: {
-      legend: { position: "bottom" },
+      legend: { 
+        display: false 
+      },
+      tooltip: {
+        backgroundColor: 'rgba(15, 23, 25, 0.95)',
+        padding: 14,
+        cornerRadius: 12,
+        displayColors: true,
+      }
     },
-    cutout: "60%",
+    maintainAspectRatio: false,
+    animation: {
+      animateRotate: true,
+      animateScale: true,
+      duration: 1200,
+      easing: 'easeOutQuart'
+    }
   };
 
   const impacts = [5, 4, 3, 2, 1];
@@ -392,10 +417,11 @@ export default function Profile() {
         gap: "16px",
         marginBottom: "24px",
       }}>
-        <KpiCardModern title="Total Risks" value={total} bgColor="#e0f2fe" iconColor="#0284c7" trend="5" subtext="Increased from last month" />
-        <KpiCardModern title="High Risk" value={high} bgColor="#fee2e2" iconColor="#dc2626" trend="2" subtext="Increased from last month" />
-        <KpiCardModern title="Medium Risk" value={medium} bgColor="#fef3c7" iconColor="#d97706" trend="1" subtext="Increased from last month" />
-        <KpiCardModern title="Low Risk" value={low} bgColor="#dcfce3" iconColor="#16a34a" subtext={<span style={{ color: "#16a34a", fontWeight: "500" }}>Under control</span>} />
+        <KpiCardModern title="Total Risks" value={total} bgColor="#f8fafc" iconColor="#64748b" trend={total > 0 ? "Active" : "None"} subtext="All profiles" />
+        <KpiCardModern title="Critical" value={critical} bgColor="#fca5a530" iconColor="#ef4444" trend={critical} subtext="Immediate action" />
+        <KpiCardModern title="High" value={high} bgColor="#fdba7430" iconColor="#f97316" trend={high} subtext="Priority focus" />
+        <KpiCardModern title="Medium" value={medium} bgColor="#fef08a30" iconColor="#eab308" trend={medium} subtext="Monitor closely" />
+        <KpiCardModern title="Low" value={low} bgColor="#86efac30" iconColor="#22c55e" trend={low} subtext="Stable state" />
       </div>
 
       <div className="analytics-container">
@@ -416,11 +442,30 @@ export default function Profile() {
                 {showLegend ? "Hide Legend" : "Show Legend"}
               </button>
             </div>
-            <div className="heatmap-legend-top">
+            <div style={{ background: '#f8fafc', borderRadius: '12px', padding: '16px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', borderRight: '1px solid #e2e8f0', paddingRight: '16px' }}>Definitions</div>
+                {['G', 'N', 'T'].map(id => {
+                  const term = {
+                    G: { label: "Gross", desc: "Risk before controls" },
+                    N: { label: "Net", desc: "Risk after controls" },
+                    T: { label: "Target", desc: "Desired risk level" }
+                  }[id];
+                  return (
+                    <div key={id} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '12px', fontWeight: 500, color: '#1e293b' }}>{id}:</span>
+                      <span style={{ fontSize: '12px', color: '#64748b' }}>{term.desc}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="heatmap-legend-top" style={{ marginBottom: '32px', gap: '24px' }}>
               {['G', 'N', 'T'].map(id => (
-                <div key={id} className="legend-item-pill">
+                <div key={id} className="legend-item-pill" style={{ background: '#fff', border: '1px solid #e2e8f0' }}>
                   <div className={`legend-badge marker-${id.toLowerCase()}`} draggable onDragStart={(e) => onDragStart(e, `NEW-${id}`)}>{id}</div>
-                  <span className="legend-text-label">{id === 'G' ? 'Gross' : id === 'N' ? 'Net' : 'Target'} Risk</span>
+                  <span className="legend-text-label" style={{ fontWeight: 700 }}>{id === 'G' ? 'Gross' : id === 'N' ? 'Net' : 'Target'}</span>
                 </div>
               ))}
             </div>
@@ -482,7 +527,7 @@ export default function Profile() {
                       { score: 2, label: "Low", color: "#22c55e", desc: { fin: "£100k - £1m", ops: "Minor disruption to workflow", safe: "First aid required", rep: "Minimal public awareness" } },
                       { score: 1, label: "Very Low", color: "#64748b", desc: { fin: "<£100k", ops: "Negligible disruption", safe: "No injury", rep: "No impact" } }
                     ].map(item => (
-                      <div key={item.score} style={{ background: "#f8fafc", borderRadius: "12px", border: "1px solid #f1f5f9", padding: "16px", display: "flex", gap: "16px" }}>
+                      <div key={item.score} style={{ background: "#f8fafc", borderRadius: "12px", border: "1px solid #f1f5f9", padding: "16px", display: "flex", gap: "16px", alignItems: "center" }}>
                         <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: item.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 800, flexShrink: 0 }}>
                           {item.score}
                         </div>
@@ -533,27 +578,136 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="analytics-bottom-grid">
-          <div className="chart-box">
-            <h3>Risk Distribution</h3>
-            <div style={{ height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Doughnut data={pieData} options={pieOptions} />
+        <div className="analytics-bottom-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'stretch' }}>
+          {/* LEFT PANEL: CHART & INSIGHTS */}
+          <div className="chart-box" style={{ padding: '32px', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ marginBottom: '32px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 500 }}>Risk Overview</h3>
+                <div style={{ textAlign: 'right' }}>
+                  <span style={{ fontSize: '28px', fontWeight: 500, color: '#0f172a' }}>{totalVal}</span>
+                  <span style={{ fontSize: '12px', fontWeight: 500, color: '#94a3b8', marginLeft: '8px', textTransform: 'uppercase' }}>Total Risks</span>
+                </div>
+              </div>
+              <div style={{ height: '2px', background: '#f1f5f9', marginTop: '16px' }} />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', flex: 1 }}>
+              {/* Actionable Insights at the Top */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div style={{ background: '#fca5a520', borderLeft: '4px solid #fca5a5', padding: '16px', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: '#991b1b', textTransform: 'uppercase', marginBottom: '4px' }}>Immediate Action</div>
+                  <div style={{ fontSize: '14px', fontWeight: 500, color: '#1e293b' }}>{critical + high} High Impact risks detected</div>
+                </div>
+                <div style={{ background: '#86efac20', borderLeft: '4px solid #86efac', padding: '16px', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: '#166534', textTransform: 'uppercase', marginBottom: '4px' }}>Risk Health</div>
+                  <div style={{ fontSize: '14px', fontWeight: 500, color: '#1e293b' }}>{low} Stable risks monitored</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
+                <div style={{ width: '220px', height: '220px', position: 'relative' }}>
+                  <Pie 
+                    data={{
+                      ...pieData,
+                      datasets: [{
+                        ...pieData.datasets[0],
+                        backgroundColor: ["#86efac", "#fef08a", "#fdba74", "#fca5a5"], // Reverting to pastel palette
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                      }]
+                    }} 
+                    options={{
+                      ...pieOptions,
+                      plugins: { ...pieOptions.plugins, legend: { display: false } }
+                    }} 
+                  />
+                </div>
+                
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {[
+                    { label: 'Critical', count: critical, color: '#fca5a5', pct: getPct(critical) },
+                    { label: 'High', count: high, color: '#fdba74', pct: getPct(high) },
+                    { label: 'Medium', count: medium, color: '#fef08a', pct: getPct(medium) },
+                    { label: 'Low', count: low, color: '#86efac', pct: getPct(low) },
+                  ].map(item => (
+                    <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ width: '10px', height: '10px', borderRadius: '2px', background: item.color }} />
+                        <span style={{ fontSize: '13px', fontWeight: 500, color: '#475569' }}>{item.label}</span>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '14px', fontWeight: 500, color: '#1e293b' }}>{item.count}</div>
+                        <div style={{ fontSize: '10px', fontWeight: 400, color: '#94a3b8' }}>{item.pct}%</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="heatmap-ranking-panel">
-            <h3>Top Risks (Ranked)</h3>
-            <div className="ranking-list">
-              {[...risks].sort((a, b) => b.score - a.score).map((r, i) => (
-                <div key={r.id} className="ranking-card">
-                  <div className="rank-main-info">
-                    <span className="rank-idx">#{i + 1}</span>
-                    <span className={`legend-badge marker-${r.title.charAt(0).toLowerCase()}`}>{r.title.charAt(0).toUpperCase()}</span>
-                    <span className="rank-card-name">{r.title}</span>
+          {/* RIGHT PANEL: RANKING */}
+          <div className="heatmap-ranking-panel" style={{ padding: '32px', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 500 }}>Risk Ranking</h3>
+              <span style={{ fontSize: '11px', fontWeight: 500, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Severity Priority</span>
+            </div>
+            
+            <div className="ranking-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {[...risks].sort((a, b) => b.score - a.score).map((r, i) => {
+                const isTop = i === 0;
+                const severityColor = r.score >= 16 ? '#fca5a5' : r.score >= 10 ? '#fdba74' : r.score >= 5 ? '#fef08a' : '#86efac';
+                
+                return (
+                  <div 
+                    key={r.id} 
+                    className={`ranking-card ${isTop ? 'ranking-card-featured' : ''}`}
+                    onClick={() => navigate(`/risk/${r.id}`)}
+                    style={{
+                      cursor: 'pointer',
+                      border: isTop ? `2px solid ${severityColor}` : '1px solid #e2e8f0',
+                      background: isTop ? `${severityColor}10` : '#fff',
+                      padding: isTop ? '24px' : '16px',
+                      borderRadius: '16px',
+                      boxShadow: isTop ? '0 10px 25px -5px rgba(0,0,0,0.05)' : 'none',
+                      transition: 'all 0.2s ease',
+                      position: 'relative'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                      <div style={{ 
+                        fontSize: isTop ? '24px' : '14px', 
+                        fontWeight: 500, 
+                        color: isTop ? severityColor : '#94a3b8',
+                        width: '35px'
+                      }}>
+                        #{i + 1}
+                      </div>
+                      
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                          <span className="rank-card-name" style={{ fontSize: isTop ? '18px' : '14px', fontWeight: 500, color: '#1e293b' }}>{r.title}</span>
+                          <span style={{ 
+                            fontSize: '10px', 
+                            fontWeight: 500, 
+                            color: severityColor === '#fef08a' ? '#854d0e' : severityColor === '#86efac' ? '#166534' : severityColor === '#fdba74' ? '#9a3412' : '#991b1b', 
+                            background: `${severityColor}40`, 
+                            padding: '2px 8px', 
+                            borderRadius: '4px',
+                            textTransform: 'uppercase'
+                          }}>{r.level}</span>
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 400 }}>Score: {r.score}</div>
+                      </div>
+                      
+                      <div style={{ opacity: isTop ? 1 : 0.4 }}>
+                        <ArrowUpRight size={isTop ? 22 : 18} color={isTop ? severityColor : '#94a3b8'} />
+                      </div>
+                    </div>
                   </div>
-                  <span className="rank-card-score">Score: {r.score}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

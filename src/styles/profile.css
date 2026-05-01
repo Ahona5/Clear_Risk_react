@@ -644,31 +644,40 @@ body {
   display: inline-block;
 }
 
+.level-critical {
+  background: #fca5a5;
+  color: #991b1b;
+}
+
+.level-critical::before {
+  background: #991b1b;
+}
+
 .level-high {
-  background: #fee2e2;
-  color: #ef4444;
+  background: #fdba74;
+  color: #9a3412;
 }
 
 .level-high::before {
-  background: #ef4444;
+  background: #9a3412;
 }
 
 .level-medium {
-  background: #fff7ed;
-  color: #f97316;
+  background: #fef08a;
+  color: #854d0e;
 }
 
 .level-medium::before {
-  background: #f97316;
+  background: #854d0e;
 }
 
 .level-low {
-  background: #f0fdf4;
-  color: #22c55e;
+  background: #86efac;
+  color: #166534;
 }
 
 .level-low::before {
-  background: #22c55e;
+  background: #166534;
 }
 
 /* ================= MODERN RISK TABLE ================= */

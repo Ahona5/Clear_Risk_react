@@ -71,18 +71,18 @@ const styles = {
 
 /* ─── MATRIX LOGIC ─── */
 const getMatrixColor = (score) => {
-  if (score >= 12) return "#ef4444"; // Critical/Red
-  if (score >= 8) return "#f97316"; // High/Orange
-  if (score >= 4) return "#eab308"; // Medium/Yellow
-  return "#22c55e"; // Low/Green
+  if (score >= 12) return "#fca5a5"; // Critical (Pastel Rose)
+  if (score >= 8) return "#fdba74";  // High (Pastel Orange)
+  if (score >= 4) return "#fef08a";  // Medium (Pastel Sun)
+  return "#86efac"; // Low (Pastel Mint)
 };
 
 const matrixValues = [
-  [1, 2, 3, 4, 5],
-  [2, 4, 6, 8, 10],
-  [3, 6, 9, 12, 15],
-  [4, 8, 12, 16, 20],
-  [5, 10, 15, 20, 25]
+  [5, 10, 15, 20, 25], // Impact 5
+  [4, 8, 12, 16, 20],  // Impact 4
+  [3, 6, 9, 12, 15],  // Impact 3
+  [2, 4, 6, 8, 10],   // Impact 2
+  [1, 2, 3, 4, 5]     // Impact 1
 ];
 
 export default function RiskDetail() {
@@ -268,8 +268,9 @@ export default function RiskDetail() {
     labels: ["Critical", "High", "Medium", "Low"],
     datasets: [{
       data: [5, 10, 15, 20],
-      backgroundColor: ["#ef4444", "#f97316", "#eab308", "#22c55e"],
-      borderWidth: 0
+      backgroundColor: ["#fca5a5", "#fdba74", "#fef08a", "#86efac"], // Applying pastel palette
+      borderWidth: 2,
+      borderColor: '#ffffff'
     }]
   };
 
@@ -283,7 +284,10 @@ export default function RiskDetail() {
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px", flexWrap: "wrap" }}>
               <AlertTriangle size={24} color="#ef4444" style={{ flexShrink: 0 }} />
               <h1 style={{ fontSize: "28px", fontWeight: 800, color: "#0f172a", margin: 0 }}>{risk.title}</h1>
-              <span style={styles.badge(risk.level === "High" ? "#fee2e2" : "#fef3c7", risk.level === "High" ? "#dc2626" : "#d97706")}>
+              <span style={styles.badge(
+                risk.level === "Critical" ? "#fca5a540" : risk.level === "High" ? "#fdba7440" : risk.level === "Medium" ? "#fef08a40" : "#86efac40",
+                risk.level === "Critical" ? "#991b1b" : risk.level === "High" ? "#9a3412" : risk.level === "Medium" ? "#854d0e" : "#166534"
+              )}>
                 {risk.level || "MEDIUM"}
               </span>
             </div>
@@ -331,17 +335,24 @@ export default function RiskDetail() {
         {/* METRICS */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "20px", marginBottom: "32px" }}>
           {[
-            { label: "Impact", value: risk.impact || 0, icon: Target, color: "#3b82f6", bg: "#eff6ff" },
-            { label: "Likelihood", value: risk.likelihood || 0, icon: Activity, color: "#8b5cf6", bg: "#f5f3ff" },
-            { label: "Risk Score", value: risk.score || 0, icon: Zap, color: "#f59e0b", bg: "#fffbeb" }
+            { label: "Impact", value: risk.impact || 0, icon: Target, color: "#3b82f6", bg: "#eff6ff", cardBg: "#f0f9ff" },
+            { label: "Likelihood", value: risk.likelihood || 0, icon: Activity, color: "#8b5cf6", bg: "#f5f3ff", cardBg: "#f5f3ff" },
+            { label: "Risk Score", value: risk.score || 0, icon: Zap, color: "#f59e0b", bg: "#fffbeb", cardBg: "#fffbeb" }
           ].map((m, i) => (
-            <div key={i} style={{ ...styles.card, display: "flex", alignItems: "center", gap: "20px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: m.bg, color: m.color, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div key={i} style={{ 
+              ...styles.card, 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "20px",
+              background: m.cardBg,
+              border: `1px solid ${m.color}20`
+            }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "#fff", color: m.color, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
                 <m.icon size={24} />
               </div>
               <div>
-                <p style={{ fontSize: "13px", fontWeight: 600, color: "#64748b", margin: "0 0 4px" }}>{m.label}</p>
-                <p style={{ fontSize: "24px", fontWeight: 800, color: "#0f172a", margin: 0 }}>{m.value}</p>
+                <p style={{ fontSize: "13px", fontWeight: 500, color: "#64748b", margin: "0 0 4px" }}>{m.label}</p>
+                <p style={{ fontSize: "28px", fontWeight: 500, color: "#0f172a", margin: 0 }}>{m.value}</p>
               </div>
             </div>
           ))}
@@ -414,40 +425,56 @@ export default function RiskDetail() {
             </h3>
           </div>
 
-          <div style={{ display: "flex", gap: "40px", alignItems: "center", padding: "0 10px", flexWrap: "wrap" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div style={{ display: "flex", gap: "60px", alignItems: "center", justifyContent: "center", padding: "30px 10px", flexWrap: "wrap" }}>
+            {/* Legend */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               {[
-                { label: "Low", color: "#22c55e" }, { label: "Medium", color: "#eab308" },
-                { label: "High", color: "#f97316" }, { label: "Critical", color: "#ef4444" }
+                { label: "Low", color: "#86efac" }, { label: "Medium", color: "#fef08a" },
+                { label: "High", color: "#fdba74" }, { label: "Critical", color: "#fca5a5" }
               ].map(l => (
-                <div key={l.label} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div key={l.label} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                   <div style={{ width: "12px", height: "12px", borderRadius: "3px", background: l.color }} />
-                  <span style={{ fontSize: "13px", fontWeight: 600, color: "#475569" }}>{l.label}</span>
+                  <span style={{ fontSize: "14px", fontWeight: 500, color: "#475569" }}>{l.label}</span>
                 </div>
               ))}
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px" }}>
-              {matrixValues.map((row, rIdx) => row.map((val, cIdx) => {
-                const imp = 5 - rIdx;
-                const lik = cIdx + 1;
-                const isSelected = risk.impact === imp && risk.likelihood === lik;
-                return (
-                  <div key={`${rIdx}-${cIdx}`}
-                    style={{
-                      width: "42px", height: "42px", borderRadius: "6px",
-                      background: getMatrixColor(val), color: "#fff",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: "13px", fontWeight: 700,
-                      border: isSelected ? "2px solid #000" : "none",
-                      boxShadow: isSelected ? "0 0 8px rgba(0,0,0,0.2)" : "none",
-                      transform: isSelected ? "scale(1.1)" : "none",
-                    }}
-                  >
-                    {val}
-                  </div>
-                );
-              }))}
+            {/* Matrix with Labels */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              {/* Y-Axis Label: Impact */}
+              <div style={{ writingMode: "vertical-rl", transform: "rotate(180deg)", fontSize: "12px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                Impact (1-5)
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px" }}>
+                  {matrixValues.map((row, rIdx) => row.map((val, cIdx) => {
+                    const imp = 5 - rIdx;
+                    const lik = cIdx + 1;
+                    const isSelected = risk.impact === imp && risk.likelihood === lik;
+                    return (
+                      <div key={`${rIdx}-${cIdx}`}
+                        style={{
+                          width: "42px", height: "42px", borderRadius: "6px",
+                          background: getMatrixColor(val), color: "#1e293b",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: "13px", fontWeight: 500,
+                          border: isSelected ? "2px solid #0f172a" : "none",
+                          boxShadow: isSelected ? "0 4px 12px rgba(0,0,0,0.1)" : "none",
+                          transform: isSelected ? "scale(1.15)" : "none",
+                          position: "relative"
+                        }}
+                      >
+                        {val}
+                      </div>
+                    );
+                  }))}
+                </div>
+                {/* X-Axis Label: Likelihood */}
+                <div style={{ textAlign: "center", fontSize: "12px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "4px" }}>
+                  Likelihood (1-5)
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -605,9 +632,9 @@ export default function RiskDetail() {
             <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#1e293b", margin: "0 0 16px" }}>Key Insights</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {[
-                { label: `Score: ${risk.score}`, bg: "#f0fdf4", color: "#16a34a", icon: Shield },
-                { label: `Level: ${risk.level}`, bg: "#fef2f2", color: "#991b1b", icon: Activity },
-                { label: "High Impact", bg: "#fef2f2", color: "#991b1b", icon: Target },
+                { label: `Score: ${risk.score}`, bg: "#fef08a20", color: "#854d0e", icon: Shield },
+                { label: `Level: ${risk.level}`, bg: risk.level === "Critical" ? "#fca5a520" : "#86efac20", color: risk.level === "Critical" ? "#991b1b" : "#166534", icon: Activity },
+                { label: risk.impact >= 4 ? "High Impact" : "Stable Impact", bg: risk.impact >= 4 ? "#fdba7420" : "#f0f9ff", color: risk.impact >= 4 ? "#9a3412" : "#0c4a6e", icon: Target },
               ].map((item, idx) => (
                 <div key={idx} style={{ padding: "10px 14px", borderRadius: "8px", background: item.bg, color: item.color, display: "flex", alignItems: "center", gap: "10px", fontSize: "13px", fontWeight: 600 }}>
                   <item.icon size={14} /> {item.label}
@@ -754,12 +781,12 @@ export default function RiskDetail() {
                           datasets: [{
                             label: kri.title,
                             data: kri.data,
-                            borderColor: "#ef4444",
-                            backgroundColor: "rgba(239, 68, 68, 0.1)",
+                            borderColor: "#fca5a5",
+                            backgroundColor: "rgba(252, 165, 165, 0.2)",
                             tension: 0.4,
                             pointRadius: 4,
                             pointBackgroundColor: "#fff",
-                            pointBorderColor: "#ef4444",
+                            pointBorderColor: "#fca5a5",
                             pointBorderWidth: 2
                           }]
                         }}
@@ -781,7 +808,7 @@ export default function RiskDetail() {
                           datasets: [{
                             label: kri.title,
                             data: kri.data,
-                            backgroundColor: "#ef4444",
+                            backgroundColor: "#fca5a5",
                             borderRadius: 4
                           }]
                         }}
