@@ -9,6 +9,8 @@ import Layout from "./Layout";
 import EscalateModal from "./EscalateModal";
 import KRIModal from "./KRIModal";
 import ControlModal from "./ControlModal";
+import ActionModal from "./ActionModal";
+import CommentSystem from "./CommentSystem";
 import { addActivityLog } from "./logger";
 import { Doughnut, Line, Bar, Pie } from "react-chartjs-2";
 import {
@@ -131,6 +133,11 @@ export default function RiskDetail() {
   const [showControlModal, setShowControlModal] = useState(false);
   const [controls, setControls] = useState(() => {
     const saved = localStorage.getItem(`controls_${id}`);
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [showActionModal, setShowActionModal] = useState(false);
+  const [actions, setActions] = useState(() => {
+    const saved = localStorage.getItem(`actions_${id}`);
     return saved ? JSON.parse(saved) : [];
   });
   const [activeMenu, setActiveMenu] = useState(null);
@@ -259,6 +266,22 @@ export default function RiskDetail() {
       setControls(updated);
       localStorage.setItem(`controls_${id}`, JSON.stringify(updated));
       addActivityLog(user, "DELETE", "Removed a control", "warning", "info");
+    }
+  };
+
+  const handleSaveAction = (newAction) => {
+    const updatedActions = [...actions, newAction];
+    setActions(updatedActions);
+    localStorage.setItem(`actions_${id}`, JSON.stringify(updatedActions));
+    addActivityLog(user, "CREATE", `Created risk response action: ${newAction.title}`, "success", "critical");
+  };
+
+  const handleDeleteAction = (actionId) => {
+    if (window.confirm("Are you sure you want to delete this action?")) {
+      const updated = actions.filter(a => a.id !== actionId);
+      setActions(updated);
+      localStorage.setItem(`actions_${id}`, JSON.stringify(updated));
+      addActivityLog(user, "DELETE", "Deleted an action", "warning", "info");
     }
   };
 
@@ -734,19 +757,113 @@ export default function RiskDetail() {
         )}
 
         {activeTab === "Actions" && (
-          <div style={{ ...styles.card, padding: "80px 20px", textAlign: "center", marginBottom: "32px" }}>
-            <Clock size={48} color="#cbd5e1" style={{ marginBottom: "16px" }} />
-            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#64748b" }}>Action Plans Tab</h3>
-            <p style={{ color: "#94a3b8" }}>This module is currently being finalized.</p>
+          <div style={{ ...styles.card, marginBottom: "32px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+              <div>
+                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", margin: "0 0 4px" }}>Risk Response Actions</h2>
+                <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>Manage the execution and closure of actions triggered by risk breaches.</p>
+              </div>
+              <button
+                onClick={() => setShowActionModal(true)}
+                style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#f59e0b", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 12px rgba(245, 158, 11, 0.25)" }}
+              >
+                <Zap size={18} /> Configure New Action
+              </button>
+            </div>
+
+            {actions.length === 0 ? (
+              <div style={{ padding: "60px 40px", textAlign: "center", border: "2px dashed #e2e8f0", borderRadius: "12px", background: "#fffbeb" }}>
+                <Zap size={48} color="#f59e0b" style={{ marginBottom: "16px", opacity: 0.5 }} />
+                <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#854d0e", margin: "0 0 8px" }}>No Response Actions Defined</h3>
+                <p style={{ fontSize: "14px", color: "#92400e", margin: "0 0 20px" }}>Define how the system should respond when this risk or its KRIs breach defined thresholds.</p>
+                <button
+                  onClick={() => setShowActionModal(true)}
+                  style={{ padding: "10px 20px", borderRadius: "8px", border: "1px solid #f59e0b", background: "transparent", color: "#f59e0b", fontSize: "13px", fontWeight: 700, cursor: "pointer" }}
+                >
+                  Set Triggered Action
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {actions.map(action => (
+                  <div key={action.id} style={{ padding: "24px", borderRadius: "12px", border: "1px solid #f1f5f9", background: "#fff", position: "relative", overflow: "hidden" }}>
+                    {/* Status Indicator Bar */}
+                    <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: action.status === "Overdue" ? "#ef4444" : "#f59e0b" }} />
+                    
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                        <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: "#fffbeb", display: "flex", alignItems: "center", justifyContent: "center", color: "#f59e0b", border: "1px solid #fef3c7" }}>
+                          <Zap size={20} />
+                        </div>
+                        <div>
+                          <h4 style={{ fontSize: "15px", fontWeight: 700, color: "#0f172a", margin: "0 0 4px" }}>{action.title}</h4>
+                          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                            <span style={{ fontSize: "12px", fontWeight: 700, color: "#f59e0b", textTransform: "uppercase" }}>{action.actionType}</span>
+                            <span style={{ fontSize: "12px", color: "#94a3b8" }}>•</span>
+                            <span style={{ fontSize: "12px", color: "#64748b", display: "flex", alignItems: "center", gap: "4px" }}>
+                              <Zap size={12} /> Trigger: {action.triggerType}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                        <div style={{ textAlign: "right" }}>
+                          <span style={{ 
+                            fontSize: "11px", fontWeight: 800, padding: "4px 10px", borderRadius: "20px", 
+                            background: action.status === "Overdue" ? "#fef2f2" : "#fffbeb", 
+                            color: action.status === "Overdue" ? "#ef4444" : "#b45309"
+                          }}>
+                            {action.status.toUpperCase()}
+                          </span>
+                          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "6px", display: "flex", alignItems: "center", gap: "4px", justifyContent: "flex-end" }}>
+                            <Clock size={12} /> Due: {new Date(action.dueDate).toLocaleDateString()}
+                          </div>
+                        </div>
+                        <button onClick={() => handleDeleteAction(action.id)} style={{ padding: "10px", borderRadius: "10px", border: "none", background: "#f8fafc", color: "#64748b", cursor: "pointer" }}>
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <p style={{ fontSize: "13px", color: "#64748b", margin: "0 0 20px", lineHeight: 1.6 }}>{action.description}</p>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "24px", paddingTop: "20px", borderTop: "1px solid #f8fafc" }}>
+                      <div>
+                        <span style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Owner</span>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#e2e8f0", fontSize: "10px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>{action.owner.charAt(0)}</div>
+                          <span style={{ fontSize: "13px", fontWeight: 600, color: "#334155" }}>{action.owner}</span>
+                        </div>
+                      </div>
+                      <div>
+                        <span style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>SLA</span>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: "#334155" }}>{action.sla}</span>
+                      </div>
+                      <div>
+                        <span style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Notification</span>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: "#334155" }}>{action.notificationChannels[0]} (+{action.notificationChannels.length - 1})</span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end" }}>
+                        <button style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid #3b82f6", background: "transparent", color: "#3b82f6", fontSize: "13px", fontWeight: 700, cursor: "pointer" }}>Update Status</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === "Comments" && (
-          <div style={{ ...styles.card, padding: "80px 20px", textAlign: "center", marginBottom: "32px" }}>
-            <MessageSquare size={48} color="#cbd5e1" style={{ marginBottom: "16px" }} />
-            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#64748b" }}>Comments & Discussions</h3>
-            <p style={{ color: "#94a3b8" }}>No discussions yet for this risk profile.</p>
-          </div>
+          <CommentSystem 
+            riskId={id} 
+            currentUser={user} 
+            onConvertToAction={(comment) => {
+              // Logic to open ActionModal with comment context
+              setShowActionModal(true);
+              // In a real app, we'd pass initialData to ActionModal
+            }}
+          />
         )}
 
         {activeTab === "Incidents" && (
@@ -1007,6 +1124,13 @@ export default function RiskDetail() {
         isOpen={showControlModal}
         onClose={() => setShowControlModal(false)}
         onSave={handleSaveControls}
+        linkedRiskTitle={risk?.title}
+      />
+
+      <ActionModal
+        isOpen={showActionModal}
+        onClose={() => setShowActionModal(false)}
+        onSave={handleSaveAction}
         linkedRiskTitle={risk?.title}
       />
 
