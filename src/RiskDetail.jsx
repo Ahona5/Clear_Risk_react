@@ -8,6 +8,7 @@ import {
 import Layout from "./Layout";
 import EscalateModal from "./EscalateModal";
 import KRIModal from "./KRIModal";
+import ControlModal from "./ControlModal";
 import { addActivityLog } from "./logger";
 import { Doughnut, Line, Bar, Pie } from "react-chartjs-2";
 import {
@@ -127,6 +128,11 @@ export default function RiskDetail() {
 
   const [showKriModal, setShowKriModal] = useState(false);
   const [editingKri, setEditingKri] = useState(null);
+  const [showControlModal, setShowControlModal] = useState(false);
+  const [controls, setControls] = useState(() => {
+    const saved = localStorage.getItem(`controls_${id}`);
+    return saved ? JSON.parse(saved) : [];
+  });
   const [activeMenu, setActiveMenu] = useState(null);
   const menuRef = useRef(null);
 
@@ -238,6 +244,22 @@ export default function RiskDetail() {
       addActivityLog(user, "CREATE", `Added new KRI: ${newKriData.title}`, "success", "info");
     }
     setEditingKri(null);
+  };
+
+  const handleSaveControls = (newControls) => {
+    const updatedControls = [...controls, ...newControls];
+    setControls(updatedControls);
+    localStorage.setItem(`controls_${id}`, JSON.stringify(updatedControls));
+    addActivityLog(user, "UPDATE", `Assigned and evaluated ${newControls.length} controls for risk "${risk.title}"`, "success", "info");
+  };
+
+  const handleDeleteControl = (controlId) => {
+    if (window.confirm("Are you sure you want to remove this control?")) {
+      const updated = controls.filter(c => c.id !== controlId);
+      setControls(updated);
+      localStorage.setItem(`controls_${id}`, JSON.stringify(updated));
+      addActivityLog(user, "DELETE", "Removed a control", "warning", "info");
+    }
   };
 
   if (loading) {
@@ -626,6 +648,123 @@ export default function RiskDetail() {
           </div>
         )}
 
+        {activeTab === "Controls" && (
+          <div style={{ ...styles.card, marginBottom: "32px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+              <div>
+                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", margin: "0 0 4px" }}>Assigned Controls</h2>
+                <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>Review and manage controls implemented to mitigate this risk.</p>
+              </div>
+              <button
+                onClick={() => setShowControlModal(true)}
+                style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#3b82f6", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 12px rgba(59, 130, 246, 0.2)" }}
+              >
+                <Plus size={18} /> Assign & Evaluate Controls
+              </button>
+            </div>
+
+            {controls.length === 0 ? (
+              <div style={{ padding: "60px 40px", textAlign: "center", border: "2px dashed #e2e8f0", borderRadius: "12px", background: "#f8fafc" }}>
+                <Shield size={48} color="#94a3b8" style={{ marginBottom: "16px", opacity: 0.5 }} />
+                <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#475569", margin: "0 0 8px" }}>No Controls Assigned</h3>
+                <p style={{ fontSize: "14px", color: "#94a3b8", margin: "0 0 20px" }}>There are currently no internal controls linked to this risk. Start by assigning controls from the library.</p>
+                <button
+                  onClick={() => setShowControlModal(true)}
+                  style={{ padding: "10px 20px", borderRadius: "8px", border: "1px solid #3b82f6", background: "transparent", color: "#3b82f6", fontSize: "13px", fontWeight: 700, cursor: "pointer" }}
+                >
+                  Browse Controls Library
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {controls.map(c => (
+                  <div key={c.id} style={{ padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9", background: "#fff", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", color: "#3b82f6" }}>
+                          <Shield size={20} />
+                        </div>
+                        <div>
+                          <h4 style={{ fontSize: "15px", fontWeight: 700, color: "#1e293b", margin: 0 }}>{c.name}</h4>
+                          <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
+                            <span style={{ fontSize: "11px", fontWeight: 700, color: c.type === "Preventive" ? "#10b981" : "#3b82f6", textTransform: "uppercase" }}>{c.type}</span>
+                            <span style={{ fontSize: "11px", color: "#94a3b8" }}>•</span>
+                            <span style={{ fontSize: "11px", fontWeight: 600, color: "#64748b" }}>Owner: {c.owner}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        <div style={{ textAlign: "right" }}>
+                          <div style={{
+                            padding: "4px 12px", borderRadius: "20px", fontSize: "11px", fontWeight: 700,
+                            background: c.effectiveness === "Effective" ? "#dcfce7" : c.effectiveness === "Partial" ? "#fef9c3" : "#fee2e2",
+                            color: c.effectiveness === "Effective" ? "#166534" : c.effectiveness === "Partial" ? "#854d0e" : "#991b1b"
+                          }}>
+                            {c.effectiveness.toUpperCase()}
+                          </div>
+                          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>Frequency: {c.frequency}</div>
+                        </div>
+                        <button onClick={() => handleDeleteControl(c.id)} style={{ padding: "8px", borderRadius: "8px", border: "none", background: "#fef2f2", color: "#ef4444", cursor: "pointer" }}>
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                    {c.notes && <p style={{ margin: "0 0 16px", fontSize: "13px", color: "#64748b", lineHeight: 1.5, fontStyle: "italic" }}>"{c.notes}"</p>}
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", paddingTop: "16px", borderTop: "1px solid #f8fafc" }}>
+                      <div>
+                        <span style={{ fontSize: "11px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Risk Impact</span>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: "#475569" }}>{c.impact} Reduction</span>
+                      </div>
+                      <div>
+                        <span style={{ fontSize: "11px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Last Performed</span>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: "#475569" }}>{c.lastPerformed || "Never"}</span>
+                      </div>
+                      <div>
+                        <span style={{ fontSize: "11px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Evidence</span>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: c.evidence ? "#3b82f6" : "#cbd5e1", textDecoration: c.evidence ? "underline" : "none", cursor: c.evidence ? "pointer" : "default" }}>
+                          {c.evidence ? "View Evidence" : "No file attached"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === "Actions" && (
+          <div style={{ ...styles.card, padding: "80px 20px", textAlign: "center", marginBottom: "32px" }}>
+            <Clock size={48} color="#cbd5e1" style={{ marginBottom: "16px" }} />
+            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#64748b" }}>Action Plans Tab</h3>
+            <p style={{ color: "#94a3b8" }}>This module is currently being finalized.</p>
+          </div>
+        )}
+
+        {activeTab === "Comments" && (
+          <div style={{ ...styles.card, padding: "80px 20px", textAlign: "center", marginBottom: "32px" }}>
+            <MessageSquare size={48} color="#cbd5e1" style={{ marginBottom: "16px" }} />
+            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#64748b" }}>Comments & Discussions</h3>
+            <p style={{ color: "#94a3b8" }}>No discussions yet for this risk profile.</p>
+          </div>
+        )}
+
+        {activeTab === "Incidents" && (
+          <div style={{ ...styles.card, padding: "80px 20px", textAlign: "center", marginBottom: "32px" }}>
+            <AlertTriangle size={48} color="#cbd5e1" style={{ marginBottom: "16px" }} />
+            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#64748b" }}>Related Incidents</h3>
+            <p style={{ color: "#94a3b8" }}>No historical incidents mapped to this risk.</p>
+          </div>
+        )}
+
+        {activeTab === "Audits" && (
+          <div style={{ ...styles.card, padding: "80px 20px", textAlign: "center", marginBottom: "32px" }}>
+            <History size={48} color="#cbd5e1" style={{ marginBottom: "16px" }} />
+            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#64748b" }}>Audit History</h3>
+            <p style={{ color: "#94a3b8" }}>No audit records found for this risk.</p>
+          </div>
+        )}
+
         {/* BOTTOM SECTION */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px" }}>
           <div style={styles.card}>
@@ -862,6 +1001,13 @@ export default function RiskDetail() {
           setEditingKri(null);
         }}
         onSave={handleSaveKri}
+      />
+
+      <ControlModal
+        isOpen={showControlModal}
+        onClose={() => setShowControlModal(false)}
+        onSave={handleSaveControls}
+        linkedRiskTitle={risk?.title}
       />
 
       <EscalateModal
