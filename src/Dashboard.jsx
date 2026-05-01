@@ -4,9 +4,11 @@ import {
   Bell, User, Settings, LogOut, ChevronDown, Menu,
   LayoutDashboard, Folder, Users as UsersIcon, Clock,
   ShieldAlert, FileText, Plus, X, TrendingUp, TrendingDown,
-  Minus, ExternalLink, Shield, Pin,
+  Minus, ExternalLink, Shield, Pin, Trash2
 } from "lucide-react";
 import { Line, Bar, Pie } from "react-chartjs-2";
+import Layout from "./Layout";
+import ErrorBoundary from "./ErrorBoundary";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -279,8 +281,6 @@ function RiskModal({ onClose, onSave, profileName, setProfileName, profileOwner,
   );
 }
 
-import Layout from "./Layout";
-
 /* ─── DASHBOARD ─── */
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -289,6 +289,7 @@ export default function Dashboard() {
   const [profiles, setProfiles] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [pinnedKris, setPinnedKris] = useState([]);
+  const [pinnedRisks, setPinnedRisks] = useState([]);
 
   const [profileName, setProfileName] = useState("");
   const [profileOwner, setProfileOwner] = useState("");
@@ -313,6 +314,7 @@ export default function Dashboard() {
     const poll = setInterval(() => {
       setProfiles(JSON.parse(localStorage.getItem("riskProfiles")) || []);
       setPinnedKris(JSON.parse(localStorage.getItem("pinnedKris")) || []);
+      setPinnedRisks(JSON.parse(localStorage.getItem("pinnedRisks") || "[]"));
     }, 3000);
     return () => clearInterval(poll);
   }, [navigate]);
@@ -334,14 +336,61 @@ export default function Dashboard() {
     setProfileName(""); setProfileOwner(""); setShowModal(false);
   };
 
+  const deleteProfile = (e, name) => {
+    e.stopPropagation(); // Prevent row click navigation
+    if (!window.confirm(`Are you sure you want to delete the profile "${name}"? This will permanently remove all associated risks and data.`)) return;
+
+    // 1. Remove profile
+    const updatedProfiles = profiles.filter(p => p.name !== name);
+    localStorage.setItem("riskProfiles", JSON.stringify(updatedProfiles));
+    setProfiles(updatedProfiles);
+
+    // 2. Cascade delete associated risks
+    const allRisks = JSON.parse(localStorage.getItem("risks")) || [];
+    const risksToRemove = allRisks.filter(r => r.profile === name);
+    const updatedRisks = allRisks.filter(r => r.profile !== name);
+    localStorage.setItem("risks", JSON.stringify(updatedRisks));
+
+    // 3. Clear localized data for each removed risk (Actions, KRIs, etc.)
+    risksToRemove.forEach(r => {
+      localStorage.removeItem(`actions_${r.id}`);
+      localStorage.removeItem(`kris_${r.id}`);
+      localStorage.removeItem(`controls_${r.id}`);
+      localStorage.removeItem(`comments_${r.id}`);
+      localStorage.removeItem(`incidents_${r.id}`);
+      localStorage.removeItem(`audits_${r.id}`);
+    });
+
+    addActivityLog(user, "DELETE", `Deleted risk profile "${name}" and all associated data`, "warning", "info");
+  };
+
   const total = profiles.length;
   const high = profiles.filter(p => p.risk === "High").length;
   const medium = profiles.filter(p => p.risk === "Medium").length;
   const low = profiles.filter(p => p.risk === "Low").length;
 
+  const getLevel = (score) => {
+    if (!score || score === 0) return "Not Assessed";
+    if (score >= 17) return "Critical";
+    if (score >= 10) return "High";
+    if (score >= 5) return "Medium";
+    return "Low";
+  };
+
+  const getLevelStyle = (level) => {
+    switch (level) {
+      case "Critical": return { bg: "#fef2f2", color: "#ef4444", dot: "#ef4444" };
+      case "High": return { bg: "#fff7ed", color: "#f97316", dot: "#f97316" };
+      case "Medium": return { bg: "#fffbeb", color: "#f59e0b", dot: "#f59e0b" };
+      case "Low": return { bg: "#f0fdf4", color: "#10b981", dot: "#10b981" };
+      default: return { bg: "#f1f5f9", color: "#64748b", dot: "#94a3b8" };
+    }
+  };
+
   return (
-    <Layout>
-      <style>
+    <ErrorBoundary>
+      <Layout>
+        <style>
         {`
           @keyframes pulse {
             0%, 100% { opacity: 1; }
@@ -439,6 +488,49 @@ export default function Dashboard() {
         <KpiCard label="Low Risk" value={low} subtext="Under control" color="green" icon={TrendingDown} isLoading={isLoading} />
       </div>
 
+      {/* ── PRIORITY RISKS SECTION ── */}
+      {pinnedRisks.length > 0 && (
+        <div style={{ marginBottom: 28 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+            <Pin size={18} color="#3b82f6" fill="#3b82f6" />
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1e293b", margin: 0 }}>Priority Risks</h2>
+            <span style={{ fontSize: 11, background: "#eff6ff", color: "#3b82f6", padding: "2px 8px", borderRadius: 10, fontWeight: 700 }}>TOP {Math.min(pinnedRisks.length, 5)}</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
+            {pinnedRisks
+              .sort((a, b) => {
+                const sevMap = { Critical: 4, High: 3, Medium: 2, Low: 1 };
+                const bSev = sevMap[b.severity] || 0;
+                const aSev = sevMap[a.severity] || 0;
+                if (bSev !== aSev) return bSev - aSev;
+                return (b.score || 0) - (a.score || 0);
+              })
+              .slice(0, 5)
+              .map(risk => (
+                <div key={risk.riskId} 
+                  onClick={() => navigate(`/risk-profile/${risk.riskId}`)}
+                  style={{ background: "#fff", borderRadius: 16, border: "1px solid #f1f5f9", padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", transition: "all 0.2s", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "#3b82f6"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "#f1f5f9"; e.currentTarget.style.transform = "translateY(0)"; }}
+                >
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", marginBottom: 4 }}>{risk.title}</div>
+                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: risk.severity === "Critical" ? "#ef4444" : "#f59e0b" }}>{risk.severity.toUpperCase()}</span>
+                      <span style={{ fontSize: 11, color: "#94a3b8" }}>•</span>
+                      <span style={{ fontSize: 11, color: "#64748b" }}>Owner: {risk.owner}</span>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: "#1e293b" }}>{risk.score}</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#3b82f6", textTransform: "uppercase" }}>{risk.type}</div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
       {/* ── RISK PROFILE SUMMARY TABLE ── */}
       <div style={{
         background: "#fff",
@@ -488,7 +580,8 @@ export default function Dashboard() {
                   { label: "Owner", width: "20%" },
                   { label: "Trend", width: "12%" },
                   { label: "Risk Level", width: "15%" },
-                  { label: "Last Updated", width: "25%" },
+                  { label: "Last Updated", width: "20%" },
+                  { label: "", width: "5%" },
                 ].map(({ label, width }) => (
                   <th key={label} style={{
                     width,
@@ -556,17 +649,19 @@ export default function Dashboard() {
                   </td>
                 </tr>
               ) : (
-                profiles.map((p, i) => {
-                  const allRisks = JSON.parse(localStorage.getItem("risks")) || [];
-                  const profileRisks = allRisks.filter(r => r.profile === p.name);
-                  const isEscalated = profileRisks.some(r => r.isEscalated);
+                (() => {
+                  const allRisks = JSON.parse(localStorage.getItem("risks") || "[]");
+                  return profiles.map((p, i) => {
+                    const profileRisks = allRisks.filter(r => r.profile === p.name);
+                    const isEscalated = profileRisks.some(r => r.isEscalated);
 
-                  const riskColors = {
-                    High: { bg: "#fef2f2", color: "#ef4444", dot: "#ef4444" },
-                    Medium: { bg: "#fffbeb", color: "#f59e0b", dot: "#f59e0b" },
-                    Low: { bg: "#f0fdf4", color: "#10b981", dot: "#10b981" },
-                  };
-                  const rc = riskColors[p.risk] || { bg: "#f1f5f9", color: "#64748b", dot: "#94a3b8" };
+                  // DYNAMIC RISK CALCULATION
+                  let maxScore = 0;
+                  if (profileRisks.length > 0) {
+                    maxScore = Math.max(...profileRisks.map(r => (r.impact || 0) * (r.likelihood || 0)));
+                  }
+                  const computedLevel = profileRisks.length > 0 ? getLevel(maxScore) : "Not Assessed";
+                  const rc = getLevelStyle(computedLevel);
 
                   const trendMap = {
                     "↑": { icon: <TrendingUp size={14} />, color: "#ef4444" },
@@ -574,7 +669,7 @@ export default function Dashboard() {
                     "→": { icon: <Minus size={14} />, color: "#94a3b8" },
                   };
 
-                  // Override trend if escalated
+                  // Calculated trend override
                   const tr = isEscalated ? trendMap["↑"] : (trendMap[p.trend] || trendMap["→"]);
 
                   return (
@@ -641,9 +736,15 @@ export default function Dashboard() {
                           background: rc.bg, color: rc.color,
                           borderRadius: 999, padding: "4px 10px",
                           fontSize: 11.5, fontWeight: 700,
+                          position: "relative"
                         }}>
                           <span style={{ width: 6, height: 6, borderRadius: "50%", background: rc.dot, flexShrink: 0 }} />
-                          {p.risk}
+                          {computedLevel}
+                          {profileRisks.length === 0 && (
+                            <div style={{ position: "absolute", top: "100%", left: 0, fontSize: "9px", color: "#94a3b8", whiteSpace: "nowrap", marginTop: "2px" }}>
+                              Risk level will be calculated once risks are added
+                            </div>
+                          )}
                         </span>
                       </td>
 
@@ -651,15 +752,29 @@ export default function Dashboard() {
                       <td style={{ padding: "13px 20px", fontSize: 12, color: "#94a3b8" }}>
                         {p.date}
                       </td>
+
+                      {/* Actions */}
+                      <td style={{ padding: "13px 20px", textAlign: "right" }}>
+                        {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
+                          <button 
+                            onClick={(e) => deleteProfile(e, p.name)}
+                            style={{ background: "none", border: "none", color: "#cbd5e1", cursor: "pointer", padding: "8px", borderRadius: "8px", transition: "all 0.2s" }}
+                            onMouseEnter={e => e.currentTarget.style.color = "#ef4444"}
+                            onMouseLeave={e => e.currentTarget.style.color = "#cbd5e1"}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   );
-                })
+                });
+                })()
               )}
             </tbody>
           </table>
         </div>
       </div>
-
       {/* ── PINNED KRIs ── */}
       {pinnedKris.length > 0 && (
         <div style={{ marginTop: 28 }}>
@@ -767,6 +882,7 @@ export default function Dashboard() {
           profileOwner={profileOwner} setProfileOwner={setProfileOwner}
         />
       )}
-    </Layout>
+      </Layout>
+    </ErrorBoundary>
   );
 }

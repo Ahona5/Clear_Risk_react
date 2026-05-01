@@ -249,7 +249,8 @@ export default function Profile() {
   };
 
   const getLevel = (score) => {
-    if (score >= 16) return "Critical";
+    if (!score || score === 0) return "Not Assessed";
+    if (score >= 17) return "Critical";
     if (score >= 10) return "High";
     if (score >= 5) return "Medium";
     return "Low";

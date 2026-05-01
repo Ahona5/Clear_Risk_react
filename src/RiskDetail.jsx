@@ -13,6 +13,7 @@ import ActionModal from "./ActionModal";
 import CommentSystem from "./CommentSystem";
 import IncidentSystem from "./IncidentSystem";
 import AuditSystem from "./AuditSystem";
+import PinModal from "./PinModal";
 import { addActivityLog } from "./logger";
 import { Doughnut, Line, Bar, Pie } from "react-chartjs-2";
 import {
@@ -142,6 +143,8 @@ export default function RiskDetail() {
     const saved = localStorage.getItem(`actions_${id}`);
     return saved ? JSON.parse(saved) : [];
   });
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [isPinned, setIsPinned] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
   const menuRef = useRef(null);
 
@@ -154,6 +157,11 @@ export default function RiskDetail() {
     const myPinned = kris.filter(k => k.isPinned).map(k => ({ ...k, riskId: id, riskTitle: risk?.title }));
     localStorage.setItem("pinnedKris", JSON.stringify([...otherPinned, ...myPinned]));
   }, [kris, id, risk]);
+
+  useEffect(() => {
+    const pinned = JSON.parse(localStorage.getItem("pinnedRisks") || "[]");
+    setIsPinned(pinned.some(p => p.riskId === id));
+  }, [id]);
 
   useEffect(() => {
     try {
@@ -287,6 +295,26 @@ export default function RiskDetail() {
     }
   };
 
+  const handlePinRisk = (pinConfig) => {
+    const pinned = JSON.parse(localStorage.getItem("pinnedRisks") || "[]");
+    const newPin = {
+      riskId: id,
+      title: risk.title,
+      severity: risk.level,
+      score: risk.score,
+      owner: risk.owner,
+      trend: "stable", // Default
+      ...pinConfig,
+      pinnedAt: new Date().toISOString()
+    };
+    
+    // Remove if already exists and add new
+    const updated = [...pinned.filter(p => p.riskId !== id), newPin];
+    localStorage.setItem("pinnedRisks", JSON.stringify(updated));
+    setIsPinned(true);
+    addActivityLog(user, "UPDATE", `Pinned risk "${risk.title}" as ${pinConfig.type} priority`, "success", "info");
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -337,6 +365,13 @@ export default function RiskDetail() {
               )}>
                 {risk.level || "MEDIUM"}
               </span>
+              <button 
+                onClick={() => setShowPinModal(true)}
+                style={{ background: "none", border: "none", padding: "8px", borderRadius: "50%", background: isPinned ? "#eff6ff" : "#f8fafc", color: isPinned ? "#3b82f6" : "#cbd5e1", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }}
+                title="Pin to Dashboard"
+              >
+                <Pin size={20} fill={isPinned ? "#3b82f6" : "none"} />
+              </button>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
@@ -1142,6 +1177,13 @@ export default function RiskDetail() {
         onClose={() => setEscalateModalOpen(false)}
         onSubmit={handleEscalate}
         usersList={JSON.parse(localStorage.getItem("adminUsersList")) || []}
+      />
+
+      <PinModal
+        isOpen={showPinModal}
+        onClose={() => setShowPinModal(false)}
+        onPin={handlePinRisk}
+        riskTitle={risk?.title}
       />
 
       <style>{`
