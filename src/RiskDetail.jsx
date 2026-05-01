@@ -11,6 +11,8 @@ import KRIModal from "./KRIModal";
 import ControlModal from "./ControlModal";
 import ActionModal from "./ActionModal";
 import CommentSystem from "./CommentSystem";
+import IncidentSystem from "./IncidentSystem";
+import AuditSystem from "./AuditSystem";
 import { addActivityLog } from "./logger";
 import { Doughnut, Line, Bar, Pie } from "react-chartjs-2";
 import {
@@ -867,19 +869,20 @@ export default function RiskDetail() {
         )}
 
         {activeTab === "Incidents" && (
-          <div style={{ ...styles.card, padding: "80px 20px", textAlign: "center", marginBottom: "32px" }}>
-            <AlertTriangle size={48} color="#cbd5e1" style={{ marginBottom: "16px" }} />
-            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#64748b" }}>Related Incidents</h3>
-            <p style={{ color: "#94a3b8" }}>No historical incidents mapped to this risk.</p>
-          </div>
+          <IncidentSystem 
+            riskId={id} 
+            riskTitle={risk?.title} 
+            currentUser={user} 
+          />
         )}
 
         {activeTab === "Audits" && (
-          <div style={{ ...styles.card, padding: "80px 20px", textAlign: "center", marginBottom: "32px" }}>
-            <History size={48} color="#cbd5e1" style={{ marginBottom: "16px" }} />
-            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#64748b" }}>Audit History</h3>
-            <p style={{ color: "#94a3b8" }}>No audit records found for this risk.</p>
-          </div>
+          <AuditSystem 
+            riskId={id} 
+            riskTitle={risk?.title} 
+            currentUser={user} 
+            linkedControls={controls}
+          />
         )}
 
         {/* BOTTOM SECTION */}
