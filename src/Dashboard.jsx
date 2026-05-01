@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Bell, User, Settings, LogOut, ChevronDown, Menu,
   LayoutDashboard, Folder, Users as UsersIcon, Clock,
   ShieldAlert, FileText, Plus, X, TrendingUp, TrendingDown,
-  Minus, ExternalLink, Shield, Pin, Trash2
+  Minus, ExternalLink, Shield, Pin, Trash2, MoreVertical, AlertCircle, Edit2
 } from "lucide-react";
 import { Line, Bar, Pie } from "react-chartjs-2";
 import Layout from "./Layout";
@@ -293,6 +293,15 @@ export default function Dashboard() {
 
   const [profileName, setProfileName] = useState("");
   const [profileOwner, setProfileOwner] = useState("");
+  const [editingProfile, setEditingProfile] = useState(null);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [profileToDelete, setProfileToDelete] = useState(null);
+  const [deleteDependencies, setDeleteDependencies] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const [activeMenu, setActiveMenu] = useState(null);
+  const menuRef = useRef(null);
 
   const user = JSON.parse(localStorage.getItem("currentUser")) || { username: "Admin", role: "admin" };
 
@@ -312,12 +321,77 @@ export default function Dashboard() {
 
     // Poll data
     const poll = setInterval(() => {
-      setProfiles(JSON.parse(localStorage.getItem("riskProfiles")) || []);
+      const savedProfiles = JSON.parse(localStorage.getItem("riskProfiles") || "[]");
+      setProfiles(savedProfiles.filter(p => !p.isDeleted));
       setPinnedKris(JSON.parse(localStorage.getItem("pinnedKris")) || []);
       setPinnedRisks(JSON.parse(localStorage.getItem("pinnedRisks") || "[]"));
     }, 3000);
     return () => clearInterval(poll);
   }, [navigate]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setActiveMenu(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const checkDependencies = (name) => {
+    const allRisks = JSON.parse(localStorage.getItem("risks") || "[]");
+    const profileRisks = allRisks.filter(r => r.profile === name);
+    
+    let krisCount = 0;
+    let controlsCount = 0;
+    let incidentsCount = 0;
+
+    profileRisks.forEach(r => {
+      krisCount += (JSON.parse(localStorage.getItem(`kris_${r.id}`)) || []).length;
+      controlsCount += (JSON.parse(localStorage.getItem(`controls_${r.id}`)) || []).length;
+      incidentsCount += (JSON.parse(localStorage.getItem(`incidents_${r.id}`)) || []).length;
+    });
+
+    return {
+      risks: profileRisks.length,
+      kris: krisCount,
+      controls: controlsCount,
+      incidents: incidentsCount,
+      total: profileRisks.length + krisCount + controlsCount + incidentsCount
+    };
+  };
+
+  const initiateDelete = (e, profile) => {
+    e.stopPropagation();
+    const deps = checkDependencies(profile.name);
+    setProfileToDelete(profile);
+    setDeleteDependencies(deps);
+    setShowDeleteModal(true);
+    setActiveMenu(null);
+  };
+
+  const handleSoftDelete = () => {
+    if (!profileToDelete) return;
+    setIsDeleting(true);
+    
+    // Simulate API delay
+    setTimeout(() => {
+      const allProfiles = JSON.parse(localStorage.getItem("riskProfiles") || "[]");
+      const updatedProfiles = allProfiles.map(p => 
+        p.name === profileToDelete.name ? { ...p, isDeleted: true, deletedAt: new Date().toISOString() } : p
+      );
+      
+      localStorage.setItem("riskProfiles", JSON.stringify(updatedProfiles));
+      setProfiles(updatedProfiles.filter(p => !p.isDeleted));
+      
+      addActivityLog(user, "DELETE", `Soft deleted risk profile "${profileToDelete.name}"`, "warning", "critical");
+      
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+      setProfileToDelete(null);
+    }, 800);
+  };
 
 
 
@@ -329,40 +403,35 @@ export default function Dashboard() {
       return;
     }
     if (!profileName.trim()) return alert("Enter a profile name");
-    const p = { name: profileName, owner: profileOwner, trend: "→", risk: "High", date: new Date().toLocaleString() };
-    const upd = [...profiles, p];
-    localStorage.setItem("riskProfiles", JSON.stringify(upd));
-    setProfiles(upd);
-    setProfileName(""); setProfileOwner(""); setShowModal(false);
+
+    if (editingProfile) {
+      const allProfiles = JSON.parse(localStorage.getItem("riskProfiles") || "[]");
+      const upd = allProfiles.map(p => 
+        p.name === editingProfile.name ? { ...p, name: profileName, owner: profileOwner } : p
+      );
+      localStorage.setItem("riskProfiles", JSON.stringify(upd));
+      setProfiles(upd.filter(p => !p.isDeleted));
+      addActivityLog(user, "UPDATE", `Updated risk profile: ${profileName}`, "info", "info");
+    } else {
+      const p = { name: profileName, owner: profileOwner, trend: "→", risk: "High", date: new Date().toLocaleString() };
+      const upd = [...profiles, p];
+      localStorage.setItem("riskProfiles", JSON.stringify(upd));
+      setProfiles(upd);
+      addActivityLog(user, "CREATE", `Created new risk profile: ${profileName}`, "success", "info");
+    }
+
+    setProfileName(""); setProfileOwner(""); setShowModal(false); setEditingProfile(null);
   };
 
-  const deleteProfile = (e, name) => {
-    e.stopPropagation(); // Prevent row click navigation
-    if (!window.confirm(`Are you sure you want to delete the profile "${name}"? This will permanently remove all associated risks and data.`)) return;
-
-    // 1. Remove profile
-    const updatedProfiles = profiles.filter(p => p.name !== name);
-    localStorage.setItem("riskProfiles", JSON.stringify(updatedProfiles));
-    setProfiles(updatedProfiles);
-
-    // 2. Cascade delete associated risks
-    const allRisks = JSON.parse(localStorage.getItem("risks")) || [];
-    const risksToRemove = allRisks.filter(r => r.profile === name);
-    const updatedRisks = allRisks.filter(r => r.profile !== name);
-    localStorage.setItem("risks", JSON.stringify(updatedRisks));
-
-    // 3. Clear localized data for each removed risk (Actions, KRIs, etc.)
-    risksToRemove.forEach(r => {
-      localStorage.removeItem(`actions_${r.id}`);
-      localStorage.removeItem(`kris_${r.id}`);
-      localStorage.removeItem(`controls_${r.id}`);
-      localStorage.removeItem(`comments_${r.id}`);
-      localStorage.removeItem(`incidents_${r.id}`);
-      localStorage.removeItem(`audits_${r.id}`);
-    });
-
-    addActivityLog(user, "DELETE", `Deleted risk profile "${name}" and all associated data`, "warning", "info");
+  const initiateEdit = (e, p) => {
+    e.stopPropagation();
+    setEditingProfile(p);
+    setProfileName(p.name);
+    setProfileOwner(p.owner);
+    setShowModal(true);
+    setActiveMenu(null);
   };
+
 
   const total = profiles.length;
   const high = profiles.filter(p => p.risk === "High").length;
@@ -554,20 +623,7 @@ export default function Dashboard() {
               {profiles.length} profile{profiles.length !== 1 ? "s" : ""} total
             </p>
           </div>
-          <button
-            onClick={() => navigate("/risk-profile")}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 5,
-              fontSize: 12, fontWeight: 700, color: "#3b82f6",
-              background: "none", border: "none", cursor: "pointer",
-              padding: "6px 10px", borderRadius: 8,
-              transition: "background 0.15s",
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = "#eff6ff"}
-            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-          >
-            View all <ExternalLink size={12} />
-          </button>
+
         </div>
 
         {/* Table */}
@@ -754,17 +810,55 @@ export default function Dashboard() {
                       </td>
 
                       {/* Actions */}
-                      <td style={{ padding: "13px 20px", textAlign: "right" }}>
-                        {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
+                      <td style={{ padding: "13px 20px", textAlign: "right", position: "relative" }}>
+                        <div style={{ display: "flex", justifyContent: "flex-end" }}>
                           <button 
-                            onClick={(e) => deleteProfile(e, p.name)}
-                            style={{ background: "none", border: "none", color: "#cbd5e1", cursor: "pointer", padding: "8px", borderRadius: "8px", transition: "all 0.2s" }}
-                            onMouseEnter={e => e.currentTarget.style.color = "#ef4444"}
-                            onMouseLeave={e => e.currentTarget.style.color = "#cbd5e1"}
+                            onClick={(e) => { e.stopPropagation(); setActiveMenu(activeMenu === i ? null : i); }}
+                            style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", padding: "6px", borderRadius: "6px", display: "flex", alignItems: "center", transition: "all 0.2s" }}
+                            onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
+                            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                           >
-                            <Trash2 size={16} />
+                            <MoreVertical size={16} />
                           </button>
-                        )}
+
+                          {activeMenu === i && (
+                            <div 
+                              ref={menuRef}
+                              style={{ position: "absolute", right: 24, top: 40, background: "#fff", borderRadius: 12, boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", zIndex: 100, minWidth: 160, padding: 6, overflow: "hidden" }}
+                            >
+                              <button 
+                                onClick={() => { localStorage.setItem("selectedProfile", p.name); navigate("/risk-profile"); }}
+                                style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "#475569", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
+                                onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
+                                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                              >
+                                <ExternalLink size={14} /> View Details
+                              </button>
+
+                              <button 
+                                onClick={(e) => initiateEdit(e, p)}
+                                style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "#475569", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
+                                onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
+                                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                              >
+                                <Edit2 size={14} /> Edit Profile
+                              </button>
+                              
+                              {user?.role?.toLowerCase() === "admin" && (
+                                <div style={{ borderTop: "1px solid #f1f5f9", marginTop: 4, paddingTop: 4 }}>
+                                  <button 
+                                    onClick={(e) => initiateDelete(e, p)}
+                                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "#ef4444", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
+                                    onMouseEnter={e => e.currentTarget.style.background = "#fef2f2"}
+                                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                                  >
+                                    <Trash2 size={14} /> Delete Profile
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
@@ -873,6 +967,59 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* ── DELETE CONFIRMATION MODAL ── */}
+      {showDeleteModal && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 10005, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(4px)" }} onClick={() => !isDeleting && setShowDeleteModal(false)}>
+          <div style={{ background: "#fff", borderRadius: 24, width: "100%", maxWidth: 440, padding: "32px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", position: "relative" }} onClick={e => e.stopPropagation()}>
+            <div style={{ width: 56, height: 56, borderRadius: 16, background: "#fef2f2", display: "flex", alignItems: "center", justifyContent: "center", color: "#ef4444", marginBottom: 24 }}>
+              <AlertCircle size={28} />
+            </div>
+            
+            <h3 style={{ fontSize: 20, fontWeight: 800, color: "#0f172a", margin: "0 0 8px 0" }}>Delete Risk Profile?</h3>
+            <p style={{ fontSize: 14, color: "#64748b", margin: "0 0 24px 0", lineHeight: 1.6 }}>
+              You are about to delete <strong style={{ color: "#0f172a" }}>{profileToDelete?.name}</strong>. This action will mark the profile as deleted and hide it from all dashboards.
+            </p>
+
+            {deleteDependencies?.total > 0 && (
+              <div style={{ background: "#fff7ed", border: "1px solid #ffedd5", borderRadius: 12, padding: "16px", marginBottom: 24 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                  <ShieldAlert size={16} color="#f97316" />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#9a3412" }}>Linked Dependencies Found</span>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div style={{ fontSize: 12, color: "#c2410c" }}>• Risks: <strong>{deleteDependencies.risks}</strong></div>
+                  <div style={{ fontSize: 12, color: "#c2410c" }}>• KRIs: <strong>{deleteDependencies.kris}</strong></div>
+                  <div style={{ fontSize: 12, color: "#c2410c" }}>• Controls: <strong>{deleteDependencies.controls}</strong></div>
+                  <div style={{ fontSize: 12, color: "#c2410c" }}>• Incidents: <strong>{deleteDependencies.incidents}</strong></div>
+                </div>
+                <p style={{ fontSize: 11, color: "#9a3412", marginTop: 12, fontWeight: 600 }}>Deleting this profile will also hide these linked records.</p>
+              </div>
+            )}
+
+            <div style={{ background: "#f8fafc", borderRadius: 12, padding: "12px 16px", border: "1px solid #e2e8f0", marginBottom: 28 }}>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "#ef4444", margin: 0, textTransform: "uppercase", letterSpacing: "0.05em" }}>Warning: This action cannot be undone.</p>
+            </div>
+
+            <div style={{ display: "flex", gap: 12 }}>
+              <button 
+                disabled={isDeleting}
+                onClick={() => setShowDeleteModal(false)}
+                style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1.5px solid #e2e8f0", background: "#fff", color: "#475569", fontSize: 14, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer" }}
+              >
+                Cancel
+              </button>
+              <button 
+                disabled={isDeleting}
+                onClick={handleSoftDelete}
+                style={{ flex: 1, padding: "12px", borderRadius: 12, border: "none", background: isDeleting ? "#94a3b8" : "#ef4444", color: "#fff", fontSize: 14, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
+              >
+                {isDeleting ? "Deleting..." : "Confirm Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* MODAL */}
       {showModal && (
         <RiskModal
@@ -882,7 +1029,7 @@ export default function Dashboard() {
           profileOwner={profileOwner} setProfileOwner={setProfileOwner}
         />
       )}
-      </Layout>
-    </ErrorBoundary>
-  );
+    </Layout>
+  </ErrorBoundary>
+);
 }
