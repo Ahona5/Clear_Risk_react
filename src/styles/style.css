@@ -10,13 +10,13 @@ html {
 }
 
 body {
-  background: #ffffff;
-  color: #374151;
+  background: var(--bg-app);
+  color: var(--text-primary);
   line-height: 1.6;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #111827;
+  color: var(--text-primary);
   letter-spacing: -0.4px;
   font-weight: 600;
 }
@@ -45,10 +45,10 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: space-between;
   align-items: center;
   padding: 16px 8%;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(8px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  border-bottom: 1px solid #f3f4f6;
+  box-shadow: var(--shadow-sm);
+  border-bottom: 1px solid var(--border-primary);
   width: 100%;
   position: sticky;
   top: 0;
@@ -255,9 +255,9 @@ h1, h2, h3, h4, h5, h6 {
   width: 260px;
   padding: 20px;
   border-radius: 12px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-md);
   text-align: center;
   transition: 0.3s;
 }

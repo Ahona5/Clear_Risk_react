@@ -10,19 +10,19 @@ import AuditModal from "./AuditModal";
 const styles = {
   container: { display: "flex", flexDirection: "column", gap: "24px" },
   header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" },
-  title: { fontSize: "20px", fontWeight: 800, color: "#0f172a", margin: 0 },
-  table: { width: "100%", background: "#fff", borderRadius: "16px", border: "1px solid #f1f5f9", overflow: "hidden" },
-  th: { padding: "16px 20px", background: "#f8fafc", color: "#64748b", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", textAlign: "left", borderBottom: "1px solid #f1f5f9" },
-  td: { padding: "16px 20px", color: "#334155", fontSize: "14px", borderBottom: "1px solid #f1f5f9" },
+  title: { fontSize: "20px", fontWeight: 800, color: "var(--text-primary)", margin: 0 },
+  table: { width: "100%", background: "var(--bg-card)", borderRadius: "16px", border: "1px solid var(--border-primary)", overflow: "hidden" },
+  th: { padding: "16px 20px", background: "var(--bg-app)", color: "var(--text-muted)", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", textAlign: "left", borderBottom: "1px solid var(--border-primary)" },
+  td: { padding: "16px 20px", color: "var(--text-secondary)", fontSize: "14px", borderBottom: "1px solid var(--border-primary)" },
   badge: (bg, color) => ({ padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700, background: bg, color: color, textTransform: "uppercase" }),
   searchBar: { display: "flex", gap: "12px", marginBottom: "20px" },
-  input: { padding: "10px 16px 10px 40px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "14px", width: "300px", outline: "none" },
-  detailView: { background: "#fff", borderRadius: "16px", border: "1px solid #f1f5f9", overflow: "hidden", animation: "fadeIn 0.3s ease-out" },
-  detailHeader: { padding: "24px 32px", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" },
-  tabBar: { display: "flex", gap: "24px", padding: "0 32px", borderBottom: "1px solid #f1f5f9", background: "#fff" },
-  tab: (active) => ({ padding: "16px 4px", fontSize: "14px", fontWeight: 700, color: active ? "#3b82f6" : "#64748b", borderBottom: active ? "2px solid #3b82f6" : "2px solid transparent", cursor: "pointer", background: "none", border: "none" }),
+  input: { padding: "10px 16px 10px 40px", borderRadius: "10px", border: "1px solid var(--border-primary)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "14px", width: "300px", outline: "none" },
+  detailView: { background: "var(--bg-card)", borderRadius: "16px", border: "1px solid var(--border-primary)", overflow: "hidden", animation: "fadeIn 0.3s ease-out" },
+  detailHeader: { padding: "24px 32px", borderBottom: "1px solid var(--border-primary)", display: "flex", justifyContent: "space-between", alignItems: "center" },
+  tabBar: { display: "flex", gap: "24px", padding: "0 32px", borderBottom: "1px solid var(--border-primary)", background: "var(--bg-card)" },
+  tab: (active) => ({ padding: "16px 4px", fontSize: "14px", fontWeight: 700, color: active ? "var(--accent-primary)" : "var(--text-muted)", borderBottom: active ? "2px solid var(--accent-primary)" : "2px solid transparent", cursor: "pointer", background: "none", border: "none" }),
   card: { padding: "24px 32px" },
-  testRow: { padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9", marginBottom: "16px", background: "#fff" }
+  testRow: { padding: "20px", borderRadius: "12px", border: "1px solid var(--border-primary)", marginBottom: "16px", background: "var(--bg-app)" }
 };
 
 export default function AuditSystem({ riskId, riskTitle, currentUser, linkedControls }) {
@@ -55,11 +55,11 @@ export default function AuditSystem({ riskId, riskTitle, currentUser, linkedCont
 
   const getStatusStyle = (status) => {
     switch (status) {
-      case "Planned": return { bg: "#f1f5f9", color: "#475569" };
-      case "In Progress": return { bg: "#eff6ff", color: "#1e40af" };
-      case "Completed": return { bg: "#f0fdf4", color: "#166534" };
-      case "Closed": return { bg: "#f8fafc", color: "#94a3b8" };
-      default: return { bg: "#f1f5f9", color: "#475569" };
+      case "Planned": return { bg: "var(--accent-soft)", color: "var(--text-muted)" };
+      case "In Progress": return { bg: "rgba(59, 130, 246, 0.1)", color: "var(--accent-primary)" };
+      case "Completed": return { bg: "rgba(52, 211, 153, 0.1)", color: "var(--status-low)" };
+      case "Closed": return { bg: "var(--bg-app)", color: "var(--text-muted)" };
+      default: return { bg: "var(--bg-app)", color: "var(--text-muted)" };
     }
   };
 
@@ -73,24 +73,24 @@ export default function AuditSystem({ riskId, riskTitle, currentUser, linkedCont
       <div style={styles.detailView}>
         <div style={styles.detailHeader}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <button onClick={() => setSelectedAudit(null)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center" }}>
+            <button onClick={() => setSelectedAudit(null)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center" }}>
               <ArrowRight size={20} style={{ transform: "rotate(180deg)" }} />
             </button>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "4px" }}>
-                <span style={{ fontSize: "12px", fontWeight: 700, color: "#94a3b8" }}>{selectedAudit.id}</span>
-                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", margin: 0 }}>{selectedAudit.name}</h2>
+                <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-muted)" }}>{selectedAudit.id}</span>
+                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>{selectedAudit.name}</h2>
               </div>
               <div style={{ display: "flex", gap: "12px" }}>
                 <span style={styles.badge(getStatusStyle(selectedAudit.status).bg, getStatusStyle(selectedAudit.status).color)}>{selectedAudit.status}</span>
-                <span style={{ fontSize: "12px", color: "#64748b" }}>Auditor: <span style={{ fontWeight: 600 }}>{selectedAudit.auditor}</span></span>
+                <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>Auditor: <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>{selectedAudit.auditor}</span></span>
               </div>
             </div>
           </div>
           <div style={{ display: "flex", gap: "12px" }}>
-            <button style={{ ...styles.badge("#f1f5f9", "#475569"), cursor: "pointer" }}>Generate Audit Report</button>
+            <button style={{ ...styles.badge("var(--bg-app)", "var(--text-muted)"), border: "1px solid var(--border-primary)", cursor: "pointer" }}>Generate Audit Report</button>
             {selectedAudit.status !== "Closed" && (
-              <button style={{ ...styles.badge("#3b82f6", "#fff"), cursor: "pointer" }}>Complete Audit</button>
+              <button style={{ ...styles.badge("var(--accent-primary)", "#fff"), cursor: "pointer" }}>Complete Audit</button>
             )}
           </div>
         </div>
@@ -105,28 +105,28 @@ export default function AuditSystem({ riskId, riskTitle, currentUser, linkedCont
           {activeDetailTab === "Overview" && (
             <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "40px" }}>
               <div>
-                <h4 style={{ fontSize: "14px", fontWeight: 700, color: "#334155", marginBottom: "12px" }}>Engagement Objectives</h4>
-                <p style={{ fontSize: "14px", color: "#64748b", lineHeight: 1.6, marginBottom: "32px" }}>{selectedAudit.objectives || "No objectives defined."}</p>
+                <h4 style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-primary)", marginBottom: "12px" }}>Engagement Objectives</h4>
+                <p style={{ fontSize: "14px", color: "var(--text-muted)", lineHeight: 1.6, marginBottom: "32px" }}>{selectedAudit.objectives || "No objectives defined."}</p>
                 
-                <h4 style={{ fontSize: "14px", fontWeight: 700, color: "#334155", marginBottom: "12px" }}>Engagement Scope</h4>
-                <div style={{ padding: "16px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #f1f5f9", marginBottom: "32px" }}>
-                  <p style={{ fontSize: "14px", color: "#334155", margin: 0 }}>{selectedAudit.scope}</p>
+                <h4 style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-primary)", marginBottom: "12px" }}>Engagement Scope</h4>
+                <div style={{ padding: "16px", borderRadius: "12px", background: "var(--bg-app)", border: "1px solid var(--border-primary)", marginBottom: "32px" }}>
+                  <p style={{ fontSize: "14px", color: "var(--text-secondary)", margin: 0 }}>{selectedAudit.scope}</p>
                 </div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                <div style={{ padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9" }}>
-                  <label style={{ fontSize: "11px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "12px" }}>Key Milestones</label>
+                <div style={{ padding: "20px", borderRadius: "12px", border: "1px solid var(--border-primary)", background: "var(--bg-app)" }}>
+                  <label style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", display: "block", marginBottom: "12px" }}>Key Milestones</label>
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: "13px", color: "#64748b" }}>Start Date:</span><span style={{ fontSize: "13px", fontWeight: 600 }}>{selectedAudit.startDate}</span></div>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: "13px", color: "#64748b" }}>End Date:</span><span style={{ fontSize: "13px", fontWeight: 600 }}>{selectedAudit.endDate}</span></div>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: "13px", color: "#64748b" }}>Status:</span><span style={{ fontSize: "13px", fontWeight: 700, color: "#3b82f6" }}>{selectedAudit.status}</span></div>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: "13px", color: "var(--text-muted)" }}>Start Date:</span><span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)" }}>{selectedAudit.startDate}</span></div>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: "13px", color: "var(--text-muted)" }}>End Date:</span><span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)" }}>{selectedAudit.endDate}</span></div>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: "13px", color: "var(--text-muted)" }}>Status:</span><span style={{ fontSize: "13px", fontWeight: 700, color: "var(--accent-primary)" }}>{selectedAudit.status}</span></div>
                   </div>
                 </div>
-                <div style={{ padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9", background: "#f0f9ff" }}>
-                   <label style={{ fontSize: "11px", fontWeight: 700, color: "#0c4a6e", textTransform: "uppercase", display: "block", marginBottom: "12px" }}>Test Execution</label>
+                <div style={{ padding: "20px", borderRadius: "12px", border: "1px solid var(--border-primary)", background: "var(--accent-soft)" }}>
+                   <label style={{ fontSize: "11px", fontWeight: 700, color: "var(--accent-primary)", textTransform: "uppercase", display: "block", marginBottom: "12px" }}>Test Execution</label>
                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                      <div style={{ fontSize: "24px", fontWeight: 800, color: "#0c4a6e" }}>{selectedAudit.testResults.length}</div>
-                      <span style={{ fontSize: "12px", color: "#0c4a6e" }}>Controls in Scope</span>
+                      <div style={{ fontSize: "24px", fontWeight: 800, color: "var(--accent-primary)" }}>{selectedAudit.testResults.length}</div>
+                      <span style={{ fontSize: "12px", color: "var(--accent-primary)" }}>Controls in Scope</span>
                    </div>
                 </div>
               </div>
@@ -176,10 +176,10 @@ export default function AuditSystem({ riskId, riskTitle, currentUser, linkedCont
 
           {activeDetailTab === "Findings" && (
             <div style={{ textAlign: "center", padding: "60px" }}>
-               <AlertTriangle size={48} color="#cbd5e1" style={{ marginBottom: "16px" }} />
-               <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#64748b", margin: "0 0 8px" }}>No findings recorded</h3>
-               <p style={{ fontSize: "14px", color: "#94a3b8", margin: "0 0 24px" }}>Generate findings for any controls that failed testing or showed operational gaps.</p>
-               <button style={{ padding: "10px 24px", borderRadius: "10px", border: "none", background: "#ef4444", color: "#fff", fontWeight: 700, cursor: "pointer" }}>Record Audit Finding</button>
+               <AlertTriangle size={48} color="var(--text-muted)" style={{ marginBottom: "16px", opacity: 0.5 }} />
+               <h3 style={{ fontSize: "18px", fontWeight: 700, color: "var(--text-secondary)", margin: "0 0 8px" }}>No findings recorded</h3>
+               <p style={{ fontSize: "14px", color: "var(--text-muted)", margin: "0 0 24px" }}>Generate findings for any controls that failed testing or showed operational gaps.</p>
+               <button style={{ padding: "10px 24px", borderRadius: "10px", border: "none", background: "var(--status-critical)", color: "#fff", fontWeight: 700, cursor: "pointer" }}>Record Audit Finding</button>
             </div>
           )}
 
@@ -215,11 +215,11 @@ export default function AuditSystem({ riskId, riskTitle, currentUser, linkedCont
       <div style={styles.header}>
         <div>
           <h2 style={styles.title}>Audit & Governance</h2>
-          <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>Review and execute audit engagements for {riskTitle}.</p>
+          <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: 0 }}>Review and execute audit engagements for {riskTitle}.</p>
         </div>
         <button 
           onClick={() => setShowModal(true)}
-          style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#3b82f6", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 12px rgba(59, 130, 246, 0.25)" }}
+          style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "var(--accent-primary)", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "var(--shadow-md)" }}
         >
           <ClipboardCheck size={18} /> Plan New Audit
         </button>
@@ -227,7 +227,7 @@ export default function AuditSystem({ riskId, riskTitle, currentUser, linkedCont
 
       <div style={styles.searchBar}>
         <div style={{ position: "relative" }}>
-          <Search size={18} color="#94a3b8" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)" }} />
+          <Search size={18} color="var(--text-muted)" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)" }} />
           <input 
             style={styles.input} 
             placeholder="Search audit ID, name..." 
@@ -235,7 +235,7 @@ export default function AuditSystem({ riskId, riskTitle, currentUser, linkedCont
             onChange={e => setSearchTerm(e.target.value)}
           />
         </div>
-        <button style={{ ...styles.badge("#fff", "#64748b"), border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "8px" }}>
+        <button style={{ ...styles.badge("var(--bg-card)", "var(--text-muted)"), border: "1px solid var(--border-primary)", display: "flex", alignItems: "center", gap: "8px" }}>
           <Filter size={16} /> Filter
         </button>
       </div>
@@ -258,25 +258,25 @@ export default function AuditSystem({ riskId, riskTitle, currentUser, linkedCont
               <tr>
                 <td colSpan="7" style={{ padding: "60px", textAlign: "center" }}>
                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
-                      <CheckSquare size={48} color="#cbd5e1" />
-                      <span style={{ fontSize: "14px", color: "#94a3b8" }}>No audit engagements planned for this risk profile.</span>
+                      <CheckSquare size={48} color="var(--text-muted)" style={{ opacity: 0.5 }} />
+                      <span style={{ fontSize: "14px", color: "var(--text-muted)" }}>No audit engagements planned for this risk profile.</span>
                    </div>
                 </td>
               </tr>
             ) : (
               filteredAudits.map(aud => (
-                <tr key={aud.id} style={{ cursor: "pointer", transition: "background 0.2s" }} onClick={() => setSelectedAudit(aud)} onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                  <td style={styles.td}><span style={{ fontWeight: 700, color: "#3b82f6" }}>{aud.id}</span></td>
+                <tr key={aud.id} style={{ cursor: "pointer", transition: "background 0.2s" }} onClick={() => setSelectedAudit(aud)} onMouseEnter={e => e.currentTarget.style.background = "var(--bg-app)"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                  <td style={styles.td}><span style={{ fontWeight: 700, color: "var(--accent-primary)" }}>{aud.id}</span></td>
                   <td style={styles.td}>
-                    <div style={{ fontWeight: 600 }}>{aud.name}</div>
-                    <div style={{ fontSize: "11px", color: "#94a3b8" }}>{aud.scope.substring(0, 30)}...</div>
+                    <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{aud.name}</div>
+                    <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{aud.scope.substring(0, 30)}...</div>
                   </td>
-                  <td style={styles.td}><span style={styles.badge("#f1f5f9", "#64748b")}>{aud.type}</span></td>
+                  <td style={styles.td}><span style={styles.badge("var(--bg-app)", "var(--text-muted)")}>{aud.type}</span></td>
                   <td style={styles.td}><span style={styles.badge(getStatusStyle(aud.status).bg, getStatusStyle(aud.status).color)}>{aud.status}</span></td>
                   <td style={styles.td}>{aud.auditor}</td>
-                  <td style={styles.td}><span style={{ fontSize: "12px", color: "#64748b" }}>{aud.startDate} to {aud.endDate}</span></td>
+                  <td style={styles.td}><span style={{ fontSize: "12px", color: "var(--text-muted)" }}>{aud.startDate} to {aud.endDate}</span></td>
                   <td style={styles.td}>
-                    <button onClick={(e) => { e.stopPropagation(); handleDeleteAudit(aud.id); }} style={{ background: "none", border: "none", color: "#cbd5e1", cursor: "pointer" }}><Trash2 size={18} /></button>
+                    <button onClick={(e) => { e.stopPropagation(); handleDeleteAudit(aud.id); }} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}><Trash2 size={18} /></button>
                   </td>
                 </tr>
               ))

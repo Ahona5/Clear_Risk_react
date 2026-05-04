@@ -9,8 +9,8 @@
 
 body {
   min-height: 100vh;
-  background: #f4f6f8;
-  /* clean light grey */
+  background: var(--bg-app);
+  color: var(--text-primary);
 }
 
 /* ================= TOPBAR ================= */
@@ -21,13 +21,14 @@ body {
   align-items: center;
   padding: 10px 30px;
   height: 60px;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-primary);
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 100;
+  color: var(--text-primary);
 }
 
 .app-logo {
@@ -193,18 +194,10 @@ body.sidebar-collapsed .sidebar li svg {
   min-width: 20px;
 }
 
-/* Maintain active toggle highlight when sidebar is collapsed */
-body.sidebar-collapsed .sidebar-toggle {
-  background: #eff6ff;
-  border-color: #3b82f6;
-  color: #2563eb;
-}
-
-/* Toggle Button */
 .sidebar-toggle {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #64748b;
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  color: var(--text-muted);
   width: 36px;
   height: 36px;
   display: flex;
@@ -217,9 +210,9 @@ body.sidebar-collapsed .sidebar-toggle {
 }
 
 .sidebar-toggle:hover {
-  background: #eff6ff;
-  border-color: #3b82f6;
-  color: #2563eb;
+  background: var(--bg-app);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
 }
 
 .sidebar-toggle i {
@@ -311,6 +304,7 @@ body.sidebar-collapsed .sidebar li:hover:not(.active) {
 .dashboard-header h1 {
   font-size: 30px;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .dashboard-buttons {
@@ -381,24 +375,24 @@ body.sidebar-collapsed .sidebar li:hover:not(.active) {
 .modern-select {
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-app);
   font-size: 13px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   cursor: pointer;
   outline: none;
   transition: all 0.2s;
 }
 
 .modern-select:hover {
-  border-color: #cbd5e1;
-  background: white;
+  border-color: var(--text-muted);
+  background: var(--bg-card);
 }
 
 .modern-select:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .checkbox-filter {
@@ -430,7 +424,7 @@ body.sidebar-collapsed .sidebar li:hover:not(.active) {
 
 .card {
   position: relative;
-  background: #ffffff;
+  background: var(--bg-card);
 
   padding: 10px 12px;
   /* 🔥 LESS PADDING */
@@ -439,14 +433,13 @@ body.sidebar-collapsed .sidebar li:hover:not(.active) {
 
   border-radius: 6px;
   /* 🔥 MORE RECTANGULAR */
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-primary);
 
   display: flex;
   flex-direction: column;
   justify-content: center;
 
-  box-shadow: none;
-  /* 🔥 REMOVE SHADOW */
+  box-shadow: var(--shadow-sm);
 }
 
 .card:hover {
@@ -509,11 +502,11 @@ body.sidebar-collapsed .sidebar li:hover:not(.active) {
 
 .table-box {
   margin-top: 32px;
-  background: #ffffff;
+  background: var(--bg-card);
   padding: 32px;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-  border: 1px solid #e5e7eb;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-primary);
 }
 
 table {
@@ -525,24 +518,21 @@ table {
 th,
 td {
   padding: 16px 12px;
-  border-bottom: 1px solid #f3f4f6;
-  /* Very light subtle border */
+  border-bottom: 1px solid var(--border-primary);
   text-align: left;
 }
 
 th {
   font-size: 12px;
   font-weight: 600;
-  color: #9ca3af;
-  /* Muted header text */
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 td {
   font-size: 14px;
-  color: #374151;
-  /* Clean readable text */
+  color: var(--text-primary);
 }
 
 tr:hover td {
@@ -557,10 +547,10 @@ tr:hover td {
 .search-box {
   display: flex;
   align-items: center;
-  background: #f9fafb;
+  background: var(--bg-app);
   border-radius: 20px;
   padding: 8px 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-primary);
 }
 
 .search-box i {
@@ -676,11 +666,11 @@ tr:hover td {
 
 .chart-box,
 .heatmap-box {
-  background: white;
+  background: var(--bg-card);
   padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-primary);
 }
 
 .chart-box {
@@ -741,8 +731,8 @@ tr:hover td {
 }
 
 .marker.target {
-  background: white;
-  border: 2px solid black;
+  background: var(--bg-card);
+  border: 2px solid var(--border-primary);
 }
 
 /* ================= DRAG MARKERS ================= */
@@ -775,9 +765,9 @@ tr:hover td {
 }
 
 .drag-marker.target {
-  background: white;
-  color: black;
-  border: 2px solid black;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 2px solid var(--border-primary);
 }
 
 /* ===== Pill Buttons ===== */
@@ -788,7 +778,9 @@ tr:hover td {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  background: white;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -800,7 +792,7 @@ tr:hover td {
 /* ================= HEATMAP CONTAINER ================= */
 
 .heatmap-box {
-  background: #f3f4f6;
+  background: var(--bg-app);
   padding: 20px;
   border-radius: 12px;
   width: fit-content;
@@ -835,8 +827,9 @@ tr:hover td {
 }
 
 .drag-marker.target {
-  background: white;
-  border: 2px solid black;
+  background: var(--bg-card);
+  border: 2px solid var(--border-primary);
+  color: var(--text-primary);
 }
 
 /* ================= GRID ================= */
@@ -918,20 +911,21 @@ tr:hover td {
 }
 
 .marker.target {
-  background: white;
-  color: black;
-  border: 1px solid black;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
 }
 
 /* ================= FINAL HEATMAP ================= */
 
 .heatmap-box {
-  background: #f3f4f6;
+  background: var(--bg-app);
   padding: 20px;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border: 1px solid var(--border-primary);
 }
 
 .heatmap-grid {
@@ -1013,8 +1007,9 @@ tr:hover td {
 
 /* TOPBAR GLASS EFFECT */
 .topbar {
-  background: #ffffffcc;
+  background: var(--bg-card);
   backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-primary);
 }
 
 /* SEARCH BAR ROUND */
@@ -1107,13 +1102,13 @@ tr:hover td {
   position: absolute;
   top: 40px;
   right: -15px;
-  background: white;
+  background: var(--bg-card);
   min-width: 320px !important;
   width: 320px !important;
   max-width: 90vw !important;
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-primary);
   z-index: 9999;
   cursor: default;
   text-align: left;

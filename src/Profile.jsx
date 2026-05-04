@@ -36,16 +36,16 @@ const KpiCardModern = ({ title, value, bgColor, iconColor, trend, subtext }) => 
     <div style={{
       position: "relative",
       overflow: "hidden",
-      background: bgColor || "#ffffff",
+      background: "var(--bg-card)",
       borderRadius: "16px",
       padding: "20px",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.03)",
+      boxShadow: "var(--shadow-md)",
       display: "flex",
       flexDirection: "column",
       justifyContent: "space-between",
       minHeight: "135px",
-      color: "#1e293b",
-      border: `1px solid ${iconColor}20` // Subtle tinted border
+      color: "var(--text-primary)",
+      border: `1px solid ${iconColor}40` // Subtle tinted border
     }}>
       {/* Decorative Half-Circle Lines */}
       <div style={{
@@ -72,7 +72,7 @@ const KpiCardModern = ({ title, value, bgColor, iconColor, trend, subtext }) => 
       }} />
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative", zIndex: 1 }}>
-        <h3 style={{ fontSize: "14px", fontWeight: "600", margin: 0, color: "#475569" }}>{title}</h3>
+        <h3 style={{ fontSize: "14px", fontWeight: "600", margin: 0, color: "var(--text-secondary)" }}>{title}</h3>
       </div>
 
       <div style={{ fontSize: "32px", fontWeight: "700", margin: "10px 0 6px 0", lineHeight: "1", position: "relative", zIndex: 1 }}>
@@ -92,7 +92,7 @@ const KpiCardModern = ({ title, value, bgColor, iconColor, trend, subtext }) => 
             <ChevronUp size={12} strokeWidth={3} />
           </div>
         )}
-        <span style={{ color: "#64748b" }}>
+        <span style={{ color: "var(--text-muted)" }}>
           {subtext}
         </span>
       </div>
@@ -433,19 +433,19 @@ export default function Profile() {
               <button
                 onClick={() => setShowLegend(!showLegend)}
                 style={{
-                  padding: "6px 14px", borderRadius: "8px", border: "1px solid #e2e8f0", background: "#fff",
-                  color: "#64748b", fontSize: "12px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", transition: "all 0.2s"
+                  padding: "6px 14px", borderRadius: "8px", border: "1px solid var(--border-primary)", background: "var(--bg-card)",
+                  color: "var(--text-muted)", fontSize: "12px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", transition: "all 0.2s"
                 }}
-                onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
-                onMouseLeave={e => e.currentTarget.style.background = "#fff"}
+                onMouseEnter={e => e.currentTarget.style.background = "var(--bg-app)"}
+                onMouseLeave={e => e.currentTarget.style.background = "var(--bg-card)"}
               >
                 {showLegend ? <ChevronUp size={14} /> : <FileText size={14} />}
                 {showLegend ? "Hide Legend" : "Show Legend"}
               </button>
             </div>
-            <div style={{ background: '#f8fafc', borderRadius: '12px', padding: '16px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
+            <div style={{ background: 'var(--bg-app)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border-primary)', marginBottom: '20px' }}>
               <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-                <div style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', borderRight: '1px solid #e2e8f0', paddingRight: '16px' }}>Definitions</div>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', borderRight: '1px solid var(--border-primary)', paddingRight: '16px' }}>Definitions</div>
                 {['G', 'N', 'T'].map(id => {
                   const term = {
                     G: { label: "Gross", desc: "Risk before controls" },
@@ -454,8 +454,8 @@ export default function Profile() {
                   }[id];
                   return (
                     <div key={id} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '12px', fontWeight: 500, color: '#1e293b' }}>{id}:</span>
-                      <span style={{ fontSize: '12px', color: '#64748b' }}>{term.desc}</span>
+                      <span style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>{id}:</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{term.desc}</span>
                     </div>
                   );
                 })}
@@ -464,9 +464,9 @@ export default function Profile() {
 
             <div className="heatmap-legend-top" style={{ marginBottom: '32px', gap: '24px' }}>
               {['G', 'N', 'T'].map(id => (
-                <div key={id} className="legend-item-pill" style={{ background: '#fff', border: '1px solid #e2e8f0' }}>
+                <div key={id} className="legend-item-pill" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}>
                   <div className={`legend-badge marker-${id.toLowerCase()}`} draggable onDragStart={(e) => onDragStart(e, `NEW-${id}`)}>{id}</div>
-                  <span className="legend-text-label" style={{ fontWeight: 700 }}>{id === 'G' ? 'Gross' : id === 'N' ? 'Net' : 'Target'}</span>
+                  <span className="legend-text-label" style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{id === 'G' ? 'Gross' : id === 'N' ? 'Net' : 'Target'}</span>
                 </div>
               ))}
             </div>
@@ -517,8 +517,8 @@ export default function Profile() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "32px" }}>
                 {/* IMPACT LEGEND */}
                 <div>
-                  <h4 style={{ fontSize: "14px", fontWeight: 800, color: "#1e293b", margin: "0 0 16px", textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <AlertTriangle size={16} color="#ef4444" /> Impact Definitions
+                  <h4 style={{ fontSize: "14px", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 16px", textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <AlertTriangle size={16} color="var(--status-critical)" /> Impact Definitions
                   </h4>
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {[
@@ -528,17 +528,17 @@ export default function Profile() {
                       { score: 2, label: "Low", color: "#22c55e", desc: { fin: "£100k - £1m", ops: "Minor disruption to workflow", safe: "First aid required", rep: "Minimal public awareness" } },
                       { score: 1, label: "Very Low", color: "#64748b", desc: { fin: "<£100k", ops: "Negligible disruption", safe: "No injury", rep: "No impact" } }
                     ].map(item => (
-                      <div key={item.score} style={{ background: "#f8fafc", borderRadius: "12px", border: "1px solid #f1f5f9", padding: "16px", display: "flex", gap: "16px", alignItems: "center" }}>
+                      <div key={item.score} style={{ background: "var(--bg-app)", borderRadius: "12px", border: "1px solid var(--border-primary)", padding: "16px", display: "flex", gap: "16px", alignItems: "center" }}>
                         <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: item.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 800, flexShrink: 0 }}>
                           {item.score}
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontWeight: 700, fontSize: "13px", color: item.color, marginBottom: "8px", textTransform: "uppercase" }}>{item.label}</div>
                           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                            <div style={{ fontSize: "11px" }}><strong style={{ color: "#64748b" }}>Fin:</strong> <span style={{ color: "#334155" }}>{item.desc.fin}</span></div>
-                            <div style={{ fontSize: "11px" }}><strong style={{ color: "#64748b" }}>Ops:</strong> <span style={{ color: "#334155" }}>{item.desc.ops}</span></div>
-                            <div style={{ fontSize: "11px" }}><strong style={{ color: "#64748b" }}>Safe:</strong> <span style={{ color: "#334155" }}>{item.desc.safe}</span></div>
-                            <div style={{ fontSize: "11px" }}><strong style={{ color: "#64748b" }}>Rep:</strong> <span style={{ color: "#334155" }}>{item.desc.rep}</span></div>
+                            <div style={{ fontSize: "11px" }}><strong style={{ color: "var(--text-muted)" }}>Fin:</strong> <span style={{ color: "var(--text-secondary)" }}>{item.desc.fin}</span></div>
+                            <div style={{ fontSize: "11px" }}><strong style={{ color: "var(--text-muted)" }}>Ops:</strong> <span style={{ color: "var(--text-secondary)" }}>{item.desc.ops}</span></div>
+                            <div style={{ fontSize: "11px" }}><strong style={{ color: "var(--text-muted)" }}>Safe:</strong> <span style={{ color: "var(--text-secondary)" }}>{item.desc.safe}</span></div>
+                            <div style={{ fontSize: "11px" }}><strong style={{ color: "var(--text-muted)" }}>Rep:</strong> <span style={{ color: "var(--text-secondary)" }}>{item.desc.rep}</span></div>
                           </div>
                         </div>
                       </div>
@@ -548,8 +548,8 @@ export default function Profile() {
 
                 {/* LIKELIHOOD LEGEND */}
                 <div>
-                  <h4 style={{ fontSize: "14px", fontWeight: 800, color: "#1e293b", margin: "0 0 16px", textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <Clock size={16} color="#3b82f6" /> Likelihood Definitions
+                  <h4 style={{ fontSize: "14px", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 16px", textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Clock size={16} color="var(--accent-primary)" /> Likelihood Definitions
                   </h4>
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {[
@@ -559,15 +559,15 @@ export default function Profile() {
                       { score: 2, label: "Low", color: "#22c55e", prob: "5% - 20%", freq: "1 in 10 years event" },
                       { score: 1, label: "Very Low", color: "#64748b", prob: "<5%", freq: "1 in 25 years event" }
                     ].map(item => (
-                      <div key={item.score} style={{ background: "#f8fafc", borderRadius: "12px", border: "1px solid #f1f5f9", padding: "16px", display: "flex", gap: "16px", alignItems: "center" }}>
+                      <div key={item.score} style={{ background: "var(--bg-app)", borderRadius: "12px", border: "1px solid var(--border-primary)", padding: "16px", display: "flex", gap: "16px", alignItems: "center" }}>
                         <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: item.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 800, flexShrink: 0 }}>
                           {item.score}
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontWeight: 700, fontSize: "13px", color: item.color, marginBottom: "4px", textTransform: "uppercase" }}>{item.label}</div>
                           <div style={{ display: "flex", gap: "16px" }}>
-                            <div style={{ fontSize: "12px", color: "#334155" }}><strong style={{ color: "#64748b" }}>Prob:</strong> {item.prob}</div>
-                            <div style={{ fontSize: "12px", color: "#334155" }}><strong style={{ color: "#64748b" }}>Freq:</strong> {item.freq}</div>
+                            <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}><strong style={{ color: "var(--text-muted)" }}>Prob:</strong> {item.prob}</div>
+                            <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}><strong style={{ color: "var(--text-muted)" }}>Freq:</strong> {item.freq}</div>
                           </div>
                         </div>
                       </div>
@@ -584,10 +584,10 @@ export default function Profile() {
           <div className="chart-box" style={{ padding: '32px', display: 'flex', flexDirection: 'column' }}>
             <div style={{ marginBottom: '32px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 500 }}>Risk Overview</h3>
+                <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 500, color: 'var(--text-primary)' }}>Risk Overview</h3>
                 <div style={{ textAlign: 'right' }}>
-                  <span style={{ fontSize: '28px', fontWeight: 500, color: '#0f172a' }}>{totalVal}</span>
-                  <span style={{ fontSize: '12px', fontWeight: 500, color: '#94a3b8', marginLeft: '8px', textTransform: 'uppercase' }}>Total Risks</span>
+                  <span style={{ fontSize: '28px', fontWeight: 500, color: 'var(--text-primary)' }}>{totalVal}</span>
+                  <span style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-muted)', marginLeft: '8px', textTransform: 'uppercase' }}>Total Risks</span>
                 </div>
               </div>
               <div style={{ height: '2px', background: '#f1f5f9', marginTop: '16px' }} />
@@ -596,13 +596,13 @@ export default function Profile() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', flex: 1 }}>
               {/* Actionable Insights at the Top */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div style={{ background: '#fca5a520', borderLeft: '4px solid #fca5a5', padding: '16px', borderRadius: '8px' }}>
-                  <div style={{ fontSize: '11px', fontWeight: 600, color: '#991b1b', textTransform: 'uppercase', marginBottom: '4px' }}>Immediate Action</div>
-                  <div style={{ fontSize: '14px', fontWeight: 500, color: '#1e293b' }}>{critical + high} High Impact risks detected</div>
+                <div style={{ background: 'rgba(248, 113, 113, 0.1)', borderLeft: '4px solid var(--status-critical)', padding: '16px', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--status-critical)', textTransform: 'uppercase', marginBottom: '4px' }}>Immediate Action</div>
+                  <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)' }}>{critical + high} High Impact risks detected</div>
                 </div>
-                <div style={{ background: '#86efac20', borderLeft: '4px solid #86efac', padding: '16px', borderRadius: '8px' }}>
-                  <div style={{ fontSize: '11px', fontWeight: 600, color: '#166534', textTransform: 'uppercase', marginBottom: '4px' }}>Risk Health</div>
-                  <div style={{ fontSize: '14px', fontWeight: 500, color: '#1e293b' }}>{low} Stable risks monitored</div>
+                <div style={{ background: 'rgba(52, 211, 153, 0.1)', borderLeft: '4px solid var(--status-low)', padding: '16px', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--status-low)', textTransform: 'uppercase', marginBottom: '4px' }}>Risk Health</div>
+                  <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)' }}>{low} Stable risks monitored</div>
                 </div>
               </div>
 
@@ -627,19 +627,19 @@ export default function Profile() {
                 
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {[
-                    { label: 'Critical', count: critical, color: '#fca5a5', pct: getPct(critical) },
-                    { label: 'High', count: high, color: '#fdba74', pct: getPct(high) },
-                    { label: 'Medium', count: medium, color: '#fef08a', pct: getPct(medium) },
-                    { label: 'Low', count: low, color: '#86efac', pct: getPct(low) },
+                    { label: 'Critical', count: critical, color: 'var(--status-critical)', pct: getPct(critical) },
+                    { label: 'High', count: high, color: 'var(--status-high)', pct: getPct(high) },
+                    { label: 'Medium', count: medium, color: 'var(--status-medium)', pct: getPct(medium) },
+                    { label: 'Low', count: low, color: 'var(--status-low)', pct: getPct(low) },
                   ].map(item => (
-                    <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'var(--bg-app)', borderRadius: '8px', border: '1px solid var(--border-primary)' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <div style={{ width: '10px', height: '10px', borderRadius: '2px', background: item.color }} />
-                        <span style={{ fontSize: '13px', fontWeight: 500, color: '#475569' }}>{item.label}</span>
+                        <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)' }}>{item.label}</span>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '14px', fontWeight: 500, color: '#1e293b' }}>{item.count}</div>
-                        <div style={{ fontSize: '10px', fontWeight: 400, color: '#94a3b8' }}>{item.pct}%</div>
+                        <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)' }}>{item.count}</div>
+                        <div style={{ fontSize: '10px', fontWeight: 400, color: 'var(--text-muted)' }}>{item.pct}%</div>
                       </div>
                     </div>
                   ))}
@@ -651,8 +651,8 @@ export default function Profile() {
           {/* RIGHT PANEL: RANKING */}
           <div className="heatmap-ranking-panel" style={{ padding: '32px', display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 500 }}>Risk Ranking</h3>
-              <span style={{ fontSize: '11px', fontWeight: 500, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Severity Priority</span>
+              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 500, color: 'var(--text-primary)' }}>Risk Ranking</h3>
+              <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Severity Priority</span>
             </div>
             
             <div className="ranking-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -667,11 +667,11 @@ export default function Profile() {
                     onClick={() => navigate(`/risk/${r.id}`)}
                     style={{
                       cursor: 'pointer',
-                      border: isTop ? `2px solid ${severityColor}` : '1px solid #e2e8f0',
-                      background: isTop ? `${severityColor}10` : '#fff',
+                      border: isTop ? `2px solid ${severityColor}` : '1px solid var(--border-primary)',
+                      background: isTop ? `rgba(${severityColor === '#fca5a5' ? '248, 113, 113' : severityColor === '#fdba74' ? '251, 146, 60' : severityColor === '#fef08a' ? '251, 191, 36' : '52, 211, 153'}, 0.1)` : 'var(--bg-card)',
                       padding: isTop ? '24px' : '16px',
                       borderRadius: '16px',
-                      boxShadow: isTop ? '0 10px 25px -5px rgba(0,0,0,0.05)' : 'none',
+                      boxShadow: isTop ? 'var(--shadow-lg)' : 'none',
                       transition: 'all 0.2s ease',
                       position: 'relative'
                     }}
@@ -688,7 +688,7 @@ export default function Profile() {
                       
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                          <span className="rank-card-name" style={{ fontSize: isTop ? '18px' : '14px', fontWeight: 500, color: '#1e293b' }}>{r.title}</span>
+                          <span className="rank-card-name" style={{ fontSize: isTop ? '18px' : '14px', fontWeight: 500, color: 'var(--text-primary)' }}>{r.title}</span>
                           <span style={{ 
                             fontSize: '10px', 
                             fontWeight: 500, 
@@ -718,7 +718,7 @@ export default function Profile() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <h3>Risk Register</h3>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <select value={controlFilter} onChange={(e) => setControlFilter(e.target.value)}>
+            <select value={controlFilter} onChange={(e) => setControlFilter(e.target.value)} style={{ background: 'var(--bg-app)', color: 'var(--text-primary)', border: '1px solid var(--border-primary)', borderRadius: '6px', padding: '4px 8px' }}>
               <option value="All Controls">All Controls</option>
               <option value="Effective">Effective</option>
               <option value="Weak">Weak</option>
@@ -739,8 +739,8 @@ export default function Profile() {
               <tr key={r.id} onClick={() => navigate(`/risk/${r.id}`)} style={{ cursor: "pointer" }} className="hover-row">
                 <td style={{ verticalAlign: 'middle' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'linear-gradient(135deg, #e0e7ff, #c7d2fe)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Folder size={15} color="#6366f1" />
+                    <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'var(--bg-app)', border: '1px solid var(--border-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Folder size={15} color="var(--accent-primary)" />
                     </div>
                     <span style={{ fontWeight: 600 }}>RISK-{i + 1}</span>
                   </div>
@@ -748,10 +748,10 @@ export default function Profile() {
                 <td style={{ fontWeight: 600 }}>{r.title} {r.isEscalated && <span className="escalated-tag">ESCALATED</span>}</td>
                 <td>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#3b82f6', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase' }}>
+                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--accent-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase' }}>
                       {(r.owner || "U").charAt(0)}
                     </div>
-                    <span style={{ fontSize: '13px', fontWeight: 500, color: '#64748b' }}>{r.owner || "Unassigned"}</span>
+                    <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-muted)' }}>{r.owner || "Unassigned"}</span>
                   </div>
                 </td>
                 <td>{r.impact}</td>
@@ -762,15 +762,15 @@ export default function Profile() {
                 <td onClick={(e) => e.stopPropagation()}>
                   <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                     {r.isEscalated ? (
-                      <button onClick={() => removeEscalation(r.id)} style={{ fontSize: "12px", fontWeight: 600, color: "#64748b", background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "5px 10px", cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e2e8f0"; e.currentTarget.style.color = "#334155"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#64748b"; }}>
+                      <button onClick={() => removeEscalation(r.id)} style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-muted)", background: "var(--bg-surface)", border: "1px solid var(--border-primary)", borderRadius: "6px", padding: "5px 10px", cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--border-primary)"; e.currentTarget.style.color = "var(--text-secondary)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "var(--bg-surface)"; e.currentTarget.style.color = "var(--text-muted)"; }}>
                         Remove Escalation
                       </button>
                     ) : (
-                      <button onClick={() => handleEscalateClick(r.id)} style={{ fontSize: "12px", fontWeight: 600, color: "#d97706", background: "#fef3c7", border: "1px solid #fde68a", borderRadius: "6px", padding: "5px 10px", cursor: "pointer", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#fde68a"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#fef3c7"; }}>
+                      <button onClick={() => handleEscalateClick(r.id)} style={{ fontSize: "12px", fontWeight: 600, color: "var(--status-high)", background: "rgba(249, 115, 22, 0.1)", border: "1px solid rgba(249, 115, 22, 0.2)", borderRadius: "6px", padding: "5px 10px", cursor: "pointer", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(249, 115, 22, 0.2)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(249, 115, 22, 0.1)"; }}>
                         <AlertTriangle size={14} /> Escalate
                       </button>
                     )}
-                    <Trash2 size={18} style={{ color: '#ef4444', cursor: 'pointer', transition: "opacity 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.opacity = "0.7"} onMouseLeave={(e) => e.currentTarget.style.opacity = "1"} onClick={() => deleteRisk(r.id)} />
+                    <Trash2 size={18} style={{ color: 'var(--status-critical)', cursor: 'pointer', transition: "opacity 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.opacity = "0.7"} onMouseLeave={(e) => e.currentTarget.style.opacity = "1"} onClick={() => deleteRisk(r.id)} />
                   </div>
                 </td>
               </tr>

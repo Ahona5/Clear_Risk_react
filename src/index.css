@@ -78,7 +78,7 @@
 body {
   margin: 0;
   font-family: 'Inter', 'Segoe UI', sans-serif;
-  background-color: var(--bg-main);
+  background-color: var(--bg-app);
   color: var(--text-primary);
 }
 

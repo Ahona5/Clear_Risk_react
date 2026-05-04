@@ -1,6 +1,6 @@
 /* ================= MODAL OVERLAY ================= */
 body {
-  background: #f1f5f9;
+  background: var(--bg-app);
 }
 
 .modal-overlay {
@@ -10,7 +10,7 @@ body {
   width: 100%;
   height: 100%;
 
-  background: rgba(15, 23, 42, 0.35);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(6px);
 
   display: flex;
@@ -23,14 +23,15 @@ body {
 /* ================= MODAL BOX ================= */
 
 .modal-box {
-  background: #ffffff;
+  background: var(--bg-card);
   padding: 32px 30px;
   border-radius: 16px;
   width: 380px;
   max-width: 90vw;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-primary);
   animation: fadeIn 0.15s ease;
   margin: auto;
 }
@@ -40,7 +41,7 @@ body {
   font-weight: 600;
   margin-top: 0;
   margin-bottom: 24px;
-  color: #0f172a;
+  color: var(--text-primary);
   text-align: center;
 }
 
@@ -58,10 +59,10 @@ body {
   width: 100%;
   padding: 12px 16px;
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  background: #f1f5f9;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-app);
   font-size: 14px;
-  color: #1e293b;
+  color: var(--text-primary);
   outline: none;
   font-family: inherit;
   transition: all 0.2s ease;
@@ -75,9 +76,9 @@ body {
 .modal-box input:focus,
 .modal-box select:focus,
 .modal-box textarea:focus {
-  background: #ffffff;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: var(--bg-card);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 /* ================= BUTTONS ================= */
@@ -90,8 +91,8 @@ body {
 
 .btn-primary {
   flex: 1;
-  background: #2563eb;
-  color: white;
+  background: var(--accent-primary);
+  color: #fff;
   padding: 12px;
   border-radius: 10px;
   border: none;
@@ -107,8 +108,8 @@ body {
 
 .btn-secondary {
   flex: 1;
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--bg-surface);
+  color: var(--text-secondary);
   padding: 12px;
   border-radius: 10px;
   border: none;
@@ -119,7 +120,7 @@ body {
 }
 
 .btn-secondary:hover {
-  background: #e2e8f0;
+  background: var(--border-primary);
 }
 
 /* ================= NEW DASHBOARD HIERARCHY ================= */
@@ -158,25 +159,21 @@ body {
 
 /* ================= PIE CHART (RISK DISTRIBUTION) ================= */
 .chart-box {
-  background: #ffffff;
+  background: var(--bg-card);
   padding: 30px;
   border-radius: 20px;
   text-align: center;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-primary);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.05),
-    0 2px 6px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-md);
 }
 
 .chart-box h3 {
-  font-size: 20px;
-  font-weight: 700;
   font-size: 18px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text-primary);
   margin-bottom: 25px;
   /* Match heatmap header spacing */
 }
@@ -192,12 +189,11 @@ body {
 .heatmap-box {
   width: 100%;
   max-width: 100%;
-  background: white;
+  background: var(--bg-card);
   padding: 30px 50px;
-  /* INCREASED LEFT/RIGHT PADDING FOR AXIS LABELS */
   border-radius: 24px;
-  border: 1px solid #f1f5f9;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-md);
   overflow: visible !important;
   /* 🔥 CRITICAL: Allow tooltips to show outside */
 }
@@ -212,19 +208,23 @@ body {
 /* COLOR STATES - MAXIMUM VIBRANCY */
 /* COLOR STATES - PROFESSIONAL SAAS PALETTE */
 .heat-low {
-  background: #86efac !important;
+  background: var(--status-low) !important;
+  opacity: 0.85;
 }
 
 .heat-medium-yellow {
-  background: #fef08a !important;
+  background: var(--status-medium) !important;
+  opacity: 0.85;
 }
 
 .heat-medium-orange {
-  background: #fdba74 !important;
+  background: var(--status-high) !important;
+  opacity: 0.85;
 }
 
 .heat-critical {
-  background: #fca5a5 !important;
+  background: var(--status-critical) !important;
+  opacity: 0.85;
 }
 
 .heatmap-layout-main {
@@ -250,9 +250,8 @@ body {
 .y-axis-label,
 .x-axis-label {
   font-size: 13px;
-  /* Smaller labels */
   font-weight: 800;
-  color: #0f172a !important;
+  color: var(--text-muted) !important;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   white-space: nowrap;
@@ -307,10 +306,10 @@ body {
 }
 
 .cell-number {
-  font-weight: 500;
+  font-weight: 600;
   font-size: 18px;
-  /* UPDATE THIS: Clean centered number */
-  color: #1e293b;
+  color: var(--text-primary);
+  opacity: 0.7;
   user-select: none;
   pointer-events: none;
   z-index: 1;
@@ -333,23 +332,21 @@ body {
 
 /* ================= RANKING PANEL (TOP RISKS) ================= */
 .heatmap-ranking-panel {
-  background: #ffffff;
+  background: var(--bg-card);
   padding: 24px;
-  /* UPDATE THIS: More compact */
   border-radius: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  border: 1px solid #f1f5f9;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-md);
 }
 
 .heatmap-ranking-panel h3 {
   font-size: 17px;
-  /* UPDATE THIS: Slightly smaller title */
   font-weight: 700;
   margin: 0;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .ranking-list {
@@ -372,24 +369,21 @@ body {
   justify-content: space-between;
   /* Rank/Name on left, Score on right */
 
-  background: #f8fafc;
+  background: var(--bg-app);
   padding: 12px 14px;
-  /* UPDATE THIS: Tight padding */
   border-radius: 12px;
-  /* Professional rounding */
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
 
   transition: all 0.2s ease;
   width: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-sm);
 }
 
 .ranking-card:hover {
-  background: white;
+  background: var(--bg-surface);
   transform: translateY(-2px);
-  /* Subtle lift */
-  border-color: #cbd5e1;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-md);
 }
 
 .rank-main-info {
@@ -416,9 +410,8 @@ body {
 
 .rank-card-name {
   font-size: 14px;
-  /* UPDATE THIS: Medium bold name */
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .rank-card-score {
@@ -445,7 +438,7 @@ body {
 .legend-text-label {
   font-size: 13px;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .legend-badge {
@@ -467,9 +460,8 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #ffffff;
-  /* UPDATE THIS: Default background so 'C' etc. pops */
-  color: #1e293b;
+  background: var(--bg-card);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -497,15 +489,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid white;
+  border: 1.5px solid var(--bg-card);
   box-shadow: 0 3px 6px rgba(239, 68, 68, 0.4);
   z-index: 10;
 }
 
 /* UPDATE THIS: Clean Marker Colors */
 .marker-g {
-  background: #000000;
-  color: #ffffff;
+  background: var(--text-primary);
+  color: var(--bg-card);
 }
 
 .marker-n {
@@ -514,9 +506,9 @@ body {
 }
 
 .marker-t {
-  background: #ffffff;
-  color: #000000;
-  border: 1.5px solid #d1d5db;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-primary);
 }
 
 .risk-marker:active {
@@ -555,10 +547,11 @@ body {
   transition: all 0.2s ease;
   pointer-events: none;
   z-index: 1000;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
   text-align: left;
   line-height: 1.4;
   font-weight: 400;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .risk-tooltip strong {
@@ -645,39 +638,39 @@ body {
 }
 
 .level-critical {
-  background: #fca5a5;
-  color: #991b1b;
+  background: rgba(248, 113, 113, 0.15);
+  color: var(--status-critical);
 }
 
 .level-critical::before {
-  background: #991b1b;
+  background: var(--status-critical);
 }
 
 .level-high {
-  background: #fdba74;
-  color: #9a3412;
+  background: rgba(251, 146, 60, 0.15);
+  color: var(--status-high);
 }
 
 .level-high::before {
-  background: #9a3412;
+  background: var(--status-high);
 }
 
 .level-medium {
-  background: #fef08a;
-  color: #854d0e;
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--status-medium);
 }
 
 .level-medium::before {
-  background: #854d0e;
+  background: var(--status-medium);
 }
 
 .level-low {
-  background: #86efac;
-  color: #166534;
+  background: rgba(52, 211, 153, 0.15);
+  color: var(--status-low);
 }
 
 .level-low::before {
-  background: #166534;
+  background: var(--status-low);
 }
 
 /* ================= MODERN RISK TABLE ================= */
@@ -692,20 +685,20 @@ body {
 .risk-table th {
   text-align: left;
   padding: 16px 20px;
-  background: #f8fafc;
-  color: #94a3b8;
+  background: var(--bg-surface);
+  color: var(--text-muted);
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .risk-table td {
   padding: 16px 20px;
   font-size: 14px;
-  color: #0f172a;
-  border-bottom: 1px solid #f1f5f9;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-primary);
   vertical-align: middle;
 }
 
@@ -714,7 +707,7 @@ body {
 }
 
 .risk-table tbody tr:hover {
-  background: #f8fafc;
+  background: var(--bg-surface);
   transform: translateY(-1px);
 }
 
@@ -743,10 +736,10 @@ body {
   /* 🔥 COMPACT */
   max-height: 260px;
 
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 12px;
-
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
 
   display: flex;
@@ -761,7 +754,7 @@ body {
   align-items: center;
 
   padding: 10px 14px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .notification-header h4 {
@@ -787,7 +780,7 @@ body {
 /* ITEM */
 .notification-item {
   padding: 10px 14px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 /* 🔥 TEXT FIX */
@@ -795,7 +788,7 @@ body {
   margin: 0;
   font-size: 13px;
   font-weight: 500;
-  color: #111827;
+  color: var(--text-primary);
 
   line-height: 1.3;
 
@@ -825,7 +818,7 @@ body {
 }
 
 .hover-row:hover {
-  background: #f1f5f9 !important;
+  background: var(--bg-surface) !important;
   transform: scale(1.002);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
 }

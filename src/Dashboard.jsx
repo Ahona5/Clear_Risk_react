@@ -35,10 +35,10 @@ ChartJS.register(
 
 /* ─── KPI CARD ─── */
 const THEMES = {
-  blue: { grad: ["#93c5fd", "#3b82f6"], bar: "#3b82f6", light: "#eff6ff" },
-  red: { grad: ["#fca5a5", "#ef4444"], bar: "#ef4444", light: "#fef2f2" },
-  amber: { grad: ["#fcd34d", "#f59e0b"], bar: "#f59e0b", light: "#fffbeb" },
-  green: { grad: ["#6ee7b7", "#10b981"], bar: "#10b981", light: "#f0fdf4" },
+  blue: { grad: ["rgba(59, 130, 246, 0.4)", "rgba(37, 99, 235, 0.6)"], bar: "var(--accent-primary)", light: "rgba(59, 130, 246, 0.1)" },
+  red: { grad: ["rgba(239, 68, 68, 0.4)", "rgba(220, 38, 38, 0.6)"], bar: "var(--status-critical)", light: "rgba(239, 68, 68, 0.1)" },
+  amber: { grad: ["rgba(245, 158, 11, 0.4)", "rgba(217, 119, 6, 0.6)"], bar: "var(--status-high)", light: "rgba(245, 158, 11, 0.1)" },
+  green: { grad: ["rgba(16, 185, 129, 0.4)", "rgba(5, 150, 105, 0.6)"], bar: "var(--status-low)", light: "rgba(16, 185, 129, 0.1)" },
 };
 
 /* ─── ANIMATED COUNTER ─── */
@@ -103,9 +103,10 @@ function KpiCard({ label, value, subtext, color, icon: Icon, isLoading }) {
       transition: "transform 0.2s, box-shadow 0.2s",
       cursor: "default",
       position: "relative",
+      border: "1px solid var(--border-primary)"
     }}
-      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(0,0,0,0.12)"; }}
-      onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.07)"; }}
+      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "var(--shadow-lg)"; }}
+      onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "var(--shadow-sm)"; }}
     >
       <div style={{
         position: "absolute",
@@ -803,7 +804,7 @@ export default function Dashboard() {
                                 >
                                   <button
                                     onClick={() => { localStorage.setItem("selectedProfile", p.name); navigate("/risk-profile"); }}
-                                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "var(--text-primary)", fontSize: 13, fontWeight: 600, cursor: "pointer" }}
+                                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "var(--text-primary)", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
                                     onMouseEnter={e => e.currentTarget.style.background = "var(--bg-app)"}
                                     onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                                   >
@@ -812,19 +813,19 @@ export default function Dashboard() {
 
                                   <button
                                     onClick={(e) => initiateEdit(e, p)}
-                                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "#475569", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
-                                    onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
+                                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "var(--text-secondary)", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
+                                    onMouseEnter={e => e.currentTarget.style.background = "var(--bg-app)"}
                                     onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                                   >
                                     <Edit2 size={14} /> Edit Profile
                                   </button>
 
                                   {user?.role?.toLowerCase() === "admin" && (
-                                    <div style={{ borderTop: "1px solid #f1f5f9", marginTop: 4, paddingTop: 4 }}>
+                                    <div style={{ borderTop: "1px solid var(--border-primary)", marginTop: 4, paddingTop: 4 }}>
                                       <button
                                         onClick={(e) => initiateDelete(e, p)}
-                                        style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "#ef4444", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
-                                        onMouseEnter={e => e.currentTarget.style.background = "#fef2f2"}
+                                        style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "var(--status-critical)", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
+                                        onMouseEnter={e => e.currentTarget.style.background = "rgba(239, 68, 68, 0.1)"}
                                         onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                                       >
                                         <Trash2 size={14} /> Delete Profile
@@ -848,27 +849,27 @@ export default function Dashboard() {
         {pinnedKris.length > 0 && (
           <div style={{ marginTop: 28 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-              <Pin size={20} color="#3b82f6" />
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#0f172a", margin: 0 }}>
+              <Pin size={20} color="var(--accent-primary)" />
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
                 Pinned Key Risk Indicators
               </h3>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: 24 }}>
               {pinnedKris.map(kri => (
                 <div key={`${kri.riskId}-${kri.id}`} style={{
-                  background: "#fff",
+                  background: "var(--bg-card)",
                   borderRadius: 20,
                   padding: 24,
-                  boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
-                  border: "1px solid #f1f5f9",
+                  boxShadow: "var(--shadow-sm)",
+                  border: "1px solid var(--border-primary)",
                 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
                     <div>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                        <span style={{ fontSize: 16, fontWeight: 700, color: "#0f172a" }}>{kri.title}</span>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: "#3b82f6", background: "#eff6ff", padding: "2px 8px", borderRadius: 999 }}>{kri.riskTitle || "Risk Profile"}</span>
+                        <span style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>{kri.title}</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "var(--accent-primary)", background: "var(--bg-app)", padding: "2px 8px", borderRadius: 999 }}>{kri.riskTitle || "Risk Profile"}</span>
                       </div>
-                      <span style={{ fontSize: 12, color: "#64748b" }}>Owner: {kri.owner}</span>
+                      <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Owner: {kri.owner}</span>
                     </div>
                   </div>
 
@@ -880,22 +881,31 @@ export default function Dashboard() {
                           datasets: [{
                             label: kri.title,
                             data: kri.data,
-                            borderColor: "#ef4444",
+                            borderColor: "var(--status-critical)",
                             backgroundColor: "rgba(239, 68, 68, 0.1)",
                             tension: 0.4,
                             pointRadius: 4,
-                            pointBackgroundColor: "#fff",
-                            pointBorderColor: "#ef4444",
+                            pointBackgroundColor: "var(--bg-card)",
+                            pointBorderColor: "var(--status-critical)",
                             pointBorderWidth: 2
                           }]
                         }}
                         options={{
                           responsive: true,
                           maintainAspectRatio: false,
-                          plugins: { legend: { display: false } },
+                          plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                              backgroundColor: "var(--bg-modal)",
+                              titleColor: "var(--text-primary)",
+                              bodyColor: "var(--text-secondary)",
+                              borderColor: "var(--border-primary)",
+                              borderWidth: 1
+                            }
+                          },
                           scales: {
-                            y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
-                            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                            y: { beginAtZero: true, grid: { color: "var(--border-primary)" }, ticks: { color: "var(--text-muted)", font: { size: 10 } } },
+                            x: { grid: { display: false }, ticks: { color: "var(--text-muted)", font: { size: 10 } } }
                           }
                         }}
                       />
@@ -907,17 +917,26 @@ export default function Dashboard() {
                           datasets: [{
                             label: kri.title,
                             data: kri.data,
-                            backgroundColor: "#ef4444",
+                            backgroundColor: "var(--status-critical)",
                             borderRadius: 4
                           }]
                         }}
                         options={{
                           responsive: true,
                           maintainAspectRatio: false,
-                          plugins: { legend: { display: false } },
+                          plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                              backgroundColor: "var(--bg-modal)",
+                              titleColor: "var(--text-primary)",
+                              bodyColor: "var(--text-secondary)",
+                              borderColor: "var(--border-primary)",
+                              borderWidth: 1
+                            }
+                          },
                           scales: {
-                            y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
-                            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                            y: { beginAtZero: true, grid: { color: "var(--border-primary)" }, ticks: { color: "var(--text-muted)", font: { size: 10 } } },
+                            x: { grid: { display: false }, ticks: { color: "var(--text-muted)", font: { size: 10 } } }
                           }
                         }}
                       />
@@ -944,49 +963,49 @@ export default function Dashboard() {
 
         {/* ── DELETE CONFIRMATION MODAL ── */}
         {showDeleteModal && (
-          <div style={{ position: "fixed", inset: 0, zIndex: 10005, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(4px)" }} onClick={() => !isDeleting && setShowDeleteModal(false)}>
-            <div style={{ background: "#fff", borderRadius: 24, width: "100%", maxWidth: 440, padding: "32px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", position: "relative" }} onClick={e => e.stopPropagation()}>
-              <div style={{ width: 56, height: 56, borderRadius: 16, background: "#fef2f2", display: "flex", alignItems: "center", justifyContent: "center", color: "#ef4444", marginBottom: 24 }}>
+          <div style={{ position: "fixed", inset: 0, zIndex: 10005, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }} onClick={() => !isDeleting && setShowDeleteModal(false)}>
+            <div style={{ background: "var(--bg-modal)", borderRadius: 24, width: "100%", maxWidth: 440, padding: "32px", boxShadow: "var(--shadow-lg)", border: "1px solid var(--border-primary)", position: "relative" }} onClick={e => e.stopPropagation()}>
+              <div style={{ width: 56, height: 56, borderRadius: 16, background: "rgba(239, 68, 68, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--status-critical)", marginBottom: 24 }}>
                 <AlertCircle size={28} />
               </div>
 
-              <h3 style={{ fontSize: 20, fontWeight: 800, color: "#0f172a", margin: "0 0 8px 0" }}>Delete Risk Profile?</h3>
-              <p style={{ fontSize: 14, color: "#64748b", margin: "0 0 24px 0", lineHeight: 1.6 }}>
-                You are about to delete <strong style={{ color: "#0f172a" }}>{profileToDelete?.name}</strong>. This action will mark the profile as deleted and hide it from all dashboards.
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: "var(--text-primary)", margin: "0 0 8px 0" }}>Delete Risk Profile?</h3>
+              <p style={{ fontSize: 14, color: "var(--text-muted)", margin: "0 0 24px 0", lineHeight: 1.6 }}>
+                You are about to delete <strong style={{ color: "var(--text-primary)" }}>{profileToDelete?.name}</strong>. This action will mark the profile as deleted and hide it from all dashboards.
               </p>
 
               {deleteDependencies?.total > 0 && (
-                <div style={{ background: "#fff7ed", border: "1px solid #ffedd5", borderRadius: 12, padding: "16px", marginBottom: 24 }}>
+                <div style={{ background: "var(--bg-app)", border: "1px solid var(--border-primary)", borderRadius: 12, padding: "16px", marginBottom: 24 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                    <ShieldAlert size={16} color="#f97316" />
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "#9a3412" }}>Linked Dependencies Found</span>
+                    <ShieldAlert size={16} color="var(--status-high)" />
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "var(--status-high)" }}>Linked Dependencies Found</span>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    <div style={{ fontSize: 12, color: "#c2410c" }}>• Risks: <strong>{deleteDependencies.risks}</strong></div>
-                    <div style={{ fontSize: 12, color: "#c2410c" }}>• KRIs: <strong>{deleteDependencies.kris}</strong></div>
-                    <div style={{ fontSize: 12, color: "#c2410c" }}>• Controls: <strong>{deleteDependencies.controls}</strong></div>
-                    <div style={{ fontSize: 12, color: "#c2410c" }}>• Incidents: <strong>{deleteDependencies.incidents}</strong></div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>• Risks: <strong style={{ color: "var(--text-primary)" }}>{deleteDependencies.risks}</strong></div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>• KRIs: <strong style={{ color: "var(--text-primary)" }}>{deleteDependencies.kris}</strong></div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>• Controls: <strong style={{ color: "var(--text-primary)" }}>{deleteDependencies.controls}</strong></div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>• Incidents: <strong style={{ color: "var(--text-primary)" }}>{deleteDependencies.incidents}</strong></div>
                   </div>
-                  <p style={{ fontSize: 11, color: "#9a3412", marginTop: 12, fontWeight: 600 }}>Deleting this profile will also hide these linked records.</p>
+                  <p style={{ fontSize: 11, color: "var(--status-high)", opacity: 0.8, marginTop: 12, fontWeight: 600 }}>Deleting this profile will also hide these linked records.</p>
                 </div>
               )}
 
-              <div style={{ background: "#f8fafc", borderRadius: 12, padding: "12px 16px", border: "1px solid #e2e8f0", marginBottom: 28 }}>
-                <p style={{ fontSize: 12, fontWeight: 700, color: "#ef4444", margin: 0, textTransform: "uppercase", letterSpacing: "0.05em" }}>Warning: This action cannot be undone.</p>
+              <div style={{ background: "rgba(239, 68, 68, 0.05)", borderRadius: 12, padding: "12px 16px", border: "1px solid rgba(239, 68, 68, 0.1)", marginBottom: 28 }}>
+                <p style={{ fontSize: 12, fontWeight: 700, color: "var(--status-critical)", margin: 0, textTransform: "uppercase", letterSpacing: "0.05em" }}>Warning: This action cannot be undone.</p>
               </div>
 
               <div style={{ display: "flex", gap: 12 }}>
                 <button
                   disabled={isDeleting}
                   onClick={() => setShowDeleteModal(false)}
-                  style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1.5px solid #e2e8f0", background: "#fff", color: "#475569", fontSize: 14, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer" }}
+                  style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1.5px solid var(--border-primary)", background: "var(--bg-app)", color: "var(--text-secondary)", fontSize: 14, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer" }}
                 >
                   Cancel
                 </button>
                 <button
                   disabled={isDeleting}
                   onClick={handleSoftDelete}
-                  style={{ flex: 1, padding: "12px", borderRadius: 12, border: "none", background: isDeleting ? "#94a3b8" : "#ef4444", color: "#fff", fontSize: 14, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
+                  style={{ flex: 1, padding: "12px", borderRadius: 12, border: "none", background: isDeleting ? "var(--text-muted)" : "var(--status-critical)", color: "#fff", fontSize: 14, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
                 >
                   {isDeleting ? "Deleting..." : "Confirm Delete"}
                 </button>

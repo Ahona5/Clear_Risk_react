@@ -1,29 +1,17 @@
 :root {
-  --primary-bg: #f8fafc;
-  --card-bg: #ffffff;
-  --text-main: #111827;
-  --text-muted: #4b5563;
-  --text-light: #6b7280;
-  --border-color: #e5e7eb;
-  --border-light: #f3f4f6;
-  --accent-blue: #3b82f6;
-  --bg-gradient-start: #7c3aed;
-  --bg-gradient-mid: #3b82f6;
-  --bg-gradient-end: #0ea5e9;
-  
-  --badge-success-bg: #dcfce7;
-  --badge-success-text: #16a34a;
-  --badge-failed-bg: #fee2e2;
-  --badge-failed-text: #dc2626;
-  --badge-pending-bg: #fef3c7;
-  --badge-pending-text: #d97706;
+  --badge-success-bg: rgba(16, 185, 129, 0.1);
+  --badge-success-text: #10b981;
+  --badge-failed-bg: rgba(239, 68, 68, 0.1);
+  --badge-failed-text: #ef4444;
+  --badge-pending-bg: rgba(245, 158, 11, 0.1);
+  --badge-pending-text: #f59e0b;
 }
 
 /* Page Layout */
 .activity-log-page {
   animation: fadeIn 0.4s ease-out;
   padding: 32px;
-  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-mid), var(--bg-gradient-end));
+  background: var(--bg-app);
   min-height: calc(100vh - 60px);
   display: flex;
   justify-content: center;
@@ -37,12 +25,13 @@
 
 /* Card Container */
 .audit-trail-card {
-  background: var(--card-bg);
+  background: var(--bg-card);
   border-radius: 12px;
   width: 100%;
   max-width: 1200px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   padding: 24px;
+  border: 1px solid var(--border-primary);
 }
 
 /* Header Section */
@@ -75,12 +64,12 @@
 .user-email {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .user-role {
   font-size: 12px;
-  color: var(--text-light);
+  color: var(--text-muted);
 }
 
 .user-avatar-circle {
@@ -103,7 +92,7 @@
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .audit-filters-left {
@@ -117,10 +106,10 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
-  background: #f9fafb;
-  color: var(--text-muted);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -166,12 +155,12 @@
   font-weight: 600;
   color: var(--text-muted);
   padding: 12px 16px;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .audit-table td {
   padding: 16px;
-  border-bottom: 1px solid #f9fafb;
+  border-bottom: 1px solid var(--border-subtle);
   vertical-align: middle;
 }
 
@@ -180,7 +169,7 @@
 }
 
 .audit-table tr:hover td {
-  background-color: #f9fafb;
+  background-color: var(--bg-surface);
 }
 
 /* Table Cells */
@@ -196,15 +185,15 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  background-color: var(--border-light);
+  background-color: var(--bg-surface);
   border-radius: 6px;
-  color: var(--text-light);
+  color: var(--text-muted);
 }
 
 .action-name {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .td-actor {
@@ -228,7 +217,7 @@
 .actor-name {
   font-size: 14px;
   font-weight: 500;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 /* Badges */
@@ -296,10 +285,10 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-lg);
   min-width: 160px;
   z-index: 50;
   padding: 6px 0;
@@ -310,13 +299,13 @@
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-main);
+  color: var(--text-primary);
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .custom-dropdown-item:hover {
-  background-color: #f3f4f6;
+  background-color: var(--bg-surface);
 }
 
 /* Responsive adjustments */

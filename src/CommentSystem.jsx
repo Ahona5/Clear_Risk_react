@@ -12,19 +12,20 @@ const styles = {
     gap: "32px",
   },
   inputCard: {
-    background: "#fff",
+    background: "var(--bg-card)",
     borderRadius: "16px",
-    border: "1px solid #e2e8f0",
+    border: "1px solid var(--border-primary)",
     padding: "24px",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+    boxShadow: "var(--shadow-sm)",
   },
   inputArea: {
     width: "100%",
     minHeight: "100px",
     padding: "16px",
     borderRadius: "12px",
-    border: "1px solid #e2e8f0",
-    background: "#f8fafc",
+    border: "1px solid var(--border-primary)",
+    background: "var(--bg-app)",
+    color: "var(--text-primary)",
     fontSize: "14px",
     outline: "none",
     resize: "none",
@@ -40,7 +41,7 @@ const styles = {
   label: {
     fontSize: "12px",
     fontWeight: 700,
-    color: "#64748b",
+    color: "var(--text-muted)",
     textTransform: "uppercase",
     marginBottom: "8px",
     display: "block",
@@ -49,10 +50,11 @@ const styles = {
     width: "100%",
     padding: "8px 12px",
     borderRadius: "8px",
-    border: "1px solid #e2e8f0",
+    border: "1px solid var(--border-primary)",
     fontSize: "13px",
     outline: "none",
-    background: "#fff",
+    background: "var(--bg-app)",
+    color: "var(--text-primary)",
     cursor: "pointer",
   },
   actionRow: {
@@ -60,12 +62,12 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     paddingTop: "16px",
-    borderTop: "1px solid #f1f5f9",
+    borderTop: "1px solid var(--border-primary)",
   },
   commentCard: {
-    background: "#fff",
+    background: "var(--bg-card)",
     borderRadius: "16px",
-    border: "1px solid #f1f5f9",
+    border: "1px solid var(--border-primary)",
     padding: "20px",
     position: "relative",
     transition: "transform 0.2s, box-shadow 0.2s",
@@ -87,7 +89,7 @@ const styles = {
   },
   commentText: {
     fontSize: "14px",
-    color: "#334155",
+    color: "var(--text-secondary)",
     lineHeight: 1.6,
     margin: "0 0 16px 0",
   },
@@ -95,7 +97,7 @@ const styles = {
     display: "flex",
     gap: "16px",
     paddingTop: "12px",
-    borderTop: "1px solid #f8fafc",
+    borderTop: "1px solid var(--border-primary)",
   },
   actionBtn: {
     display: "flex",
@@ -103,7 +105,7 @@ const styles = {
     gap: "6px",
     fontSize: "12px",
     fontWeight: 600,
-    color: "#64748b",
+    color: "var(--text-muted)",
     background: "none",
     border: "none",
     cursor: "pointer",
@@ -113,7 +115,7 @@ const styles = {
   },
   replySection: {
     marginLeft: "48px",
-    borderLeft: "2px solid #f1f5f9",
+    borderLeft: "2px solid var(--border-primary)",
     paddingLeft: "20px",
     marginTop: "16px",
     display: "flex",
@@ -177,30 +179,30 @@ export default function CommentSystem({ riskId, currentUser, onConvertToAction }
 
   const getTypeStyle = (type) => {
     switch (type) {
-      case "Issue": return { bg: "#fee2e2", color: "#b91c1c" };
-      case "Decision": return { bg: "#dcfce7", color: "#166534" };
-      case "Escalation": return { bg: "#ffedd5", color: "#9a3412" };
-      case "Observation": return { bg: "#e0f2fe", color: "#075985" };
-      default: return { bg: "#f1f5f9", color: "#475569" };
+      case "Issue": return { bg: "rgba(239, 68, 68, 0.1)", color: "var(--status-critical)" };
+      case "Decision": return { bg: "rgba(16, 185, 129, 0.1)", color: "var(--status-low)" };
+      case "Escalation": return { bg: "rgba(245, 158, 11, 0.1)", color: "var(--status-high)" };
+      case "Observation": return { bg: "rgba(59, 130, 246, 0.1)", color: "var(--accent-primary)" };
+      default: return { bg: "var(--bg-app)", color: "var(--text-muted)" };
     }
   };
 
   const getImpactColor = (level) => {
-    if (level === "High") return "#ef4444";
-    if (level === "Medium") return "#f59e0b";
-    return "#10b981";
+    if (level === "High") return "var(--status-critical)";
+    if (level === "Medium") return "var(--status-high)";
+    return "var(--status-low)";
   };
 
   const CommentCard = ({ comment, isReply = false }) => (
     <div style={isReply ? {} : { marginBottom: "24px" }}>
       <div style={styles.commentCard}>
         <div style={styles.authorInfo}>
-          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#3b82f6", border: "1px solid #e2e8f0" }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "var(--bg-app)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent-primary)", border: "1px solid var(--border-primary)" }}>
             <User size={20} />
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <span style={{ fontSize: "14px", fontWeight: 700, color: "#1e293b" }}>{comment.author}</span>
+              <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-primary)" }}>{comment.author}</span>
               <span style={styles.badge(getTypeStyle(comment.type).bg, getTypeStyle(comment.type).color)}>{comment.type}</span>
               {comment.impact !== "Low" && (
                 <span style={{ fontSize: "11px", fontWeight: 700, color: getImpactColor(comment.impact), display: "flex", alignItems: "center", gap: "4px" }}>
@@ -208,13 +210,13 @@ export default function CommentSystem({ riskId, currentUser, onConvertToAction }
                 </span>
               )}
             </div>
-            <div style={{ fontSize: "11px", color: "#94a3b8", display: "flex", alignItems: "center", gap: "4px", marginTop: "2px" }}>
+            <div style={{ fontSize: "11px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "4px", marginTop: "2px" }}>
               <Clock size={12} /> {new Date(comment.timestamp).toLocaleString()}
               {comment.isEdited && <span style={{ fontStyle: "italic" }}>• Edited</span>}
-              {comment.event !== "None" && <span style={{ color: "#3b82f6", fontWeight: 600 }}>• Linked Event: {comment.event}</span>}
+              {comment.event !== "None" && <span style={{ color: "var(--accent-primary)", fontWeight: 600 }}>• Linked Event: {comment.event}</span>}
             </div>
           </div>
-          <button style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer" }}><MoreVertical size={18} /></button>
+          <button style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}><MoreVertical size={18} /></button>
         </div>
 
         <p style={styles.commentText}>{comment.text}</p>
@@ -308,7 +310,7 @@ export default function CommentSystem({ riskId, currentUser, onConvertToAction }
             <button style={styles.actionBtn}><LinkIcon size={18} /> Add Reference</button>
           </div>
           <button 
-            style={{ ...styles.primaryBtn, display: "flex", alignItems: "center", gap: "10px" }}
+            style={{ padding: "10px 24px", borderRadius: "10px", border: "none", background: "var(--accent-primary)", color: "#fff", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
             onClick={() => handleSubmit()}
           >
             <Send size={16} /> Post Audit Comment
@@ -319,7 +321,7 @@ export default function CommentSystem({ riskId, currentUser, onConvertToAction }
       {/* FEED SECTION */}
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-          <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#1e293b", margin: 0 }}>Audit Trail ({comments.length})</h3>
+          <h3 style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>Audit Trail ({comments.length})</h3>
           <div style={{ display: "flex", gap: "12px" }}>
              <button style={styles.actionBtn}><Tag size={16} /> Filter by Type</button>
              <button style={styles.actionBtn}><Edit2 size={16} /> Edit History</button>
@@ -327,10 +329,10 @@ export default function CommentSystem({ riskId, currentUser, onConvertToAction }
         </div>
 
         {comments.length === 0 ? (
-          <div style={{ padding: "60px 40px", textAlign: "center", border: "2px dashed #e2e8f0", borderRadius: "16px", background: "#f8fafc" }}>
-            <MessageSquare size={48} color="#cbd5e1" style={{ marginBottom: "16px", opacity: 0.5 }} />
-            <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#64748b", margin: "0 0 8px" }}>No activity recorded yet</h3>
-            <p style={{ fontSize: "14px", color: "#94a3b8", margin: 0 }}>Start the audit trail by posting your first observation or decision update.</p>
+          <div style={{ padding: "60px 40px", textAlign: "center", border: "2px dashed var(--border-primary)", borderRadius: "16px", background: "var(--bg-app)" }}>
+            <MessageSquare size={48} color="var(--text-muted)" style={{ marginBottom: "16px", opacity: 0.5 }} />
+            <h3 style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-secondary)", margin: "0 0 8px" }}>No activity recorded yet</h3>
+            <p style={{ fontSize: "14px", color: "var(--text-muted)", margin: 0 }}>Start the audit trail by posting your first observation or decision update.</p>
           </div>
         ) : (
           comments.map(comment => (
@@ -340,8 +342,8 @@ export default function CommentSystem({ riskId, currentUser, onConvertToAction }
       </div>
 
       <style>{`
-        textarea:focus { border-color: #3b82f6 !important; background: #fff !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
-        select:focus { border-color: #3b82f6 !important; }
+        textarea:focus { border-color: var(--accent-primary) !important; background: var(--bg-card) !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        select:focus { border-color: var(--accent-primary) !important; }
       `}</style>
     </div>
   );

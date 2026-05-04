@@ -9,42 +9,43 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: "rgba(15, 23, 42, 0.6)",
+    background: "rgba(0, 0, 0, 0.5)",
     backdropFilter: "blur(8px)",
     padding: "40px",
     animation: "fadeIn 0.2s ease-out",
   },
   modalContent: {
-    background: "#fff",
+    background: "var(--bg-modal)",
     borderRadius: "12px",
     width: "100%",
     maxWidth: "1000px",
     maxHeight: "90vh",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+    boxShadow: "var(--shadow-lg)",
     overflowY: "auto",
     display: "flex",
     flexDirection: "column",
     position: "relative",
+    border: "1px solid var(--border-primary)",
   },
   header: {
     padding: "24px 32px",
-    borderBottom: "1px solid #f1f5f9",
+    borderBottom: "1px solid var(--border-primary)",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     position: "sticky",
     top: 0,
-    background: "#fff",
+    background: "var(--bg-modal)",
     zIndex: 10,
   },
   section: {
     padding: "32px",
-    borderBottom: "1px solid #f1f5f9",
+    borderBottom: "1px solid var(--border-primary)",
   },
   sectionTitle: {
     fontSize: "16px",
     fontWeight: 600,
-    color: "#0f172a",
+    color: "var(--text-primary)",
     marginBottom: "4px",
     display: "flex",
     alignItems: "center",
@@ -52,7 +53,7 @@ const styles = {
   },
   sectionDesc: {
     fontSize: "13px",
-    color: "#64748b",
+    color: "var(--text-muted)",
     marginBottom: "24px",
   },
   fieldGroup: {
@@ -63,7 +64,7 @@ const styles = {
   label: {
     fontSize: "13px",
     fontWeight: 500,
-    color: "#334155",
+    color: "var(--text-secondary)",
     marginBottom: "8px",
     display: "flex",
     alignItems: "center",
@@ -73,25 +74,29 @@ const styles = {
     width: "100%",
     padding: "10px 14px",
     borderRadius: "8px",
-    border: "1px solid #e2e8f0",
+    border: "1px solid var(--border-primary)",
     fontSize: "14px",
     outline: "none",
     transition: "all 0.2s",
-    background: "#fcfdfe",
+    background: "var(--bg-app)",
+    color: "var(--text-primary)",
+    fontFamily: "inherit",
   },
   select: {
     width: "100%",
     padding: "10px 14px",
     borderRadius: "8px",
-    border: "1px solid #e2e8f0",
+    border: "1px solid var(--border-primary)",
     fontSize: "14px",
     outline: "none",
-    background: "#fcfdfe",
+    background: "var(--bg-app)",
+    color: "var(--text-primary)",
     cursor: "pointer",
+    fontFamily: "inherit",
   },
   helper: {
     fontSize: "12px",
-    color: "#94a3b8",
+    color: "var(--text-muted)",
     marginTop: "6px",
   },
   thresholdInput: {
@@ -101,14 +106,15 @@ const styles = {
     padding: "12px",
     borderRadius: "8px",
     marginBottom: "12px",
+    border: "1px solid var(--border-primary)",
   },
   footer: {
     padding: "24px 32px",
-    borderTop: "1px solid #f1f5f9",
+    borderTop: "1px solid var(--border-primary)",
     display: "flex",
     justifyContent: "flex-end",
     gap: "16px",
-    background: "#fff",
+    background: "var(--bg-modal)",
     position: "sticky",
     bottom: 0,
   },
@@ -116,7 +122,7 @@ const styles = {
     padding: "12px 32px",
     borderRadius: "8px",
     border: "none",
-    background: "#2563eb",
+    background: "var(--accent-primary)",
     color: "#fff",
     fontSize: "14px",
     fontWeight: 600,
@@ -126,9 +132,9 @@ const styles = {
   secondaryBtn: {
     padding: "12px 32px",
     borderRadius: "8px",
-    border: "1px solid #e2e8f0",
-    background: "#fff",
-    color: "#475569",
+    border: "1px solid var(--border-primary)",
+    background: "var(--bg-app)",
+    color: "var(--text-secondary)",
     fontSize: "14px",
     fontWeight: 600,
     cursor: "pointer",
@@ -329,13 +335,13 @@ export default function KRIModal({ isOpen, onClose, onSave, initialData, risks =
           <p style={styles.sectionDesc}>Define the numeric ranges that trigger status changes and alerts. {errors.thresholds && <span style={{ color: "#ef4444", fontWeight: 600 }}>{errors.thresholds}</span>}</p>
           
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px" }}>
-            <div style={{ ...styles.thresholdInput, background: "#f0fdf4", border: "1px solid #bbf7d0" }}>
-              <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#22c55e" }} />
+            <div style={{ ...styles.thresholdInput, background: "rgba(34, 197, 94, 0.1)", borderColor: "rgba(34, 197, 94, 0.2)" }}>
+              <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "var(--status-low)" }} />
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: "11px", fontWeight: 700, color: "#166534", marginBottom: "4px" }}>GREEN (STABLE)</div>
+                <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--status-low)", marginBottom: "4px" }}>GREEN (STABLE)</div>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <input style={{ ...styles.input, padding: "6px" }} type="number" value={formData.thresholds.green.min} readOnly />
-                  <span>to</span>
+                  <span style={{ color: "var(--text-muted)" }}>to</span>
                   <input 
                     style={{ ...styles.input, padding: "6px" }} 
                     type="number" 
@@ -345,13 +351,13 @@ export default function KRIModal({ isOpen, onClose, onSave, initialData, risks =
                 </div>
               </div>
             </div>
-            <div style={{ ...styles.thresholdInput, background: "#fffbeb", border: "1px solid #fef3c7" }}>
-              <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#eab308" }} />
+            <div style={{ ...styles.thresholdInput, background: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.2)" }}>
+              <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "var(--status-medium)" }} />
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: "11px", fontWeight: 700, color: "#854d0e", marginBottom: "4px" }}>AMBER (CAUTION)</div>
+                <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--status-medium)", marginBottom: "4px" }}>AMBER (CAUTION)</div>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <input style={{ ...styles.input, padding: "6px" }} type="number" value={formData.thresholds.amber.min} readOnly />
-                  <span>to</span>
+                  <span style={{ color: "var(--text-muted)" }}>to</span>
                   <input 
                     style={{ ...styles.input, padding: "6px" }} 
                     type="number" 
@@ -361,13 +367,13 @@ export default function KRIModal({ isOpen, onClose, onSave, initialData, risks =
                 </div>
               </div>
             </div>
-            <div style={{ ...styles.thresholdInput, background: "#fef2f2", border: "1px solid #fee2e2" }}>
-              <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#ef4444" }} />
+            <div style={{ ...styles.thresholdInput, background: "rgba(239, 68, 68, 0.1)", borderColor: "rgba(239, 68, 68, 0.2)" }}>
+              <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "var(--status-critical)" }} />
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: "11px", fontWeight: 700, color: "#991b1b", marginBottom: "4px" }}>RED (CRITICAL)</div>
+                <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--status-critical)", marginBottom: "4px" }}>RED (CRITICAL)</div>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <input style={{ ...styles.input, padding: "6px" }} type="number" value={formData.thresholds.red.min} readOnly />
-                  <span>to</span>
+                  <span style={{ color: "var(--text-muted)" }}>to</span>
                   <input 
                     style={{ ...styles.input, padding: "6px" }} 
                     type="number" 
@@ -488,7 +494,7 @@ export default function KRIModal({ isOpen, onClose, onSave, initialData, risks =
 
         <style>{`
           @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-          input:focus, select:focus, textarea:focus { border-color: #2563eb !important; background: #fff !important; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+          input:focus, select:focus, textarea:focus { border-color: var(--accent-primary) !important; background: var(--bg-surface) !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
         `}</style>
       </div>
     </div>

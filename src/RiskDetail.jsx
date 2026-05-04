@@ -41,19 +41,54 @@ ChartJS.register(
 
 /* ─── STYLES ─── */
 const styles = {
-  card: { background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid #e2e8f0", boxShadow: "0 1px 4px rgba(0,0,0,0.05)", position: "relative" },
-  badge: (bg, color) => ({ background: bg, color, padding: "4px 12px", borderRadius: "999px", fontSize: "12px", fontWeight: 700, textTransform: "uppercase" }),
-  input: { width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#f8fafc", fontSize: "14px", outline: "none", transition: "all 0.2s" },
-  label: { fontSize: "12px", fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" },
+  card: { 
+    background: "var(--bg-card)", 
+    borderRadius: "16px", 
+    padding: "24px", 
+    border: "1px solid var(--border-primary)", 
+    boxShadow: "var(--shadow-md)", 
+    position: "relative" 
+  },
+  badge: (bg, color) => ({ 
+    background: bg, 
+    color, 
+    padding: "4px 12px", 
+    borderRadius: "999px", 
+    fontSize: "12px", 
+    fontWeight: 700, 
+    textTransform: "uppercase" 
+  }),
+  input: { 
+    width: "100%", 
+    padding: "12px 16px", 
+    borderRadius: "12px", 
+    border: "1px solid var(--border-primary)", 
+    background: "var(--bg-app)", 
+    color: "var(--text-primary)",
+    fontSize: "14px", 
+    outline: "none", 
+    transition: "all 0.2s" 
+  },
+  label: { 
+    fontSize: "12px", 
+    fontWeight: 700, 
+    color: "var(--text-muted)", 
+    textTransform: "uppercase", 
+    letterSpacing: "0.05em", 
+    marginBottom: "8px", 
+    display: "flex", 
+    alignItems: "center", 
+    gap: "8px" 
+  },
   dropdown: {
     position: "absolute",
     top: "100%",
     right: "0",
     minWidth: "160px",
-    background: "#fff",
+    background: "var(--bg-card)",
     borderRadius: "10px",
-    boxShadow: "0 10px 25px -5px rgba(0,0,0,0.15)",
-    border: "1px solid #e2e8f0",
+    boxShadow: "var(--shadow-lg)",
+    border: "1px solid var(--border-primary)",
     zIndex: 99999,
     padding: "6px",
     marginTop: "8px",
@@ -63,6 +98,7 @@ const styles = {
     padding: "10px 12px",
     fontSize: "14px",
     fontWeight: 600,
+    color: "var(--text-primary)",
     display: "flex",
     alignItems: "center",
     gap: "10px",
@@ -77,10 +113,10 @@ const styles = {
 
 /* ─── MATRIX LOGIC ─── */
 const getMatrixColor = (score) => {
-  if (score >= 12) return "#fca5a5"; // Critical (Pastel Rose)
-  if (score >= 8) return "#fdba74";  // High (Pastel Orange)
-  if (score >= 4) return "#fef08a";  // Medium (Pastel Sun)
-  return "#86efac"; // Low (Pastel Mint)
+  if (score >= 12) return "var(--status-critical)";
+  if (score >= 8) return "var(--status-high)";
+  if (score >= 4) return "var(--status-medium)";
+  return "var(--status-low)";
 };
 
 const matrixValues = [
@@ -319,7 +355,7 @@ export default function RiskDetail() {
     return (
       <Layout>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "80vh" }}>
-          <p style={{ color: "#64748b", fontSize: "16px", fontWeight: 500 }}>Loading Risk Details...</p>
+          <p style={{ color: "var(--text-muted)", fontSize: "16px", fontWeight: 500 }}>Loading Risk Details...</p>
         </div>
       </Layout>
     );
@@ -329,9 +365,9 @@ export default function RiskDetail() {
     return (
       <Layout>
         <div style={{ padding: "80px 20px", textAlign: "center" }}>
-          <h2 style={{ color: "#ef4444", marginBottom: "12px" }}>Risk Not Found</h2>
-          <p style={{ color: "#64748b", marginBottom: "24px" }}>The risk you are looking for does not exist or has been removed.</p>
-          <button onClick={() => navigate("/risk-profile")} style={{ padding: "12px 24px", borderRadius: "10px", border: "none", background: "#3b82f6", color: "#fff", fontWeight: 600, cursor: "pointer" }}>
+          <h2 style={{ color: "var(--status-critical)", marginBottom: "12px" }}>Risk Not Found</h2>
+          <p style={{ color: "var(--text-muted)", marginBottom: "24px" }}>The risk you are looking for does not exist or has been removed.</p>
+          <button onClick={() => navigate("/risk-profile")} style={{ padding: "12px 24px", borderRadius: "10px", border: "none", background: "var(--accent-primary)", color: "#fff", fontWeight: 600, cursor: "pointer" }}>
             Return to Risk Register
           </button>
         </div>
@@ -343,9 +379,9 @@ export default function RiskDetail() {
     labels: ["Critical", "High", "Medium", "Low"],
     datasets: [{
       data: [5, 10, 15, 20],
-      backgroundColor: ["#fca5a5", "#fdba74", "#fef08a", "#86efac"], // Applying pastel palette
+      backgroundColor: ["#f87171", "#fb923c", "#fbbf24", "#34d399"], // Using dark-mode toned down palette
       borderWidth: 2,
-      borderColor: '#ffffff'
+      borderColor: 'transparent'
     }]
   };
 
@@ -357,58 +393,58 @@ export default function RiskDetail() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "32px", gap: "20px", flexWrap: "wrap" }}>
           <div style={{ flex: 1, minWidth: "300px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px", flexWrap: "wrap" }}>
-              <AlertTriangle size={24} color="#ef4444" style={{ flexShrink: 0 }} />
-              <h1 style={{ fontSize: "28px", fontWeight: 800, color: "#0f172a", margin: 0 }}>{risk.title}</h1>
+              <AlertTriangle size={24} color="var(--status-critical)" style={{ flexShrink: 0 }} />
+              <h1 style={{ fontSize: "28px", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>{risk.title}</h1>
               <span style={styles.badge(
-                risk.level === "Critical" ? "#fca5a540" : risk.level === "High" ? "#fdba7440" : risk.level === "Medium" ? "#fef08a40" : "#86efac40",
-                risk.level === "Critical" ? "#991b1b" : risk.level === "High" ? "#9a3412" : risk.level === "Medium" ? "#854d0e" : "#166534"
+                "var(--accent-soft)",
+                risk.level === "Critical" ? "var(--status-critical)" : risk.level === "High" ? "var(--status-high)" : risk.level === "Medium" ? "var(--status-medium)" : "var(--status-low)"
               )}>
                 {risk.level || "MEDIUM"}
               </span>
               <button 
                 onClick={() => setShowPinModal(true)}
-                style={{ background: "none", border: "none", padding: "8px", borderRadius: "50%", background: isPinned ? "#eff6ff" : "#f8fafc", color: isPinned ? "#3b82f6" : "#cbd5e1", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }}
+                style={{ background: "none", border: "none", padding: "8px", borderRadius: "50%", background: isPinned ? "var(--accent-soft)" : "var(--bg-app)", color: isPinned ? "var(--accent-primary)" : "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }}
                 title="Pin to Dashboard"
               >
-                <Pin size={20} fill={isPinned ? "#3b82f6" : "none"} />
+                <Pin size={20} fill={isPinned ? "var(--accent-primary)" : "none"} />
               </button>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontSize: "13px", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Risk Status:</span>
+                <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase" }}>Risk Status:</span>
                 <select
                   value={form.status}
                   onChange={(e) => setForm({ ...form, status: e.target.value })}
-                  style={{ border: "none", background: "#f1f5f9", padding: "4px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "#1e293b", cursor: "pointer", outline: "none" }}
+                  style={{ border: "none", background: "var(--bg-surface)", padding: "4px 12px", borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", cursor: "pointer", outline: "none" }}
                 >
                   <option>Open</option>
                   <option>Mitigated</option>
                   <option>Closed</option>
                 </select>
               </div>
-              <span style={{ fontSize: "13px", color: "#94a3b8", display: "flex", alignItems: "center", gap: "6px" }}>
+              <span style={{ fontSize: "13px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "6px" }}>
                 <Clock size={14} /> Last updated: {risk.date || "Today"}
               </span>
             </div>
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
-            <button style={{ padding: "10px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", color: "#64748b" }}><Pin size={18} /></button>
+            <button style={{ padding: "10px", borderRadius: "10px", border: "1px solid var(--border-primary)", background: "var(--bg-card)", cursor: "pointer", color: "var(--text-muted)" }}><Pin size={18} /></button>
             <button
               onClick={() => setEscalateModalOpen(true)}
-              style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid #fee2e2", background: "#fff", color: "#ef4444", fontSize: "14px", fontWeight: 700, display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
+              style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid rgba(239, 68, 68, 0.2)", background: "var(--bg-card)", color: "var(--status-critical)", fontSize: "14px", fontWeight: 700, display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
             >
               <AlertTriangle size={16} /> Escalate
             </button>
 
-            <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "6px 16px", display: "flex", alignItems: "center", gap: "12px" }}>
-              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#3b82f6", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "12px" }}>
+            <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-primary)", borderRadius: "12px", padding: "6px 16px", display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "var(--accent-primary)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "12px" }}>
                 {risk.owner ? risk.owner.charAt(0).toUpperCase() : "A"}
               </div>
               <div>
-                <p style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", margin: 0, textTransform: "uppercase", letterSpacing: "0.05em" }}>Primary Owner</p>
-                <p style={{ fontSize: "13px", fontWeight: 600, color: "#1e293b", margin: 0 }}>{risk.owner || "admin"}</p>
+                <p style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-muted)", margin: 0, textTransform: "uppercase", letterSpacing: "0.05em" }}>Primary Owner</p>
+                <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>{risk.owner || "admin"}</p>
               </div>
             </div>
           </div>
@@ -426,15 +462,15 @@ export default function RiskDetail() {
               display: "flex", 
               alignItems: "center", 
               gap: "20px",
-              background: m.cardBg,
-              border: `1px solid ${m.color}20`
+              background: "var(--bg-card)",
+              border: `1px solid var(--border-primary)`
             }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "#fff", color: m.color, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "var(--bg-app)", color: m.color, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "var(--shadow-sm)" }}>
                 <m.icon size={24} />
               </div>
               <div>
-                <p style={{ fontSize: "13px", fontWeight: 500, color: "#64748b", margin: "0 0 4px" }}>{m.label}</p>
-                <p style={{ fontSize: "28px", fontWeight: 500, color: "#0f172a", margin: 0 }}>{m.value}</p>
+                <p style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-muted)", margin: "0 0 4px" }}>{m.label}</p>
+                <p style={{ fontSize: "28px", fontWeight: 500, color: "var(--text-primary)", margin: 0 }}>{m.value}</p>
               </div>
             </div>
           ))}
@@ -443,8 +479,8 @@ export default function RiskDetail() {
         {/* SUMMARY */}
         <div style={{ ...styles.card, marginBottom: "32px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-            <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#1e293b", margin: 0, display: "flex", alignItems: "center", gap: "10px" }}>
-              <FileText size={18} color="#3b82f6" /> Executive Summary
+            <h3 style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-primary)", margin: 0, display: "flex", alignItems: "center", gap: "10px" }}>
+              <FileText size={18} color="var(--accent-primary)" /> Executive Summary
             </h3>
             {!isEditingSummary && (
               <button
@@ -452,7 +488,7 @@ export default function RiskDetail() {
                   setTempSummary(form.summary);
                   setIsEditingSummary(true);
                 }}
-                style={{ padding: "6px 14px", borderRadius: "8px", border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: "12px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}
+                style={{ padding: "6px 14px", borderRadius: "8px", border: "1px solid var(--border-primary)", background: "var(--bg-card)", color: "var(--text-muted)", fontSize: "12px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}
               >
                 <Edit3 size={14} /> Edit Summary
               </button>
@@ -473,22 +509,22 @@ export default function RiskDetail() {
                     setForm({ ...form, summary: tempSummary });
                     setIsEditingSummary(false);
                   }}
-                  style={{ padding: "8px 20px", borderRadius: "8px", border: "none", background: "#3b82f6", color: "#fff", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}
+                  style={{ padding: "8px 20px", borderRadius: "8px", border: "none", background: "var(--accent-primary)", color: "#fff", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}
                 >
                   Save
                 </button>
                 <button
                   onClick={() => setIsEditingSummary(false)}
-                  style={{ padding: "8px 20px", borderRadius: "8px", border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}
+                  style={{ padding: "8px 20px", borderRadius: "8px", border: "1px solid var(--border-primary)", background: "var(--bg-card)", color: "var(--text-muted)", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}
                 >
                   Cancel
                 </button>
               </div>
             </div>
           ) : (
-            <div style={{ minHeight: "100px", background: "#f8fafc", borderRadius: "12px", border: "1px dashed #cbd5e1", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#64748b", fontSize: "14px", padding: "20px" }}>
+            <div style={{ minHeight: "100px", background: "var(--bg-app)", borderRadius: "12px", border: "1px dashed var(--border-primary)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontSize: "14px", padding: "20px" }}>
               {form.summary ? (
-                <p style={{ margin: 0, width: "100%", color: "#334155", lineHeight: 1.6 }}>{form.summary}</p>
+                <p style={{ margin: 0, width: "100%", color: "var(--text-primary)", lineHeight: 1.6 }}>{form.summary}</p>
               ) : (
                 <>
                   <FileText size={24} style={{ marginBottom: "8px", opacity: 0.5 }} />
@@ -502,8 +538,8 @@ export default function RiskDetail() {
         {/* MATRIX */}
         <div style={{ ...styles.card, marginBottom: "32px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
-            <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#1e293b", margin: 0, display: "flex", alignItems: "center", gap: "10px" }}>
-              <Shield size={18} color="#3b82f6" /> Risk Assessment Matrix
+            <h3 style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-primary)", margin: 0, display: "flex", alignItems: "center", gap: "10px" }}>
+              <Shield size={18} color="var(--accent-primary)" /> Risk Assessment Matrix
             </h3>
           </div>
 
@@ -511,12 +547,12 @@ export default function RiskDetail() {
             {/* Legend */}
             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               {[
-                { label: "Low", color: "#86efac" }, { label: "Medium", color: "#fef08a" },
-                { label: "High", color: "#fdba74" }, { label: "Critical", color: "#fca5a5" }
+                { label: "Low", color: "var(--status-low)" }, { label: "Medium", color: "var(--status-medium)" },
+                { label: "High", color: "var(--status-high)" }, { label: "Critical", color: "var(--status-critical)" }
               ].map(l => (
                 <div key={l.label} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                   <div style={{ width: "12px", height: "12px", borderRadius: "3px", background: l.color }} />
-                  <span style={{ fontSize: "14px", fontWeight: 500, color: "#475569" }}>{l.label}</span>
+                  <span style={{ fontSize: "14px", fontWeight: 500, color: "var(--text-secondary)" }}>{l.label}</span>
                 </div>
               ))}
             </div>
@@ -524,7 +560,7 @@ export default function RiskDetail() {
             {/* Matrix with Labels */}
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               {/* Y-Axis Label: Impact */}
-              <div style={{ writingMode: "vertical-rl", transform: "rotate(180deg)", fontSize: "12px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+              <div style={{ writingMode: "vertical-rl", transform: "rotate(180deg)", fontSize: "12px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
                 Impact (1-5)
               </div>
 
@@ -538,11 +574,11 @@ export default function RiskDetail() {
                       <div key={`${rIdx}-${cIdx}`}
                         style={{
                           width: "42px", height: "42px", borderRadius: "6px",
-                          background: getMatrixColor(val), color: "#1e293b",
+                          background: getMatrixColor(val), color: "#fff",
                           display: "flex", alignItems: "center", justifyContent: "center",
-                          fontSize: "13px", fontWeight: 500,
-                          border: isSelected ? "2px solid #0f172a" : "none",
-                          boxShadow: isSelected ? "0 4px 12px rgba(0,0,0,0.1)" : "none",
+                          fontSize: "13px", fontWeight: 700,
+                          border: isSelected ? "2px solid var(--text-primary)" : "none",
+                          boxShadow: isSelected ? "var(--shadow-md)" : "none",
                           transform: isSelected ? "scale(1.15)" : "none",
                           position: "relative"
                         }}
@@ -553,7 +589,7 @@ export default function RiskDetail() {
                   }))}
                 </div>
                 {/* X-Axis Label: Likelihood */}
-                <div style={{ textAlign: "center", fontSize: "12px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "4px" }}>
+                <div style={{ textAlign: "center", fontSize: "12px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "4px" }}>
                   Likelihood (1-5)
                 </div>
               </div>
@@ -562,13 +598,13 @@ export default function RiskDetail() {
         </div>
 
         {/* TABS */}
-        <div style={{ marginBottom: "24px", borderBottom: "1px solid #e2e8f0", display: "flex", gap: "24px", overflowX: "auto" }}>
+        <div style={{ marginBottom: "24px", borderBottom: "1px solid var(--border-primary)", display: "flex", gap: "24px", overflowX: "auto" }}>
           {["Details", "Controls", "Actions", "Comments", "Incidents", "Audits"].map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               style={{
                 padding: "12px 2px", border: "none", background: "none", fontSize: "14px", fontWeight: 700,
-                color: activeTab === tab ? "#3b82f6" : "#64748b", cursor: "pointer",
-                borderBottom: activeTab === tab ? "2px solid #3b82f6" : "2px solid transparent",
+                color: activeTab === tab ? "var(--accent-primary)" : "var(--text-muted)", cursor: "pointer",
+                borderBottom: activeTab === tab ? "2px solid var(--accent-primary)" : "2px solid transparent",
                 whiteSpace: "nowrap"
               }}
             >
@@ -581,8 +617,8 @@ export default function RiskDetail() {
           <div style={{ ...styles.card, marginBottom: "32px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
               <div>
-                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", margin: "0 0 4px" }}>Details</h2>
-                <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>Provide detailed information about the identified risk, including the event, root causes, and potential consequences.</p>
+                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 4px" }}>Details</h2>
+                <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: 0 }}>Provide detailed information about the identified risk, including the event, root causes, and potential consequences.</p>
               </div>
               {!isEditingDetails && (
                 <button
@@ -601,8 +637,8 @@ export default function RiskDetail() {
               <>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px", marginBottom: "24px" }}>
                   <div>
-                    <label style={styles.label}><AlertTriangle size={14} color="#3b82f6" /> RISK EVENT</label>
-                    <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Describe the risk event — what could happen and what are you concerned about.</p>
+                    <label style={styles.label}><AlertTriangle size={14} color="var(--accent-primary)" /> RISK EVENT</label>
+                    <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: "-4px 0 12px" }}>Describe the risk event — what could happen and what are you concerned about.</p>
                     <textarea
                       placeholder="Describe the risk event..."
                       value={form.riskEvent}
@@ -611,8 +647,8 @@ export default function RiskDetail() {
                     />
                   </div>
                   <div>
-                    <label style={styles.label}><Zap size={14} color="#3b82f6" /> ROOT CAUSES</label>
-                    <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Explain the root causes of the risk. Why could this event occur?</p>
+                    <label style={styles.label}><Zap size={14} color="var(--accent-primary)" /> ROOT CAUSES</label>
+                    <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: "-4px 0 12px" }}>Explain the root causes of the risk. Why could this event occur?</p>
                     <textarea
                       placeholder="Describe the root causes..."
                       value={form.rootCauses}
@@ -623,8 +659,8 @@ export default function RiskDetail() {
                 </div>
 
                 <div style={{ marginBottom: "24px" }}>
-                  <label style={styles.label}><Target size={14} color="#3b82f6" /> POTENTIAL CONSEQUENCES</label>
-                  <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Describe the potential impact if the risk occurs (financial, operational, reputational, etc.).</p>
+                  <label style={styles.label}><Target size={14} color="var(--accent-primary)" /> POTENTIAL CONSEQUENCES</label>
+                  <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: "-4px 0 12px" }}>Describe the potential impact if the risk occurs (financial, operational, reputational, etc.).</p>
                   <textarea
                     placeholder="Describe the consequences..."
                     value={form.consequences}
@@ -635,7 +671,7 @@ export default function RiskDetail() {
 
                 <div style={{ marginBottom: "32px" }}>
                   <label style={{ ...styles.label, textTransform: "none" }}>Risk Appetite Statement</label>
-                  <p style={{ fontSize: "12px", color: "#64748b", margin: "-4px 0 12px" }}>Define the organization's willingness to accept this risk and how it should be managed.</p>
+                  <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: "-4px 0 12px" }}>Define the organization's willingness to accept this risk and how it should be managed.</p>
                   <textarea
                     placeholder="Example: The organization has a moderate appetite for this risk due to potential strategic benefits..."
                     value={form.appetite}
@@ -651,7 +687,7 @@ export default function RiskDetail() {
                       handleSave();
                       setIsEditingDetails(false);
                     }}
-                    style={{ flex: 1, padding: "14px", borderRadius: "12px", border: "none", background: "#3b82f6", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: saveStatus === "saving" ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", opacity: saveStatus === "saving" ? 0.7 : 1 }}
+                    style={{ flex: 1, padding: "14px", borderRadius: "12px", border: "none", background: "var(--accent-primary)", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: saveStatus === "saving" ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", opacity: saveStatus === "saving" ? 0.7 : 1 }}
                   >
                     {saveStatus === "saving" ? <RefreshCw size={18} className="animate-spin" /> : <Save size={18} />}
                     {saveStatus === "saving" ? "Saving..." : "Save All Assessment Details"}
@@ -662,7 +698,7 @@ export default function RiskDetail() {
                       setForm({ ...tempForm });
                       setIsEditingDetails(false);
                     }}
-                    style={{ padding: "14px 24px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: "14px", fontWeight: 700, cursor: "pointer" }}
+                    style={{ padding: "14px 24px", borderRadius: "12px", border: "1px solid var(--border-primary)", background: "var(--bg-card)", color: "var(--text-muted)", fontSize: "14px", fontWeight: 700, cursor: "pointer" }}
                   >
                     Discard Changes
                   </button>
@@ -671,36 +707,36 @@ export default function RiskDetail() {
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
                 {saveStatus === "success" && (
-                  <div style={{ padding: "12px 16px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "8px", color: "#166534", fontSize: "13px", fontWeight: 600, display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ padding: "12px 16px", background: "rgba(52, 211, 153, 0.1)", border: "1px solid rgba(52, 211, 153, 0.2)", borderRadius: "8px", color: "var(--status-low)", fontSize: "13px", fontWeight: 600, display: "flex", alignItems: "center", gap: "8px" }}>
                     <Shield size={16} /> Assessment details saved successfully!
                   </div>
                 )}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "32px" }}>
-                  <div style={{ background: "#f8fafc", padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9" }}>
-                    <label style={{ ...styles.label, color: "#3b82f6" }}><AlertTriangle size={14} /> RISK EVENT</label>
-                    <p style={{ margin: 0, fontSize: "14px", color: "#334155", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
-                      {form.riskEvent || <span style={{ color: "#94a3b8", fontStyle: "italic" }}>No risk event described yet.</span>}
+                  <div style={{ background: "var(--bg-app)", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-primary)" }}>
+                    <label style={{ ...styles.label, color: "var(--accent-primary)" }}><AlertTriangle size={14} /> RISK EVENT</label>
+                    <p style={{ margin: 0, fontSize: "14px", color: "var(--text-primary)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                      {form.riskEvent || <span style={{ color: "var(--text-muted)", fontStyle: "italic" }}>No risk event described yet.</span>}
                     </p>
                   </div>
-                  <div style={{ background: "#f8fafc", padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9" }}>
-                    <label style={{ ...styles.label, color: "#3b82f6" }}><Zap size={14} /> ROOT CAUSES</label>
-                    <p style={{ margin: 0, fontSize: "14px", color: "#334155", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
-                      {form.rootCauses || <span style={{ color: "#94a3b8", fontStyle: "italic" }}>No root causes identified yet.</span>}
+                  <div style={{ background: "var(--bg-app)", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-primary)" }}>
+                    <label style={{ ...styles.label, color: "var(--accent-primary)" }}><Zap size={14} /> ROOT CAUSES</label>
+                    <p style={{ margin: 0, fontSize: "14px", color: "var(--text-primary)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                      {form.rootCauses || <span style={{ color: "var(--text-muted)", fontStyle: "italic" }}>No root causes identified yet.</span>}
                     </p>
                   </div>
                 </div>
 
-                <div style={{ background: "#f8fafc", padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9" }}>
-                  <label style={{ ...styles.label, color: "#3b82f6" }}><Target size={14} /> POTENTIAL CONSEQUENCES</label>
-                  <p style={{ margin: 0, fontSize: "14px", color: "#334155", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
-                    {form.consequences || <span style={{ color: "#94a3b8", fontStyle: "italic" }}>No consequences described yet.</span>}
+                <div style={{ background: "var(--bg-app)", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-primary)" }}>
+                  <label style={{ ...styles.label, color: "var(--accent-primary)" }}><Target size={14} /> POTENTIAL CONSEQUENCES</label>
+                  <p style={{ margin: 0, fontSize: "14px", color: "var(--text-primary)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                    {form.consequences || <span style={{ color: "var(--text-muted)", fontStyle: "italic" }}>No consequences described yet.</span>}
                   </p>
                 </div>
 
-                <div style={{ background: "#f8fafc", padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9" }}>
-                  <label style={{ ...styles.label, textTransform: "none", color: "#3b82f6" }}>Risk Appetite Statement</label>
-                  <p style={{ margin: 0, fontSize: "14px", color: "#334155", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
-                    {form.appetite || <span style={{ color: "#94a3b8", fontStyle: "italic" }}>No appetite statement defined yet.</span>}
+                <div style={{ background: "var(--bg-app)", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-primary)" }}>
+                  <label style={{ ...styles.label, textTransform: "none", color: "var(--accent-primary)" }}>Risk Appetite Statement</label>
+                  <p style={{ margin: 0, fontSize: "14px", color: "var(--text-primary)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                    {form.appetite || <span style={{ color: "var(--text-muted)", fontStyle: "italic" }}>No appetite statement defined yet.</span>}
                   </p>
                 </div>
               </div>
@@ -712,25 +748,25 @@ export default function RiskDetail() {
           <div style={{ ...styles.card, marginBottom: "32px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
               <div>
-                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", margin: "0 0 4px" }}>Assigned Controls</h2>
-                <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>Review and manage controls implemented to mitigate this risk.</p>
+                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 4px" }}>Assigned Controls</h2>
+                <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: 0 }}>Review and manage controls implemented to mitigate this risk.</p>
               </div>
               <button
                 onClick={() => setShowControlModal(true)}
-                style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#3b82f6", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 12px rgba(59, 130, 246, 0.2)" }}
+                style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "var(--accent-primary)", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 12px rgba(59, 130, 246, 0.2)" }}
               >
                 <Plus size={18} /> Assign & Evaluate Controls
               </button>
             </div>
 
             {controls.length === 0 ? (
-              <div style={{ padding: "60px 40px", textAlign: "center", border: "2px dashed #e2e8f0", borderRadius: "12px", background: "#f8fafc" }}>
-                <Shield size={48} color="#94a3b8" style={{ marginBottom: "16px", opacity: 0.5 }} />
-                <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#475569", margin: "0 0 8px" }}>No Controls Assigned</h3>
-                <p style={{ fontSize: "14px", color: "#94a3b8", margin: "0 0 20px" }}>There are currently no internal controls linked to this risk. Start by assigning controls from the library.</p>
+              <div style={{ padding: "60px 40px", textAlign: "center", border: "2px dashed var(--border-primary)", borderRadius: "12px", background: "var(--bg-app)" }}>
+                <Shield size={48} color="var(--text-muted)" style={{ marginBottom: "16px", opacity: 0.5 }} />
+                <h3 style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-secondary)", margin: "0 0 8px" }}>No Controls Assigned</h3>
+                <p style={{ fontSize: "14px", color: "var(--text-muted)", margin: "0 0 20px" }}>There are currently no internal controls linked to this risk. Start by assigning controls from the library.</p>
                 <button
                   onClick={() => setShowControlModal(true)}
-                  style={{ padding: "10px 20px", borderRadius: "8px", border: "1px solid #3b82f6", background: "transparent", color: "#3b82f6", fontSize: "13px", fontWeight: 700, cursor: "pointer" }}
+                  style={{ padding: "10px 20px", borderRadius: "8px", border: "1px solid var(--accent-primary)", background: "transparent", color: "var(--accent-primary)", fontSize: "13px", fontWeight: 700, cursor: "pointer" }}
                 >
                   Browse Controls Library
                 </button>
@@ -738,18 +774,18 @@ export default function RiskDetail() {
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 {controls.map(c => (
-                  <div key={c.id} style={{ padding: "20px", borderRadius: "12px", border: "1px solid #f1f5f9", background: "#fff", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}>
+                  <div key={c.id} style={{ padding: "20px", borderRadius: "12px", border: "1px solid var(--border-primary)", background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                        <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", color: "#3b82f6" }}>
+                        <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "var(--accent-soft)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent-primary)" }}>
                           <Shield size={20} />
                         </div>
                         <div>
-                          <h4 style={{ fontSize: "15px", fontWeight: 700, color: "#1e293b", margin: 0 }}>{c.name}</h4>
+                          <h4 style={{ fontSize: "15px", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>{c.name}</h4>
                           <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
-                            <span style={{ fontSize: "11px", fontWeight: 700, color: c.type === "Preventive" ? "#10b981" : "#3b82f6", textTransform: "uppercase" }}>{c.type}</span>
-                            <span style={{ fontSize: "11px", color: "#94a3b8" }}>•</span>
-                            <span style={{ fontSize: "11px", fontWeight: 600, color: "#64748b" }}>Owner: {c.owner}</span>
+                            <span style={{ fontSize: "11px", fontWeight: 700, color: c.type === "Preventive" ? "var(--status-low)" : "var(--accent-primary)", textTransform: "uppercase" }}>{c.type}</span>
+                            <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>•</span>
+                            <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)" }}>Owner: {c.owner}</span>
                           </div>
                         </div>
                       </div>
@@ -757,31 +793,31 @@ export default function RiskDetail() {
                         <div style={{ textAlign: "right" }}>
                           <div style={{
                             padding: "4px 12px", borderRadius: "20px", fontSize: "11px", fontWeight: 700,
-                            background: c.effectiveness === "Effective" ? "#dcfce7" : c.effectiveness === "Partial" ? "#fef9c3" : "#fee2e2",
-                            color: c.effectiveness === "Effective" ? "#166534" : c.effectiveness === "Partial" ? "#854d0e" : "#991b1b"
+                            background: c.effectiveness === "Effective" ? "rgba(52, 211, 153, 0.1)" : c.effectiveness === "Partial" ? "rgba(251, 191, 36, 0.1)" : "rgba(248, 113, 113, 0.1)",
+                            color: c.effectiveness === "Effective" ? "var(--status-low)" : c.effectiveness === "Partial" ? "var(--status-medium)" : "var(--status-critical)"
                           }}>
                             {c.effectiveness.toUpperCase()}
                           </div>
-                          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>Frequency: {c.frequency}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>Frequency: {c.frequency}</div>
                         </div>
-                        <button onClick={() => handleDeleteControl(c.id)} style={{ padding: "8px", borderRadius: "8px", border: "none", background: "#fef2f2", color: "#ef4444", cursor: "pointer" }}>
+                        <button onClick={() => handleDeleteControl(c.id)} style={{ padding: "8px", borderRadius: "8px", border: "none", background: "rgba(239, 68, 68, 0.1)", color: "var(--status-critical)", cursor: "pointer" }}>
                           <Trash2 size={16} />
                         </button>
                       </div>
                     </div>
-                    {c.notes && <p style={{ margin: "0 0 16px", fontSize: "13px", color: "#64748b", lineHeight: 1.5, fontStyle: "italic" }}>"{c.notes}"</p>}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", paddingTop: "16px", borderTop: "1px solid #f8fafc" }}>
+                    {c.notes && <p style={{ margin: "0 0 16px", fontSize: "13px", color: "var(--text-muted)", lineHeight: 1.5, fontStyle: "italic" }}>"{c.notes}"</p>}
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", paddingTop: "16px", borderTop: "1px solid var(--border-subtle)" }}>
                       <div>
-                        <span style={{ fontSize: "11px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Risk Impact</span>
-                        <span style={{ fontSize: "13px", fontWeight: 600, color: "#475569" }}>{c.impact} Reduction</span>
+                        <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Risk Impact</span>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)" }}>{c.impact} Reduction</span>
                       </div>
                       <div>
-                        <span style={{ fontSize: "11px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Last Performed</span>
-                        <span style={{ fontSize: "13px", fontWeight: 600, color: "#475569" }}>{c.lastPerformed || "Never"}</span>
+                        <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Last Performed</span>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)" }}>{c.lastPerformed || "Never"}</span>
                       </div>
                       <div>
-                        <span style={{ fontSize: "11px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Evidence</span>
-                        <span style={{ fontSize: "13px", fontWeight: 600, color: c.evidence ? "#3b82f6" : "#cbd5e1", textDecoration: c.evidence ? "underline" : "none", cursor: c.evidence ? "pointer" : "default" }}>
+                        <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Evidence</span>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: c.evidence ? "var(--accent-primary)" : "var(--text-muted)", textDecoration: c.evidence ? "underline" : "none", cursor: c.evidence ? "pointer" : "default" }}>
                           {c.evidence ? "View Evidence" : "No file attached"}
                         </span>
                       </div>
@@ -797,25 +833,25 @@ export default function RiskDetail() {
           <div style={{ ...styles.card, marginBottom: "32px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
               <div>
-                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", margin: "0 0 4px" }}>Risk Response Actions</h2>
-                <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>Manage the execution and closure of actions triggered by risk breaches.</p>
+                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 4px" }}>Risk Response Actions</h2>
+                <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: 0 }}>Manage the execution and closure of actions triggered by risk breaches.</p>
               </div>
               <button
                 onClick={() => setShowActionModal(true)}
-                style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#f59e0b", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 12px rgba(245, 158, 11, 0.25)" }}
+                style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "var(--status-high)", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "var(--shadow-md)" }}
               >
                 <Zap size={18} /> Configure New Action
               </button>
             </div>
 
             {actions.length === 0 ? (
-              <div style={{ padding: "60px 40px", textAlign: "center", border: "2px dashed #e2e8f0", borderRadius: "12px", background: "#fffbeb" }}>
-                <Zap size={48} color="#f59e0b" style={{ marginBottom: "16px", opacity: 0.5 }} />
-                <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#854d0e", margin: "0 0 8px" }}>No Response Actions Defined</h3>
-                <p style={{ fontSize: "14px", color: "#92400e", margin: "0 0 20px" }}>Define how the system should respond when this risk or its KRIs breach defined thresholds.</p>
+              <div style={{ padding: "60px 40px", textAlign: "center", border: "2px dashed var(--border-primary)", borderRadius: "12px", background: "var(--bg-app)" }}>
+                <Zap size={48} color="var(--status-high)" style={{ marginBottom: "16px", opacity: 0.5 }} />
+                <h3 style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-secondary)", margin: "0 0 8px" }}>No Response Actions Defined</h3>
+                <p style={{ fontSize: "14px", color: "var(--text-muted)", margin: "0 0 20px" }}>Define how the system should respond when this risk or its KRIs breach defined thresholds.</p>
                 <button
                   onClick={() => setShowActionModal(true)}
-                  style={{ padding: "10px 20px", borderRadius: "8px", border: "1px solid #f59e0b", background: "transparent", color: "#f59e0b", fontSize: "13px", fontWeight: 700, cursor: "pointer" }}
+                  style={{ padding: "10px 20px", borderRadius: "8px", border: "1px solid var(--status-high)", background: "transparent", color: "var(--status-high)", fontSize: "13px", fontWeight: 700, cursor: "pointer" }}
                 >
                   Set Triggered Action
                 </button>
@@ -823,21 +859,21 @@ export default function RiskDetail() {
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 {actions.map(action => (
-                  <div key={action.id} style={{ padding: "24px", borderRadius: "12px", border: "1px solid #f1f5f9", background: "#fff", position: "relative", overflow: "hidden" }}>
+                  <div key={action.id} style={{ padding: "24px", borderRadius: "12px", border: "1px solid var(--border-primary)", background: "var(--bg-card)", position: "relative", overflow: "hidden" }}>
                     {/* Status Indicator Bar */}
                     <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: action.status === "Overdue" ? "#ef4444" : "#f59e0b" }} />
                     
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                        <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: "#fffbeb", display: "flex", alignItems: "center", justifyContent: "center", color: "#f59e0b", border: "1px solid #fef3c7" }}>
+                        <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: "var(--bg-app)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--status-high)", border: "1px solid var(--border-subtle)" }}>
                           <Zap size={20} />
                         </div>
                         <div>
-                          <h4 style={{ fontSize: "15px", fontWeight: 700, color: "#0f172a", margin: "0 0 4px" }}>{action.title}</h4>
+                          <h4 style={{ fontSize: "15px", fontWeight: 700, color: "var(--text-primary)", margin: "0 0 4px" }}>{action.title}</h4>
                           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                            <span style={{ fontSize: "12px", fontWeight: 700, color: "#f59e0b", textTransform: "uppercase" }}>{action.actionType}</span>
-                            <span style={{ fontSize: "12px", color: "#94a3b8" }}>•</span>
-                            <span style={{ fontSize: "12px", color: "#64748b", display: "flex", alignItems: "center", gap: "4px" }}>
+                            <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--status-high)", textTransform: "uppercase" }}>{action.actionType}</span>
+                            <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>•</span>
+                            <span style={{ fontSize: "12px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "4px" }}>
                               <Zap size={12} /> Trigger: {action.triggerType}
                             </span>
                           </div>
@@ -847,41 +883,41 @@ export default function RiskDetail() {
                         <div style={{ textAlign: "right" }}>
                           <span style={{ 
                             fontSize: "11px", fontWeight: 800, padding: "4px 10px", borderRadius: "20px", 
-                            background: action.status === "Overdue" ? "#fef2f2" : "#fffbeb", 
-                            color: action.status === "Overdue" ? "#ef4444" : "#b45309"
+                            background: "rgba(245, 158, 11, 0.1)", 
+                            color: "var(--status-high)"
                           }}>
                             {action.status.toUpperCase()}
                           </span>
-                          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "6px", display: "flex", alignItems: "center", gap: "4px", justifyContent: "flex-end" }}>
+                          <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "6px", display: "flex", alignItems: "center", gap: "4px", justifyContent: "flex-end" }}>
                             <Clock size={12} /> Due: {new Date(action.dueDate).toLocaleDateString()}
                           </div>
                         </div>
-                        <button onClick={() => handleDeleteAction(action.id)} style={{ padding: "10px", borderRadius: "10px", border: "none", background: "#f8fafc", color: "#64748b", cursor: "pointer" }}>
+                        <button onClick={() => handleDeleteAction(action.id)} style={{ padding: "10px", borderRadius: "10px", border: "none", background: "var(--bg-app)", color: "var(--text-muted)", cursor: "pointer" }}>
                           <Trash2 size={18} />
                         </button>
                       </div>
                     </div>
 
-                    <p style={{ fontSize: "13px", color: "#64748b", margin: "0 0 20px", lineHeight: 1.6 }}>{action.description}</p>
+                    <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: "0 0 20px", lineHeight: 1.6 }}>{action.description}</p>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "24px", paddingTop: "20px", borderTop: "1px solid #f8fafc" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "24px", paddingTop: "20px", borderTop: "1px solid var(--border-subtle)" }}>
                       <div>
-                        <span style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Owner</span>
+                        <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Owner</span>
                         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#e2e8f0", fontSize: "10px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>{action.owner.charAt(0)}</div>
-                          <span style={{ fontSize: "13px", fontWeight: 600, color: "#334155" }}>{action.owner}</span>
+                          <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "var(--bg-app)", color: "var(--text-secondary)", fontSize: "10px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>{action.owner.charAt(0)}</div>
+                          <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)" }}>{action.owner}</span>
                         </div>
                       </div>
                       <div>
-                        <span style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>SLA</span>
-                        <span style={{ fontSize: "13px", fontWeight: 600, color: "#334155" }}>{action.sla}</span>
+                        <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>SLA</span>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)" }}>{action.sla}</span>
                       </div>
                       <div>
-                        <span style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Notification</span>
-                        <span style={{ fontSize: "13px", fontWeight: 600, color: "#334155" }}>{action.notificationChannels[0]} (+{action.notificationChannels.length - 1})</span>
+                        <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>Notification</span>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)" }}>{action.notificationChannels[0]} (+{action.notificationChannels.length - 1})</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end" }}>
-                        <button style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid #3b82f6", background: "transparent", color: "#3b82f6", fontSize: "13px", fontWeight: 700, cursor: "pointer" }}>Update Status</button>
+                        <button style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid var(--accent-primary)", background: "transparent", color: "var(--accent-primary)", fontSize: "13px", fontWeight: 700, cursor: "pointer" }}>Update Status</button>
                       </div>
                     </div>
                   </div>
@@ -923,12 +959,12 @@ export default function RiskDetail() {
         {/* BOTTOM SECTION */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px" }}>
           <div style={styles.card}>
-            <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#1e293b", margin: "0 0 16px" }}>Key Insights</h3>
+            <h3 style={{ fontSize: "15px", fontWeight: 700, color: "var(--text-primary)", margin: "0 0 16px" }}>Key Insights</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {[
-                { label: `Score: ${risk.score}`, bg: "#fef08a20", color: "#854d0e", icon: Shield },
-                { label: `Level: ${risk.level}`, bg: risk.level === "Critical" ? "#fca5a520" : "#86efac20", color: risk.level === "Critical" ? "#991b1b" : "#166534", icon: Activity },
-                { label: risk.impact >= 4 ? "High Impact" : "Stable Impact", bg: risk.impact >= 4 ? "#fdba7420" : "#f0f9ff", color: risk.impact >= 4 ? "#9a3412" : "#0c4a6e", icon: Target },
+                { label: `Score: ${risk.score}`, bg: "var(--accent-soft)", color: "var(--status-medium)", icon: Shield },
+                { label: `Level: ${risk.level}`, bg: "var(--accent-soft)", color: risk.level === "Critical" ? "var(--status-critical)" : "var(--status-low)", icon: Activity },
+                { label: risk.impact >= 4 ? "High Impact" : "Stable Impact", bg: "var(--accent-soft)", color: risk.impact >= 4 ? "var(--status-high)" : "var(--accent-primary)", icon: Target },
               ].map((item, idx) => (
                 <div key={idx} style={{ padding: "10px 14px", borderRadius: "8px", background: item.bg, color: item.color, display: "flex", alignItems: "center", gap: "10px", fontSize: "13px", fontWeight: 600 }}>
                   <item.icon size={14} /> {item.label}
@@ -937,7 +973,7 @@ export default function RiskDetail() {
             </div>
           </div>
           <div style={styles.card}>
-            <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#1e293b", margin: "0 0 16px" }}>Distribution</h3>
+            <h3 style={{ fontSize: "15px", fontWeight: 700, color: "var(--text-primary)", margin: "0 0 16px" }}>Distribution</h3>
             <div style={{ height: "180px", display: "flex", justifyContent: "center" }}>
               <Doughnut data={chartData} options={{ plugins: { legend: { display: false } }, cutout: "70%" }} />
             </div>
@@ -948,8 +984,8 @@ export default function RiskDetail() {
         <div style={{ marginTop: "40px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#0f172a", margin: 0 }}>Key Risk Indicator</h2>
-              <span style={{ background: "#f1f5f9", color: "#64748b", padding: "2px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700 }}>{kris.length} KRI</span>
+              <h2 style={{ fontSize: "20px", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>Key Risk Indicator</h2>
+              <span style={{ background: "var(--bg-surface)", color: "var(--text-muted)", padding: "2px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700 }}>{kris.length} KRI</span>
             </div>
             {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
               <button
@@ -957,7 +993,7 @@ export default function RiskDetail() {
                   setEditingKri(null);
                   setShowKriModal(true);
                 }}
-                style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#3b82f6", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 12px rgba(59, 130, 246, 0.25)" }}
+                style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "var(--accent-primary)", color: "#fff", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "var(--shadow-md)" }}
               >
                 <Plus size={18} /> Add KRI
               </button>
@@ -966,22 +1002,22 @@ export default function RiskDetail() {
 
           {kris.length === 0 ? (
             <div style={{
-              background: "#fff",
+              background: "var(--bg-card)",
               borderRadius: "16px",
               padding: "60px 40px",
               textAlign: "center",
-              border: "2px dashed #e2e8f0",
+              border: "2px dashed var(--border-primary)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               gap: "16px"
             }}>
-              <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8" }}>
+              <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "var(--bg-app)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)" }}>
                 <Activity size={32} />
               </div>
               <div>
-                <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#1e293b", margin: "0 0 8px" }}>No KRI added yet</h3>
-                <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
+                <h3 style={{ fontSize: "18px", fontWeight: 700, color: "var(--text-primary)", margin: "0 0 8px" }}>No KRI added yet</h3>
+                <p style={{ fontSize: "14px", color: "var(--text-muted)", margin: 0 }}>
                   {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator")
                     ? "Click 'Add KRI' to create your first indicator and start tracking performance."
                     : "There are currently no Key Risk Indicators defined for this profile."}
@@ -990,7 +1026,7 @@ export default function RiskDetail() {
               {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
                 <button
                   onClick={() => setShowKriModal(true)}
-                  style={{ marginTop: "8px", padding: "10px 20px", borderRadius: "10px", border: "1px solid #3b82f6", background: "transparent", color: "#3b82f6", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}
+                  style={{ marginTop: "8px", padding: "10px 20px", borderRadius: "10px", border: "1px solid var(--accent-primary)", background: "transparent", color: "var(--accent-primary)", fontSize: "14px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}
                 >
                   <Plus size={18} /> Add First KRI
                 </button>
@@ -1002,16 +1038,16 @@ export default function RiskDetail() {
                 <div key={kri.id} style={styles.card}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#10b981", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: 700 }}>
+                      <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "var(--status-low)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: 700 }}>
                         {kri.owner.charAt(0)}
                       </div>
-                      <span style={{ fontSize: "15px", fontWeight: 700, color: "#1e293b" }}>{kri.title}</span>
+                      <span style={{ fontSize: "15px", fontWeight: 700, color: "var(--text-primary)" }}>{kri.title}</span>
                     </div>
 
                     <div style={{ position: "relative" }}>
                       <button
                         onClick={() => setActiveMenu(activeMenu === kri.id ? null : kri.id)}
-                        style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", padding: "8px", borderRadius: "50%", transition: "background 0.2s", display: "flex", alignItems: "center", justifyContent: "center" }}
+                        style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", padding: "8px", borderRadius: "50%", transition: "background 0.2s", display: "flex", alignItems: "center", justifyContent: "center" }}
                       >
                         <MoreVertical size={20} />
                       </button>
@@ -1019,45 +1055,45 @@ export default function RiskDetail() {
                       {activeMenu === kri.id && (
                         <div ref={menuRef} style={styles.dropdown}>
                           <div
-                            style={{ ...styles.dropdownItem, color: "#10b981" }}
+                            style={{ ...styles.dropdownItem, color: "var(--status-low)" }}
                             onClick={() => handlePinKri(kri.id)}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.background = "#ecfdf5";
+                              e.currentTarget.style.background = "rgba(16, 185, 129, 0.1)";
                             }}
                             onMouseLeave={(e) => {
                               e.currentTarget.style.background = "transparent";
                             }}
                           >
-                            <Pin size={16} color="#10b981" style={{ minWidth: "16px", flexShrink: 0 }} />
+                            <Pin size={16} color="var(--status-low)" style={{ minWidth: "16px", flexShrink: 0 }} />
                             <span style={{ whiteSpace: "nowrap", flex: 1 }}>{kri.isPinned ? "Unpin" : "Pin"}</span>
                           </div>
 
                           {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
                             <>
                               <div
-                                style={{ ...styles.dropdownItem, color: "#334155" }}
+                                style={{ ...styles.dropdownItem, color: "var(--text-primary)" }}
                                 onClick={() => handleEditKri(kri)}
                                 onMouseEnter={(e) => {
-                                  e.currentTarget.style.background = "#f1f5f9";
+                                  e.currentTarget.style.background = "var(--bg-surface)";
                                 }}
                                 onMouseLeave={(e) => {
                                   e.currentTarget.style.background = "transparent";
                                 }}
                               >
-                                <Edit size={16} color="#3b82f6" style={{ minWidth: "16px", flexShrink: 0 }} />
+                                <Edit size={16} color="var(--accent-primary)" style={{ minWidth: "16px", flexShrink: 0 }} />
                                 <span style={{ whiteSpace: "nowrap", flex: 1 }}>Edit</span>
                               </div>
                               <div
-                                style={{ ...styles.dropdownItem, color: "#ef4444" }}
+                                style={{ ...styles.dropdownItem, color: "var(--status-critical)" }}
                                 onClick={() => handleDeleteKri(kri.id)}
                                 onMouseEnter={(e) => {
-                                  e.currentTarget.style.background = "#fef2f2";
+                                  e.currentTarget.style.background = "rgba(239, 68, 68, 0.1)";
                                 }}
                                 onMouseLeave={(e) => {
                                   e.currentTarget.style.background = "transparent";
                                 }}
                               >
-                                <Trash2 size={16} color="#ef4444" style={{ minWidth: "16px", flexShrink: 0 }} />
+                                <Trash2 size={16} color="var(--status-critical)" style={{ minWidth: "16px", flexShrink: 0 }} />
                                 <span style={{ whiteSpace: "nowrap", flex: 1 }}>Delete</span>
                               </div>
                             </>
@@ -1075,12 +1111,12 @@ export default function RiskDetail() {
                           datasets: [{
                             label: kri.title,
                             data: kri.data,
-                            borderColor: "#fca5a5",
-                            backgroundColor: "rgba(252, 165, 165, 0.2)",
+                            borderColor: "var(--status-critical)",
+                            backgroundColor: "rgba(248, 113, 113, 0.1)",
                             tension: 0.4,
                             pointRadius: 4,
-                            pointBackgroundColor: "#fff",
-                            pointBorderColor: "#fca5a5",
+                            pointBackgroundColor: "var(--bg-card)",
+                            pointBorderColor: "var(--status-critical)",
                             pointBorderWidth: 2
                           }]
                         }}
@@ -1134,12 +1170,12 @@ export default function RiskDetail() {
                     )}
                   </div>
 
-                  <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "16px" }}>
+                  <div style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: "16px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                      <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b" }}>Latest Comment</span>
-                      <span style={{ fontSize: "12px", color: "#94a3b8" }}>{kri.date}</span>
+                      <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-primary)" }}>Latest Comment</span>
+                      <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>{kri.date}</span>
                     </div>
-                    <p style={{ fontSize: "13px", color: "#64748b", margin: 0, lineHeight: 1.5 }}>{kri.comment}</p>
+                    <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>{kri.comment}</p>
                   </div>
                 </div>
               ))}

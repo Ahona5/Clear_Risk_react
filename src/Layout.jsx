@@ -14,20 +14,20 @@ function NotifPanel({ items, onRead, onReadAll }) {
       position: "absolute", right: 0, top: "48px", zIndex: 9999,
       width: "320px", minWidth: "320px",
       background: "var(--bg-card)", borderRadius: "12px",
-      boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
-      border: "1px solid var(--border-color)", overflow: "hidden",
+      boxShadow: "var(--shadow-lg)",
+      border: "1px solid var(--border-primary)", overflow: "hidden",
       display: "flex", flexDirection: "column"
     }}>
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "16px", borderBottom: "1px solid var(--border-color)",
+        padding: "16px", borderBottom: "1px solid var(--border-primary)",
         background: "var(--bg-card)", flexShrink: 0
       }}>
         <span style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)" }}>Notifications</span>
         {items.some(n => !n.read) && (
           <button onClick={onReadAll}
             style={{
-              fontSize: "12px", fontWeight: 600, color: "#3b82f6", background: "none",
+              fontSize: "12px", fontWeight: 600, color: "var(--accent-primary)", background: "none",
               border: "none", cursor: "pointer", padding: 0
             }}
             onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
@@ -43,16 +43,16 @@ function NotifPanel({ items, onRead, onReadAll }) {
         ) : items.map(n => (
           <div key={n.id} onClick={() => onRead(n.id)}
             style={{
-              padding: "16px", cursor: "pointer", borderBottom: "1px solid var(--border-subtle)",
-              background: !n.read ? "var(--bg-subtle)" : "var(--bg-card)",
+              padding: "16px", cursor: "pointer", borderBottom: "1px solid var(--border-primary)",
+              background: !n.read ? "var(--bg-surface)" : "var(--bg-card)",
               display: "flex", gap: "12px", alignItems: "flex-start",
               width: "100%", boxSizing: "border-box", transition: "background 0.2s"
             }}
-            onMouseEnter={e => e.currentTarget.style.background = !n.read ? "var(--bg-hover)" : "var(--bg-hover)"}
-            onMouseLeave={e => e.currentTarget.style.background = !n.read ? "var(--bg-subtle)" : "var(--bg-card)"}
+            onMouseEnter={e => e.currentTarget.style.background = "var(--bg-hover)"}
+            onMouseLeave={e => e.currentTarget.style.background = !n.read ? "var(--bg-surface)" : "var(--bg-card)"}
           >
             {!n.read ? (
-              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#3b82f6", flexShrink: 0, marginTop: "6px" }} />
+              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--accent-primary)", flexShrink: 0, marginTop: "6px" }} />
             ) : (
               <div style={{ width: "8px", height: "8px", flexShrink: 0 }} />
             )}
@@ -226,7 +226,7 @@ export default function Layout({ children }) {
               {unread > 0 && (
                 <span style={{
                   position: "absolute", top: -4, right: -4, minWidth: 16, height: 16,
-                  background: "#ef4444", color: "#fff", fontSize: 9, fontWeight: 700,
+                  background: "var(--status-critical)", color: "#fff", fontSize: 9, fontWeight: 700,
                   borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
                   padding: "0 4px"
                 }}>
@@ -246,7 +246,7 @@ export default function Layout({ children }) {
                 borderRadius: 12, background: "transparent", border: "1px solid transparent",
                 cursor: "pointer", transition: "all 0.15s"
               }}
-              onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
+              onMouseEnter={e => e.currentTarget.style.background = "var(--bg-hover)"}
               onMouseLeave={e => e.currentTarget.style.background = "transparent"}
             >
               <div style={{
