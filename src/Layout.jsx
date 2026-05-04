@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { 
-  Menu, Bell, User, LogOut, 
-  LayoutDashboard, Folder, ShieldAlert, Users as UsersIcon, FileText, Clock 
+import {
+  Menu, Bell, User, LogOut,
+  LayoutDashboard, Folder, ShieldAlert, Users as UsersIcon, FileText, Clock
 } from "lucide-react";
 
 /* ─── NOTIFICATION DROPDOWN ─── */
 function NotifPanel({ items, onRead, onReadAll }) {
   return (
     <div style={{
-      position: "absolute", right: 0, top: "48px", zIndex: 9999, 
+      position: "absolute", right: 0, top: "48px", zIndex: 9999,
       width: "320px", minWidth: "320px",
-      background: "#fff", borderRadius: "12px", 
+      background: "#fff", borderRadius: "12px",
       boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
       border: "1px solid #e2e8f0", overflow: "hidden",
       display: "flex", flexDirection: "column"
@@ -55,9 +55,9 @@ function NotifPanel({ items, onRead, onReadAll }) {
               <div style={{ width: "8px", height: "8px", flexShrink: 0 }} /> // Placeholder for alignment
             )}
             <div style={{ display: "flex", flexDirection: "column", gap: "4px", flex: 1, minWidth: 0 }}>
-              <p style={{ 
-                fontSize: "13px", color: "#334155", margin: 0, 
-                lineHeight: "1.4", wordWrap: "break-word", whiteSpace: "normal" 
+              <p style={{
+                fontSize: "13px", color: "#334155", margin: 0,
+                lineHeight: "1.4", wordWrap: "break-word", whiteSpace: "normal"
               }}>
                 {n.message}
               </p>
@@ -77,14 +77,14 @@ function NavItem({ label, path, icon: Icon, active, badge, collapsed, onClick })
       style={{
         width: "100%", display: "flex", alignItems: "center", gap: 12,
         padding: "10px 12px", borderRadius: 12, fontSize: 14, fontWeight: 600,
-        background: active ? "rgba(255,255,255,0.1)" : "transparent",
-        color: active ? "#fff" : "#94a3b8", border: "none", cursor: "pointer",
+        background: active ? "rgba(59, 130, 246, 0.12)" : "transparent",
+        color: active ? "#2563eb" : "#64748b", border: "none", cursor: "pointer",
         transition: "all 0.15s", justifyContent: collapsed ? "center" : "flex-start"
       }}
-      onMouseEnter={e => { if(!active) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#e2e8f0"; } }}
-      onMouseLeave={e => { if(!active) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#94a3b8"; } }}
+      onMouseEnter={e => { if(!active) { e.currentTarget.style.background = "rgba(59, 130, 246, 0.05)"; e.currentTarget.style.color = "#1e293b"; } }}
+      onMouseLeave={e => { if(!active) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#64748b"; } }}
     >
-      <Icon size={19} color={active ? "#60a5fa" : "inherit"} style={{ flexShrink: 0 }} />
+      <Icon size={19} color={active ? "#2563eb" : "inherit"} style={{ flexShrink: 0 }} />
       {!collapsed && <span style={{ flex: 1, textAlign: "left", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>}
       {!collapsed && badge > 0 && (
         <span style={{
@@ -103,7 +103,7 @@ export default function Layout({ children }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [showNotifs, setShowNotifs] = useState(false);
-  
+
   const user = JSON.parse(localStorage.getItem("currentUser")) || { username: "Admin", role: "admin" };
   const [profiles, setProfiles] = useState(JSON.parse(localStorage.getItem("riskProfiles")) || []);
   const [notifications, setNotifications] = useState(JSON.parse(localStorage.getItem("notifications")) || []);
@@ -148,30 +148,30 @@ export default function Layout({ children }) {
   };
 
   const SIDEBAR_W = collapsed ? 72 : 240;
-  
+
   const isAdmin = user.role === "admin" || user.role === "moderator";
 
   const nav = [
-    { label: "Dashboard",       path: "/dashboard",    icon: LayoutDashboard, active: location.pathname === "/dashboard" },
-    { label: "Risk Profiles",   path: "/risk-profile", icon: Folder,          badge: profiles.length, active: location.pathname === "/risk-profile" },
-    { label: "Risks",           path: null,            icon: ShieldAlert,     badge: 0 },
-    isAdmin && { label: "Users",           path: "/users",        icon: UsersIcon,       badge: 0, active: location.pathname === "/users" },
-    { label: "Report Incident", path: null,            icon: FileText,        badge: 0 },
-    isAdmin && { label: "Activity",        path: "/activity",     icon: Clock,           badge: 0, active: location.pathname === "/activity" },
+    { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, active: location.pathname === "/dashboard" },
+    { label: "Risk Profiles", path: "/risk-profile", icon: Folder, badge: profiles.length, active: location.pathname === "/risk-profile" },
+    { label: "Risks", path: null, icon: ShieldAlert, badge: 0 },
+    isAdmin && { label: "Users", path: "/users", icon: UsersIcon, badge: 0, active: location.pathname === "/users" },
+    { label: "Report Incident", path: null, icon: FileText, badge: 0 },
+    isAdmin && { label: "Activity", path: "/activity", icon: Clock, badge: 0, active: location.pathname === "/activity" },
   ].filter(Boolean);
 
   return (
-    <div style={{ display:"flex", flexDirection:"column", height:"100vh", overflow:"hidden", background:"#f1f5f9", fontFamily:"'Inter','Segoe UI',sans-serif" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", background: "#f1f5f9", fontFamily: "'Inter','Segoe UI',sans-serif" }}>
       {/* ══════════ TOPBAR ══════════ */}
       <div style={{
-        height: 60, minHeight: 60, background:"#fff",
-        borderBottom:"1px solid #e2e8f0",
-        display:"flex", alignItems:"center", justifyContent:"space-between",
-        padding:"0 24px", zIndex: 30, flexShrink: 0,
-        boxShadow:"0 1px 4px rgba(0,0,0,0.06)"
+        height: 60, minHeight: 60, background: "#fff",
+        borderBottom: "1px solid #e2e8f0",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 24px", zIndex: 30, flexShrink: 0,
+        boxShadow: "0 1px 4px rgba(0,0,0,0.06)"
       }}>
         {/* Left */}
-        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <button
             onClick={() => setCollapsed(!collapsed)}
             style={{
@@ -182,13 +182,13 @@ export default function Layout({ children }) {
           >
             <Menu size={18} />
           </button>
-          <img src="/images/logo.png" alt="Clear Risk" style={{ height:32, width: "auto", objectFit:"contain" }} />
+          <img src="/images/logo.png" alt="Clear Risk" style={{ height: 32, width: "auto", objectFit: "contain" }} />
         </div>
 
         {/* Right */}
-        <div style={{ display:"flex", alignItems:"center", gap:12, position:"relative" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, position: "relative" }}>
           {/* Bell */}
-          <div style={{ position:"relative" }}>
+          <div style={{ position: "relative" }}>
             <button
               onClick={() => { setShowNotifs(!showNotifs); }}
               style={{
@@ -213,7 +213,7 @@ export default function Layout({ children }) {
           </div>
 
           {/* User */}
-          <div style={{ position:"relative" }}>
+          <div style={{ position: "relative" }}>
             <button
               onClick={() => { navigate("/profile"); setShowNotifs(false); }}
               style={{
@@ -244,21 +244,22 @@ export default function Layout({ children }) {
       </div>
 
       {/* ══════════ BODY ══════════ */}
-      <div style={{ display:"flex", flex:1, overflow:"hidden" }}>
+      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
         {/* ── SIDEBAR ── */}
         <div style={{
           width: SIDEBAR_W, minWidth: SIDEBAR_W, flexShrink: 0,
-          background:"#0b1220",
-          overflowY:"auto", overflowX:"hidden",
-          transition:"width 0.25s ease",
-          display:"flex", flexDirection:"column", gap:4,
-          padding:"16px 10px",
+          background: "#f0f4ff",
+          borderRight: "1px solid #e2e8f0",
+          overflowY: "auto", overflowX: "hidden",
+          transition: "width 0.25s ease",
+          display: "flex", flexDirection: "column", gap: 4,
+          padding: "16px 10px",
         }}>
           {nav.map(item => (
             <NavItem key={item.label} {...item} collapsed={collapsed} onClick={handleNav} />
           ))}
           <div style={{ flex: 1 }} />
-          
+
           <button onClick={handleLogout}
             style={{
               width: "100%", display: "flex", alignItems: "center", gap: 12,
@@ -276,7 +277,7 @@ export default function Layout({ children }) {
         </div>
 
         {/* ── MAIN CONTENT ── */}
-        <div style={{ flex:1, overflowY:"auto", overflowX:"hidden", padding:"28px 32px" }}>
+        <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "28px 32px" }}>
           {children}
         </div>
       </div>

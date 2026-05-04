@@ -342,7 +342,7 @@ export default function Dashboard() {
   const checkDependencies = (name) => {
     const allRisks = JSON.parse(localStorage.getItem("risks") || "[]");
     const profileRisks = allRisks.filter(r => r.profile === name);
-    
+
     let krisCount = 0;
     let controlsCount = 0;
     let incidentsCount = 0;
@@ -374,19 +374,19 @@ export default function Dashboard() {
   const handleSoftDelete = () => {
     if (!profileToDelete) return;
     setIsDeleting(true);
-    
+
     // Simulate API delay
     setTimeout(() => {
       const allProfiles = JSON.parse(localStorage.getItem("riskProfiles") || "[]");
-      const updatedProfiles = allProfiles.map(p => 
+      const updatedProfiles = allProfiles.map(p =>
         p.name === profileToDelete.name ? { ...p, isDeleted: true, deletedAt: new Date().toISOString() } : p
       );
-      
+
       localStorage.setItem("riskProfiles", JSON.stringify(updatedProfiles));
       setProfiles(updatedProfiles.filter(p => !p.isDeleted));
-      
+
       addActivityLog(user, "DELETE", `Soft deleted risk profile "${profileToDelete.name}"`, "warning", "critical");
-      
+
       setIsDeleting(false);
       setShowDeleteModal(false);
       setProfileToDelete(null);
@@ -406,7 +406,7 @@ export default function Dashboard() {
 
     if (editingProfile) {
       const allProfiles = JSON.parse(localStorage.getItem("riskProfiles") || "[]");
-      const upd = allProfiles.map(p => 
+      const upd = allProfiles.map(p =>
         p.name === editingProfile.name ? { ...p, name: profileName, owner: profileOwner } : p
       );
       localStorage.setItem("riskProfiles", JSON.stringify(upd));
@@ -460,7 +460,7 @@ export default function Dashboard() {
     <ErrorBoundary>
       <Layout>
         <style>
-        {`
+          {`
           @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -471,565 +471,565 @@ export default function Dashboard() {
             animation: pulse 1.5s infinite ease-in-out;
           }
         `}
-      </style>          {/* ── HEADER CARD ── */}
-      <div style={{
-        background: "#fff",
-        borderRadius: 20,
-        boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
-        padding: "0",
-        marginBottom: 28,
-        overflow: "hidden",
-      }}>
-        {/* Top accent strip */}
+        </style>          {/* ── HEADER CARD ── */}
         <div style={{
-          height: 5,
-          background: "linear-gradient(90deg, #3b82f6, #6366f1, #8b5cf6)",
-        }} />
-
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "20px 28px 22px",
-          flexWrap: "wrap",
-          gap: 16,
+          background: "#fff",
+          borderRadius: 20,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
+          padding: "0",
+          marginBottom: 28,
+          overflow: "hidden",
         }}>
-          {/* Left text */}
-          <div>
-            <div style={{
-              display: "inline-flex", alignItems: "center", gap: 6,
-              background: "#eff6ff", borderRadius: 999,
-              padding: "3px 10px", marginBottom: 10,
-            }}>
-              <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#3b82f6" }} />
-              <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#3b82f6" }}>
-                Admin Console
-              </span>
+          {/* Top accent strip */}
+          <div style={{
+            height: 5,
+            background: "linear-gradient(90deg, #3b82f6, #6366f1, #8b5cf6)",
+          }} />
+
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "20px 28px 22px",
+            flexWrap: "wrap",
+            gap: 16,
+          }}>
+            {/* Left text */}
+            <div>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                background: "#eff6ff", borderRadius: 999,
+                padding: "3px 10px", marginBottom: 10,
+              }}>
+                <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#3b82f6" }} />
+                <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#3b82f6" }}>
+                  Admin Console
+                </span>
+              </div>
+              <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0f172a", margin: 0, lineHeight: 1.2 }}>
+                My Dashboard
+              </h1>
+              <p style={{ fontSize: 13.5, color: "#94a3b8", marginTop: 6, fontWeight: 400 }}>
+                Welcome back,{" "}
+                <span style={{ fontWeight: 700, color: "#475569" }}>{user.username}</span>
+                {" "}👋&nbsp; Have a productive day!
+              </p>
             </div>
-            <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0f172a", margin: 0, lineHeight: 1.2 }}>
-              My Dashboard
-            </h1>
-            <p style={{ fontSize: 13.5, color: "#94a3b8", marginTop: 6, fontWeight: 400 }}>
-              Welcome back,{" "}
-              <span style={{ fontWeight: 700, color: "#475569" }}>{user.username}</span>
-              {" "}👋&nbsp; Have a productive day!
-            </p>
-          </div>
 
-          {/* Right button */}
-          {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
-            <button
-              onClick={() => setShowModal(true)}
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                background: "linear-gradient(135deg, #3b82f6, #6366f1)",
-                color: "#fff",
-                border: "none",
-                borderRadius: 999,
-                padding: "11px 22px",
-                fontSize: 14, fontWeight: 700,
-                cursor: "pointer",
-                boxShadow: "0 4px 14px rgba(99,102,241,0.35)",
-                transition: "all 0.2s",
-                whiteSpace: "nowrap",
-                flexShrink: 0,
-              }}
-              onMouseEnter={e => e.currentTarget.style.boxShadow = "0 6px 20px rgba(99,102,241,0.5)"}
-              onMouseLeave={e => e.currentTarget.style.boxShadow = "0 4px 14px rgba(99,102,241,0.35)"}
-            >
-              <Plus size={16} />
-              Add Risk Profile
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* ── KPI GRID ── */}
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-        gap: 20,
-        marginBottom: 28,
-      }}>
-        <KpiCard label="Total Risks" value={total} subtext="All registered profiles" color="blue" icon={Shield} isLoading={isLoading} />
-        <KpiCard label="High Risk" value={high} subtext="Needs immediate attention" color="red" icon={ShieldAlert} isLoading={isLoading} />
-        <KpiCard label="Medium Risk" value={medium} subtext="Monitor closely" color="amber" icon={TrendingUp} isLoading={isLoading} />
-        <KpiCard label="Low Risk" value={low} subtext="Under control" color="green" icon={TrendingDown} isLoading={isLoading} />
-      </div>
-
-      {/* ── PRIORITY RISKS SECTION ── */}
-      {pinnedRisks.length > 0 && (
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-            <Pin size={18} color="#3b82f6" fill="#3b82f6" />
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1e293b", margin: 0 }}>Priority Risks</h2>
-            <span style={{ fontSize: 11, background: "#eff6ff", color: "#3b82f6", padding: "2px 8px", borderRadius: 10, fontWeight: 700 }}>TOP {Math.min(pinnedRisks.length, 5)}</span>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
-            {pinnedRisks
-              .sort((a, b) => {
-                const sevMap = { Critical: 4, High: 3, Medium: 2, Low: 1 };
-                const bSev = sevMap[b.severity] || 0;
-                const aSev = sevMap[a.severity] || 0;
-                if (bSev !== aSev) return bSev - aSev;
-                return (b.score || 0) - (a.score || 0);
-              })
-              .slice(0, 5)
-              .map(risk => (
-                <div key={risk.riskId} 
-                  onClick={() => navigate(`/risk-profile/${risk.riskId}`)}
-                  style={{ background: "#fff", borderRadius: 16, border: "1px solid #f1f5f9", padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", transition: "all 0.2s", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = "#3b82f6"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = "#f1f5f9"; e.currentTarget.style.transform = "translateY(0)"; }}
-                >
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", marginBottom: 4 }}>{risk.title}</div>
-                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: risk.severity === "Critical" ? "#ef4444" : "#f59e0b" }}>{risk.severity.toUpperCase()}</span>
-                      <span style={{ fontSize: 11, color: "#94a3b8" }}>•</span>
-                      <span style={{ fontSize: 11, color: "#64748b" }}>Owner: {risk.owner}</span>
-                    </div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: "#1e293b" }}>{risk.score}</div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: "#3b82f6", textTransform: "uppercase" }}>{risk.type}</div>
-                  </div>
-                </div>
-              ))}
+            {/* Right button */}
+            {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "moderator") && (
+              <button
+                onClick={() => setShowModal(true)}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  background: "linear-gradient(135deg, #3b82f6, #6366f1)",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 999,
+                  padding: "11px 22px",
+                  fontSize: 14, fontWeight: 700,
+                  cursor: "pointer",
+                  boxShadow: "0 4px 14px rgba(99,102,241,0.35)",
+                  transition: "all 0.2s",
+                  whiteSpace: "nowrap",
+                  flexShrink: 0,
+                }}
+                onMouseEnter={e => e.currentTarget.style.boxShadow = "0 6px 20px rgba(99,102,241,0.5)"}
+                onMouseLeave={e => e.currentTarget.style.boxShadow = "0 4px 14px rgba(99,102,241,0.35)"}
+              >
+                <Plus size={16} />
+                Add Risk Profile
+              </button>
+            )}
           </div>
         </div>
-      )}
 
-      {/* ── RISK PROFILE SUMMARY TABLE ── */}
-      <div style={{
-        background: "#fff",
-        borderRadius: 20,
-        boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
-        overflow: "hidden",
-      }}>
-        {/* Table header row */}
+        {/* ── KPI GRID ── */}
         <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "18px 24px 16px",
-          borderBottom: "1px solid #f1f5f9",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 20,
+          marginBottom: 28,
         }}>
-          <div>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", margin: 0 }}>
-              Risk Profile Summary
-            </h3>
-            <p style={{ fontSize: 12, color: "#94a3b8", marginTop: 3 }}>
-              {profiles.length} profile{profiles.length !== 1 ? "s" : ""} total
-            </p>
-          </div>
-
+          <KpiCard label="Total Risks" value={total} subtext="All registered profiles" color="blue" icon={Shield} isLoading={isLoading} />
+          <KpiCard label="High Risk" value={high} subtext="Needs immediate attention" color="red" icon={ShieldAlert} isLoading={isLoading} />
+          <KpiCard label="Medium Risk" value={medium} subtext="Monitor closely" color="amber" icon={TrendingUp} isLoading={isLoading} />
+          <KpiCard label="Low Risk" value={low} subtext="Under control" color="green" icon={TrendingDown} isLoading={isLoading} />
         </div>
 
-        {/* Table */}
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ background: "#f8fafc" }}>
-                {[
-                  { label: "Risk Profile", width: "28%" },
-                  { label: "Owner", width: "20%" },
-                  { label: "Trend", width: "12%" },
-                  { label: "Risk Level", width: "15%" },
-                  { label: "Last Updated", width: "20%" },
-                  { label: "", width: "5%" },
-                ].map(({ label, width }) => (
-                  <th key={label} style={{
-                    width,
-                    textAlign: "left",
-                    padding: "11px 20px",
-                    fontSize: 10.5,
-                    fontWeight: 700,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: "#94a3b8",
-                    borderBottom: "1px solid #f1f5f9",
-                    whiteSpace: "nowrap",
-                  }}>{label}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                // Skeleton rows
-                Array.from({ length: 3 }).map((_, i) => (
-                  <tr key={i} style={{ borderBottom: "1px solid #f8fafc" }}>
-                    <td style={{ padding: "13px 20px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <div className="skeleton-box" style={{ width: 34, height: 34, borderRadius: 10 }} />
-                        <div className="skeleton-box" style={{ width: 120, height: 16 }} />
+        {/* ── PRIORITY RISKS SECTION ── */}
+        {pinnedRisks.length > 0 && (
+          <div style={{ marginBottom: 28 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+              <Pin size={18} color="#3b82f6" fill="#3b82f6" />
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1e293b", margin: 0 }}>Priority Risks</h2>
+              <span style={{ fontSize: 11, background: "#eff6ff", color: "#3b82f6", padding: "2px 8px", borderRadius: 10, fontWeight: 700 }}>TOP {Math.min(pinnedRisks.length, 5)}</span>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
+              {pinnedRisks
+                .sort((a, b) => {
+                  const sevMap = { Critical: 4, High: 3, Medium: 2, Low: 1 };
+                  const bSev = sevMap[b.severity] || 0;
+                  const aSev = sevMap[a.severity] || 0;
+                  if (bSev !== aSev) return bSev - aSev;
+                  return (b.score || 0) - (a.score || 0);
+                })
+                .slice(0, 5)
+                .map(risk => (
+                  <div key={risk.riskId}
+                    onClick={() => navigate(`/risk-profile/${risk.riskId}`)}
+                    style={{ background: "#fff", borderRadius: 16, border: "1px solid #f1f5f9", padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", transition: "all 0.2s", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = "#3b82f6"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = "#f1f5f9"; e.currentTarget.style.transform = "translateY(0)"; }}
+                  >
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", marginBottom: 4 }}>{risk.title}</div>
+                      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: risk.severity === "Critical" ? "#ef4444" : "#f59e0b" }}>{risk.severity.toUpperCase()}</span>
+                        <span style={{ fontSize: 11, color: "#94a3b8" }}>•</span>
+                        <span style={{ fontSize: 11, color: "#64748b" }}>Owner: {risk.owner}</span>
                       </div>
-                    </td>
-                    <td style={{ padding: "13px 20px" }}><div className="skeleton-box" style={{ width: 80, height: 16 }} /></td>
-                    <td style={{ padding: "13px 20px" }}><div className="skeleton-box" style={{ width: 24, height: 16 }} /></td>
-                    <td style={{ padding: "13px 20px" }}><div className="skeleton-box" style={{ width: 60, height: 22, borderRadius: 999 }} /></td>
-                    <td style={{ padding: "13px 20px" }}><div className="skeleton-box" style={{ width: 140, height: 14 }} /></td>
-                  </tr>
-                ))
-              ) : profiles.length === 0 ? (
-                <tr>
-                  <td colSpan={5} style={{ padding: "60px 24px", textAlign: "center" }}>
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-                      <div style={{
-                        width: 60, height: 60, borderRadius: "50%",
-                        background: "#f1f5f9",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }}>
-                        <Folder size={28} color="#94a3b8" />
-                      </div>
-                      <p style={{ fontSize: 14, fontWeight: 600, color: "#64748b", margin: 0 }}>
-                        No risk profiles yet
-                      </p>
-                      <p style={{ fontSize: 12, color: "#94a3b8", margin: 0 }}>
-                        Create your first profile to start tracking risks
-                      </p>
-                      <button
-                        onClick={() => setShowModal(true)}
-                        style={{
-                          marginTop: 4,
-                          display: "inline-flex", alignItems: "center", gap: 6,
-                          background: "#eff6ff", color: "#3b82f6",
-                          border: "none", borderRadius: 999,
-                          padding: "8px 18px", fontSize: 13, fontWeight: 700,
-                          cursor: "pointer",
-                        }}
-                      >
-                        <Plus size={14} /> Create first profile
-                      </button>
                     </div>
-                  </td>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: "#1e293b" }}>{risk.score}</div>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "#3b82f6", textTransform: "uppercase" }}>{risk.type}</div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── RISK PROFILE SUMMARY TABLE ── */}
+        <div style={{
+          background: "#fff",
+          borderRadius: 20,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
+          overflow: "hidden",
+        }}>
+          {/* Table header row */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "18px 24px 16px",
+            borderBottom: "1px solid #f1f5f9",
+          }}>
+            <div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", margin: 0 }}>
+                Risk Profile Summary
+              </h3>
+              <p style={{ fontSize: 12, color: "#94a3b8", marginTop: 3 }}>
+                {profiles.length} profile{profiles.length !== 1 ? "s" : ""} total
+              </p>
+            </div>
+
+          </div>
+
+          {/* Table */}
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ background: "#f8fafc" }}>
+                  {[
+                    { label: "Risk Profile", width: "28%" },
+                    { label: "Owner", width: "20%" },
+                    { label: "Trend", width: "12%" },
+                    { label: "Risk Level", width: "15%" },
+                    { label: "Last Updated", width: "20%" },
+                    { label: "", width: "5%" },
+                  ].map(({ label, width }) => (
+                    <th key={label} style={{
+                      width,
+                      textAlign: "left",
+                      padding: "11px 20px",
+                      fontSize: 10.5,
+                      fontWeight: 700,
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      color: "#94a3b8",
+                      borderBottom: "1px solid #f1f5f9",
+                      whiteSpace: "nowrap",
+                    }}>{label}</th>
+                  ))}
                 </tr>
-              ) : (
-                (() => {
-                  const allRisks = JSON.parse(localStorage.getItem("risks") || "[]");
-                  return profiles.map((p, i) => {
-                    const profileRisks = allRisks.filter(r => r.profile === p.name);
-                    const isEscalated = profileRisks.some(r => r.isEscalated);
-
-                  // DYNAMIC RISK CALCULATION
-                  let maxScore = 0;
-                  if (profileRisks.length > 0) {
-                    maxScore = Math.max(...profileRisks.map(r => (r.impact || 0) * (r.likelihood || 0)));
-                  }
-                  const computedLevel = profileRisks.length > 0 ? getLevel(maxScore) : "Not Assessed";
-                  const rc = getLevelStyle(computedLevel);
-
-                  const trendMap = {
-                    "↑": { icon: <TrendingUp size={14} />, color: "#ef4444" },
-                    "↓": { icon: <TrendingDown size={14} />, color: "#10b981" },
-                    "→": { icon: <Minus size={14} />, color: "#94a3b8" },
-                  };
-
-                  // Calculated trend override
-                  const tr = isEscalated ? trendMap["↑"] : (trendMap[p.trend] || trendMap["→"]);
-
-                  return (
-                    <tr
-                      key={i}
-                      onClick={() => { localStorage.setItem("selectedProfile", p.name); navigate("/risk-profile"); }}
-                      style={{ cursor: "pointer", transition: "background 0.15s", borderBottom: "1px solid #f8fafc" }}
-                      onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
-                      onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-                    >
-                      {/* Profile name */}
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  // Skeleton rows
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <tr key={i} style={{ borderBottom: "1px solid #f8fafc" }}>
                       <td style={{ padding: "13px 20px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          <div style={{
-                            width: 34, height: 34, borderRadius: 10,
-                            background: isEscalated ? "linear-gradient(135deg,#fee2e2,#fecaca)" : "linear-gradient(135deg,#e0e7ff,#c7d2fe)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            flexShrink: 0,
-                          }}>
-                            <Folder size={15} color={isEscalated ? "#ef4444" : "#6366f1"} />
-                          </div>
-                          <div style={{ display: "flex", flexDirection: "column" }}>
-                            <span style={{ fontSize: 14, fontWeight: 600, color: "#0f172a" }}>
-                              {p.name}
-                            </span>
-                            {isEscalated && (
-                              <span style={{ fontSize: "10px", fontWeight: 800, color: "#ef4444", textTransform: "uppercase", marginTop: "2px" }}>
-                                ● Escalated
-                              </span>
-                            )}
-                          </div>
+                          <div className="skeleton-box" style={{ width: 34, height: 34, borderRadius: 10 }} />
+                          <div className="skeleton-box" style={{ width: 120, height: 16 }} />
                         </div>
                       </td>
-
-                      {/* Owner */}
-                      <td style={{ padding: "13px 20px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <div style={{
-                            width: 26, height: 26, borderRadius: "50%",
-                            background: "linear-gradient(135deg, #3b82f6, #6366f1)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            color: "#fff", fontSize: 11, fontWeight: 700, flexShrink: 0,
-                          }}>
-                            {(p.owner || "?").charAt(0).toUpperCase()}
-                          </div>
-                          <span style={{ fontSize: 13, color: "#475569" }}>{p.owner || "—"}</span>
+                      <td style={{ padding: "13px 20px" }}><div className="skeleton-box" style={{ width: 80, height: 16 }} /></td>
+                      <td style={{ padding: "13px 20px" }}><div className="skeleton-box" style={{ width: 24, height: 16 }} /></td>
+                      <td style={{ padding: "13px 20px" }}><div className="skeleton-box" style={{ width: 60, height: 22, borderRadius: 999 }} /></td>
+                      <td style={{ padding: "13px 20px" }}><div className="skeleton-box" style={{ width: 140, height: 14 }} /></td>
+                    </tr>
+                  ))
+                ) : profiles.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} style={{ padding: "60px 24px", textAlign: "center" }}>
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+                        <div style={{
+                          width: 60, height: 60, borderRadius: "50%",
+                          background: "#f1f5f9",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                        }}>
+                          <Folder size={28} color="#94a3b8" />
                         </div>
-                      </td>
+                        <p style={{ fontSize: 14, fontWeight: 600, color: "#64748b", margin: 0 }}>
+                          No risk profiles yet
+                        </p>
+                        <p style={{ fontSize: 12, color: "#94a3b8", margin: 0 }}>
+                          Create your first profile to start tracking risks
+                        </p>
+                        <button
+                          onClick={() => setShowModal(true)}
+                          style={{
+                            marginTop: 4,
+                            display: "inline-flex", alignItems: "center", gap: 6,
+                            background: "#eff6ff", color: "#3b82f6",
+                            border: "none", borderRadius: 999,
+                            padding: "8px 18px", fontSize: 13, fontWeight: 700,
+                            cursor: "pointer",
+                          }}
+                        >
+                          <Plus size={14} /> Create first profile
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  (() => {
+                    const allRisks = JSON.parse(localStorage.getItem("risks") || "[]");
+                    return profiles.map((p, i) => {
+                      const profileRisks = allRisks.filter(r => r.profile === p.name);
+                      const isEscalated = profileRisks.some(r => r.isEscalated);
 
-                      {/* Trend */}
-                      <td style={{ padding: "13px 20px" }}>
-                        <span style={{
-                          display: "inline-flex", alignItems: "center", gap: 4,
-                          color: tr.color, fontWeight: 600, fontSize: 13,
-                        }}>
-                          {tr.icon}
-                        </span>
-                      </td>
+                      // DYNAMIC RISK CALCULATION
+                      let maxScore = 0;
+                      if (profileRisks.length > 0) {
+                        maxScore = Math.max(...profileRisks.map(r => (r.impact || 0) * (r.likelihood || 0)));
+                      }
+                      const computedLevel = profileRisks.length > 0 ? getLevel(maxScore) : "Not Assessed";
+                      const rc = getLevelStyle(computedLevel);
 
-                      {/* Risk level pill */}
-                      <td style={{ padding: "13px 20px" }}>
-                        <span style={{
-                          display: "inline-flex", alignItems: "center", gap: 5,
-                          background: rc.bg, color: rc.color,
-                          borderRadius: 999, padding: "4px 10px",
-                          fontSize: 11.5, fontWeight: 700,
-                          position: "relative"
-                        }}>
-                          <span style={{ width: 6, height: 6, borderRadius: "50%", background: rc.dot, flexShrink: 0 }} />
-                          {computedLevel}
-                          {profileRisks.length === 0 && (
-                            <div style={{ position: "absolute", top: "100%", left: 0, fontSize: "9px", color: "#94a3b8", whiteSpace: "nowrap", marginTop: "2px" }}>
-                              Risk level will be calculated once risks are added
+                      const trendMap = {
+                        "↑": { icon: <TrendingUp size={14} />, color: "#ef4444" },
+                        "↓": { icon: <TrendingDown size={14} />, color: "#10b981" },
+                        "→": { icon: <Minus size={14} />, color: "#94a3b8" },
+                      };
+
+                      // Calculated trend override
+                      const tr = isEscalated ? trendMap["↑"] : (trendMap[p.trend] || trendMap["→"]);
+
+                      return (
+                        <tr
+                          key={i}
+                          onClick={() => { localStorage.setItem("selectedProfile", p.name); navigate("/risk-profile"); }}
+                          style={{ cursor: "pointer", transition: "background 0.15s", borderBottom: "1px solid #f8fafc" }}
+                          onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
+                          onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                        >
+                          {/* Profile name */}
+                          <td style={{ padding: "13px 20px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                              <div style={{
+                                width: 34, height: 34, borderRadius: 10,
+                                background: isEscalated ? "linear-gradient(135deg,#fee2e2,#fecaca)" : "linear-gradient(135deg,#e0e7ff,#c7d2fe)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                flexShrink: 0,
+                              }}>
+                                <Folder size={15} color={isEscalated ? "#ef4444" : "#6366f1"} />
+                              </div>
+                              <div style={{ display: "flex", flexDirection: "column" }}>
+                                <span style={{ fontSize: 14, fontWeight: 600, color: "#0f172a" }}>
+                                  {p.name}
+                                </span>
+                                {isEscalated && (
+                                  <span style={{ fontSize: "10px", fontWeight: 800, color: "#ef4444", textTransform: "uppercase", marginTop: "2px" }}>
+                                    ● Escalated
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                          )}
-                        </span>
-                      </td>
+                          </td>
 
-                      {/* Date */}
-                      <td style={{ padding: "13px 20px", fontSize: 12, color: "#94a3b8" }}>
-                        {p.date}
-                      </td>
+                          {/* Owner */}
+                          <td style={{ padding: "13px 20px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                              <div style={{
+                                width: 26, height: 26, borderRadius: "50%",
+                                background: "linear-gradient(135deg, #3b82f6, #6366f1)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                color: "#fff", fontSize: 11, fontWeight: 700, flexShrink: 0,
+                              }}>
+                                {(p.owner || "?").charAt(0).toUpperCase()}
+                              </div>
+                              <span style={{ fontSize: 13, color: "#475569" }}>{p.owner || "—"}</span>
+                            </div>
+                          </td>
 
-                      {/* Actions */}
-                      <td style={{ padding: "13px 20px", textAlign: "right", position: "relative" }}>
-                        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); setActiveMenu(activeMenu === i ? null : i); }}
-                            style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", padding: "6px", borderRadius: "6px", display: "flex", alignItems: "center", transition: "all 0.2s" }}
-                            onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
-                            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-                          >
-                            <MoreVertical size={16} />
-                          </button>
+                          {/* Trend */}
+                          <td style={{ padding: "13px 20px" }}>
+                            <span style={{
+                              display: "inline-flex", alignItems: "center", gap: 4,
+                              color: tr.color, fontWeight: 600, fontSize: 13,
+                            }}>
+                              {tr.icon}
+                            </span>
+                          </td>
 
-                          {activeMenu === i && (
-                            <div 
-                              ref={menuRef}
-                              style={{ position: "absolute", right: 24, top: 40, background: "#fff", borderRadius: 12, boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", zIndex: 100, minWidth: 160, padding: 6, overflow: "hidden" }}
-                            >
-                              <button 
-                                onClick={() => { localStorage.setItem("selectedProfile", p.name); navigate("/risk-profile"); }}
-                                style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "#475569", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
-                                onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
+                          {/* Risk level pill */}
+                          <td style={{ padding: "13px 20px" }}>
+                            <span style={{
+                              display: "inline-flex", alignItems: "center", gap: 5,
+                              background: rc.bg, color: rc.color,
+                              borderRadius: 999, padding: "4px 10px",
+                              fontSize: 11.5, fontWeight: 700,
+                              position: "relative"
+                            }}>
+                              <span style={{ width: 6, height: 6, borderRadius: "50%", background: rc.dot, flexShrink: 0 }} />
+                              {computedLevel}
+                              {profileRisks.length === 0 && (
+                                <div style={{ position: "absolute", top: "100%", left: 0, fontSize: "9px", color: "#94a3b8", whiteSpace: "nowrap", marginTop: "2px" }}>
+                                  Risk level will be calculated once risks are added
+                                </div>
+                              )}
+                            </span>
+                          </td>
+
+                          {/* Date */}
+                          <td style={{ padding: "13px 20px", fontSize: 12, color: "#94a3b8" }}>
+                            {p.date}
+                          </td>
+
+                          {/* Actions */}
+                          <td style={{ padding: "13px 20px", textAlign: "right", position: "relative" }}>
+                            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); setActiveMenu(activeMenu === i ? null : i); }}
+                                style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", padding: "6px", borderRadius: "6px", display: "flex", alignItems: "center", transition: "all 0.2s" }}
+                                onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
                                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                               >
-                                <ExternalLink size={14} /> View Details
+                                <MoreVertical size={16} />
                               </button>
 
-                              <button 
-                                onClick={(e) => initiateEdit(e, p)}
-                                style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "#475569", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
-                                onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
-                                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-                              >
-                                <Edit2 size={14} /> Edit Profile
-                              </button>
-                              
-                              {user?.role?.toLowerCase() === "admin" && (
-                                <div style={{ borderTop: "1px solid #f1f5f9", marginTop: 4, paddingTop: 4 }}>
-                                  <button 
-                                    onClick={(e) => initiateDelete(e, p)}
-                                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "#ef4444", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
-                                    onMouseEnter={e => e.currentTarget.style.background = "#fef2f2"}
+                              {activeMenu === i && (
+                                <div
+                                  ref={menuRef}
+                                  style={{ position: "absolute", right: 24, top: 40, background: "#fff", borderRadius: 12, boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", zIndex: 100, minWidth: 160, padding: 6, overflow: "hidden" }}
+                                >
+                                  <button
+                                    onClick={() => { localStorage.setItem("selectedProfile", p.name); navigate("/risk-profile"); }}
+                                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "#475569", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
+                                    onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
                                     onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                                   >
-                                    <Trash2 size={14} /> Delete Profile
+                                    <ExternalLink size={14} /> View Details
                                   </button>
+
+                                  <button
+                                    onClick={(e) => initiateEdit(e, p)}
+                                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "#475569", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
+                                    onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
+                                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                                  >
+                                    <Edit2 size={14} /> Edit Profile
+                                  </button>
+
+                                  {user?.role?.toLowerCase() === "admin" && (
+                                    <div style={{ borderTop: "1px solid #f1f5f9", marginTop: 4, paddingTop: 4 }}>
+                                      <button
+                                        onClick={(e) => initiateDelete(e, p)}
+                                        style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "#ef4444", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
+                                        onMouseEnter={e => e.currentTarget.style.background = "#fef2f2"}
+                                        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                                      >
+                                        <Trash2 size={14} /> Delete Profile
+                                      </button>
+                                    </div>
+                                  )}
                                 </div>
                               )}
                             </div>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                });
-                })()
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      {/* ── PINNED KRIs ── */}
-      {pinnedKris.length > 0 && (
-        <div style={{ marginTop: 28 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-            <Pin size={20} color="#3b82f6" />
-            <h3 style={{ fontSize: 18, fontWeight: 700, color: "#0f172a", margin: 0 }}>
-              Pinned Key Risk Indicators
-            </h3>
+                          </td>
+                        </tr>
+                      );
+                    });
+                  })()
+                )}
+              </tbody>
+            </table>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: 24 }}>
-            {pinnedKris.map(kri => (
-              <div key={`${kri.riskId}-${kri.id}`} style={{
-                background: "#fff",
-                borderRadius: 20,
-                padding: 24,
-                boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
-                border: "1px solid #f1f5f9",
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-                  <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                      <span style={{ fontSize: 16, fontWeight: 700, color: "#0f172a" }}>{kri.title}</span>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: "#3b82f6", background: "#eff6ff", padding: "2px 8px", borderRadius: 999 }}>{kri.riskTitle || "Risk Profile"}</span>
+        </div>
+        {/* ── PINNED KRIs ── */}
+        {pinnedKris.length > 0 && (
+          <div style={{ marginTop: 28 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+              <Pin size={20} color="#3b82f6" />
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#0f172a", margin: 0 }}>
+                Pinned Key Risk Indicators
+              </h3>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: 24 }}>
+              {pinnedKris.map(kri => (
+                <div key={`${kri.riskId}-${kri.id}`} style={{
+                  background: "#fff",
+                  borderRadius: 20,
+                  padding: 24,
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
+                  border: "1px solid #f1f5f9",
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                        <span style={{ fontSize: 16, fontWeight: 700, color: "#0f172a" }}>{kri.title}</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "#3b82f6", background: "#eff6ff", padding: "2px 8px", borderRadius: 999 }}>{kri.riskTitle || "Risk Profile"}</span>
+                      </div>
+                      <span style={{ fontSize: 12, color: "#64748b" }}>Owner: {kri.owner}</span>
                     </div>
-                    <span style={{ fontSize: 12, color: "#64748b" }}>Owner: {kri.owner}</span>
+                  </div>
+
+                  <div style={{ height: "200px", padding: "10px 0" }}>
+                    {kri.type === "Line" && (
+                      <Line
+                        data={{
+                          labels: kri.labels,
+                          datasets: [{
+                            label: kri.title,
+                            data: kri.data,
+                            borderColor: "#ef4444",
+                            backgroundColor: "rgba(239, 68, 68, 0.1)",
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: "#fff",
+                            pointBorderColor: "#ef4444",
+                            pointBorderWidth: 2
+                          }]
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: { legend: { display: false } },
+                          scales: {
+                            y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
+                            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                          }
+                        }}
+                      />
+                    )}
+                    {(kri.type === "Column" || kri.type === "Stacked") && (
+                      <Bar
+                        data={{
+                          labels: kri.labels,
+                          datasets: [{
+                            label: kri.title,
+                            data: kri.data,
+                            backgroundColor: "#ef4444",
+                            borderRadius: 4
+                          }]
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: { legend: { display: false } },
+                          scales: {
+                            y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
+                            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                          }
+                        }}
+                      />
+                    )}
+                    {kri.type === "Pie" && (
+                      <Pie
+                        data={{
+                          labels: kri.labels || ["No Data"],
+                          datasets: [{
+                            data: kri.data || [100],
+                            backgroundColor: ["#22C55E", "#F59E0B", "#EF4444", "#3b82f6", "#8b5cf6"],
+                            borderWidth: 0
+                          }]
+                        }}
+                        options={{ responsive: true, maintainAspectRatio: false }}
+                      />
+                    )}
                   </div>
                 </div>
-
-                <div style={{ height: "200px", padding: "10px 0" }}>
-                  {kri.type === "Line" && (
-                    <Line
-                      data={{
-                        labels: kri.labels,
-                        datasets: [{
-                          label: kri.title,
-                          data: kri.data,
-                          borderColor: "#ef4444",
-                          backgroundColor: "rgba(239, 68, 68, 0.1)",
-                          tension: 0.4,
-                          pointRadius: 4,
-                          pointBackgroundColor: "#fff",
-                          pointBorderColor: "#ef4444",
-                          pointBorderWidth: 2
-                        }]
-                      }}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                          y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
-                          x: { grid: { display: false }, ticks: { font: { size: 10 } } }
-                        }
-                      }}
-                    />
-                  )}
-                  {(kri.type === "Column" || kri.type === "Stacked") && (
-                    <Bar
-                      data={{
-                        labels: kri.labels,
-                        datasets: [{
-                          label: kri.title,
-                          data: kri.data,
-                          backgroundColor: "#ef4444",
-                          borderRadius: 4
-                        }]
-                      }}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                          y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { font: { size: 10 } } },
-                          x: { grid: { display: false }, ticks: { font: { size: 10 } } }
-                        }
-                      }}
-                    />
-                  )}
-                  {kri.type === "Pie" && (
-                    <Pie
-                      data={{
-                        labels: kri.labels || ["No Data"],
-                        datasets: [{
-                          data: kri.data || [100],
-                          backgroundColor: ["#22C55E", "#F59E0B", "#EF4444", "#3b82f6", "#8b5cf6"],
-                          borderWidth: 0
-                        }]
-                      }}
-                      options={{ responsive: true, maintainAspectRatio: false }}
-                    />
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── DELETE CONFIRMATION MODAL ── */}
-      {showDeleteModal && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 10005, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(4px)" }} onClick={() => !isDeleting && setShowDeleteModal(false)}>
-          <div style={{ background: "#fff", borderRadius: 24, width: "100%", maxWidth: 440, padding: "32px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", position: "relative" }} onClick={e => e.stopPropagation()}>
-            <div style={{ width: 56, height: 56, borderRadius: 16, background: "#fef2f2", display: "flex", alignItems: "center", justifyContent: "center", color: "#ef4444", marginBottom: 24 }}>
-              <AlertCircle size={28} />
-            </div>
-            
-            <h3 style={{ fontSize: 20, fontWeight: 800, color: "#0f172a", margin: "0 0 8px 0" }}>Delete Risk Profile?</h3>
-            <p style={{ fontSize: 14, color: "#64748b", margin: "0 0 24px 0", lineHeight: 1.6 }}>
-              You are about to delete <strong style={{ color: "#0f172a" }}>{profileToDelete?.name}</strong>. This action will mark the profile as deleted and hide it from all dashboards.
-            </p>
-
-            {deleteDependencies?.total > 0 && (
-              <div style={{ background: "#fff7ed", border: "1px solid #ffedd5", borderRadius: 12, padding: "16px", marginBottom: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                  <ShieldAlert size={16} color="#f97316" />
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "#9a3412" }}>Linked Dependencies Found</span>
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <div style={{ fontSize: 12, color: "#c2410c" }}>• Risks: <strong>{deleteDependencies.risks}</strong></div>
-                  <div style={{ fontSize: 12, color: "#c2410c" }}>• KRIs: <strong>{deleteDependencies.kris}</strong></div>
-                  <div style={{ fontSize: 12, color: "#c2410c" }}>• Controls: <strong>{deleteDependencies.controls}</strong></div>
-                  <div style={{ fontSize: 12, color: "#c2410c" }}>• Incidents: <strong>{deleteDependencies.incidents}</strong></div>
-                </div>
-                <p style={{ fontSize: 11, color: "#9a3412", marginTop: 12, fontWeight: 600 }}>Deleting this profile will also hide these linked records.</p>
-              </div>
-            )}
-
-            <div style={{ background: "#f8fafc", borderRadius: 12, padding: "12px 16px", border: "1px solid #e2e8f0", marginBottom: 28 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, color: "#ef4444", margin: 0, textTransform: "uppercase", letterSpacing: "0.05em" }}>Warning: This action cannot be undone.</p>
-            </div>
-
-            <div style={{ display: "flex", gap: 12 }}>
-              <button 
-                disabled={isDeleting}
-                onClick={() => setShowDeleteModal(false)}
-                style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1.5px solid #e2e8f0", background: "#fff", color: "#475569", fontSize: 14, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer" }}
-              >
-                Cancel
-              </button>
-              <button 
-                disabled={isDeleting}
-                onClick={handleSoftDelete}
-                style={{ flex: 1, padding: "12px", borderRadius: 12, border: "none", background: isDeleting ? "#94a3b8" : "#ef4444", color: "#fff", fontSize: 14, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
-              >
-                {isDeleting ? "Deleting..." : "Confirm Delete"}
-              </button>
+              ))}
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* MODAL */}
-      {showModal && (
-        <RiskModal
-          onClose={() => setShowModal(false)}
-          onSave={saveProfile}
-          profileName={profileName} setProfileName={setProfileName}
-          profileOwner={profileOwner} setProfileOwner={setProfileOwner}
-        />
-      )}
-    </Layout>
-  </ErrorBoundary>
-);
+        {/* ── DELETE CONFIRMATION MODAL ── */}
+        {showDeleteModal && (
+          <div style={{ position: "fixed", inset: 0, zIndex: 10005, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(4px)" }} onClick={() => !isDeleting && setShowDeleteModal(false)}>
+            <div style={{ background: "#fff", borderRadius: 24, width: "100%", maxWidth: 440, padding: "32px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", position: "relative" }} onClick={e => e.stopPropagation()}>
+              <div style={{ width: 56, height: 56, borderRadius: 16, background: "#fef2f2", display: "flex", alignItems: "center", justifyContent: "center", color: "#ef4444", marginBottom: 24 }}>
+                <AlertCircle size={28} />
+              </div>
+
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: "#0f172a", margin: "0 0 8px 0" }}>Delete Risk Profile?</h3>
+              <p style={{ fontSize: 14, color: "#64748b", margin: "0 0 24px 0", lineHeight: 1.6 }}>
+                You are about to delete <strong style={{ color: "#0f172a" }}>{profileToDelete?.name}</strong>. This action will mark the profile as deleted and hide it from all dashboards.
+              </p>
+
+              {deleteDependencies?.total > 0 && (
+                <div style={{ background: "#fff7ed", border: "1px solid #ffedd5", borderRadius: 12, padding: "16px", marginBottom: 24 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                    <ShieldAlert size={16} color="#f97316" />
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#9a3412" }}>Linked Dependencies Found</span>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                    <div style={{ fontSize: 12, color: "#c2410c" }}>• Risks: <strong>{deleteDependencies.risks}</strong></div>
+                    <div style={{ fontSize: 12, color: "#c2410c" }}>• KRIs: <strong>{deleteDependencies.kris}</strong></div>
+                    <div style={{ fontSize: 12, color: "#c2410c" }}>• Controls: <strong>{deleteDependencies.controls}</strong></div>
+                    <div style={{ fontSize: 12, color: "#c2410c" }}>• Incidents: <strong>{deleteDependencies.incidents}</strong></div>
+                  </div>
+                  <p style={{ fontSize: 11, color: "#9a3412", marginTop: 12, fontWeight: 600 }}>Deleting this profile will also hide these linked records.</p>
+                </div>
+              )}
+
+              <div style={{ background: "#f8fafc", borderRadius: 12, padding: "12px 16px", border: "1px solid #e2e8f0", marginBottom: 28 }}>
+                <p style={{ fontSize: 12, fontWeight: 700, color: "#ef4444", margin: 0, textTransform: "uppercase", letterSpacing: "0.05em" }}>Warning: This action cannot be undone.</p>
+              </div>
+
+              <div style={{ display: "flex", gap: 12 }}>
+                <button
+                  disabled={isDeleting}
+                  onClick={() => setShowDeleteModal(false)}
+                  style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1.5px solid #e2e8f0", background: "#fff", color: "#475569", fontSize: 14, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  disabled={isDeleting}
+                  onClick={handleSoftDelete}
+                  style={{ flex: 1, padding: "12px", borderRadius: 12, border: "none", background: isDeleting ? "#94a3b8" : "#ef4444", color: "#fff", fontSize: 14, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
+                >
+                  {isDeleting ? "Deleting..." : "Confirm Delete"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL */}
+        {showModal && (
+          <RiskModal
+            onClose={() => setShowModal(false)}
+            onSave={saveProfile}
+            profileName={profileName} setProfileName={setProfileName}
+            profileOwner={profileOwner} setProfileOwner={setProfileOwner}
+          />
+        )}
+      </Layout>
+    </ErrorBoundary>
+  );
 }

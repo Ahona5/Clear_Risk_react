@@ -1,20 +1,30 @@
 .heatmap-layout {
   display: flex;
-  gap: 60px; /* Increased gap for better separation */
+  gap: 60px;
+  /* Increased gap for better separation */
   max-width: 1300px;
-  margin: 40px auto; 
+  margin: 40px auto;
   align-items: flex-start;
-  justify-content: center; /* Center the whole dual-panel block */
+  justify-content: center;
+  /* Center the whole dual-panel block */
   padding: 0 40px;
   animation: fadeIn 0.4s ease-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.heatmap-container, .ranking-container {
+.heatmap-container,
+.ranking-container {
   background: #ffffff;
   padding: 35px;
   border-radius: 20px;
@@ -23,15 +33,18 @@
 }
 
 .heatmap-container {
-  flex: 1; /* More equal balance or specific width */
-  max-width: 700px; /* Keep heatmap from becoming excessively large */
+  flex: 1;
+  /* More equal balance or specific width */
+  max-width: 700px;
+  /* Keep heatmap from becoming excessively large */
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .ranking-container {
-  width: 360px; /* Fixed width sidebar for better center stability of heatmap */
+  width: 360px;
+  /* Fixed width sidebar for better center stability of heatmap */
   max-height: 800px;
   overflow-y: auto;
   display: flex;
@@ -86,8 +99,10 @@
 /* ================= HEATMAP GRID ================= */
 .heatmap-grid-wrapper {
   display: grid;
-  grid-template-columns: 50px 1fr 50px; /* SYMMETRICAL: Y-axis space | Grid | Spacer to balance centering */
-  grid-template-rows: 1fr 50px;       /* Grid | X-axis space */
+  grid-template-columns: 50px 1fr 50px;
+  /* SYMMETRICAL: Y-axis space | Grid | Spacer to balance centering */
+  grid-template-rows: 1fr 50px;
+  /* Grid | X-axis space */
   gap: 15px;
   align-items: center;
   justify-items: center;
@@ -109,7 +124,8 @@
 }
 
 .x-axis-label {
-  grid-column: 2; /* Perfectly centered under the grid column */
+  grid-column: 2;
+  /* Perfectly centered under the grid column */
   grid-row: 2;
   font-size: 14px;
   font-weight: 800;
@@ -120,7 +136,8 @@
 }
 
 .heatmap-grid {
-  grid-column: 2; /* Occupies the middle column, balanced by 50px on either side */
+  grid-column: 2;
+  /* Occupies the middle column, balanced by 50px on either side */
   grid-row: 1;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -142,7 +159,8 @@
   padding: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 0;
-  min-height: 0; /* Prevents cell height expansion beyond square aspect */
+  min-height: 0;
+  /* Prevents cell height expansion beyond square aspect */
   position: relative;
   z-index: 1;
 }
@@ -153,22 +171,40 @@
   z-index: 5;
 }
 
-.heatmap-cell.low { background: #22c55e; border: 1.5px solid rgba(0,0,0,0.05); }
-.heatmap-cell.medium-yellow { background: #facc15; border: 1.5px solid rgba(0,0,0,0.05); }
-.heatmap-cell.medium-orange { background: #fb923c; border: 1.5px solid rgba(0,0,0,0.05); }
-.heatmap-cell.critical { background: #ef4444; border: 1.5px solid rgba(0,0,0,0.05); }
+.heatmap-cell.low {
+  background: #22c55e;
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
+}
+
+.heatmap-cell.medium-yellow {
+  background: #facc15;
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
+}
+
+.heatmap-cell.medium-orange {
+  background: #fb923c;
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
+}
+
+.heatmap-cell.critical {
+  background: #ef4444;
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
+}
 
 .cell-score-bg {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 36px; /* Slightly larger for impact */
+  font-size: 36px;
+  /* Slightly larger for impact */
   font-weight: 900;
-  color: rgba(15, 23, 42, 0.05); /* Subtly darker for visibility but still watermark-like */
+  color: rgba(15, 23, 42, 0.05);
+  /* Subtly darker for visibility but still watermark-like */
   pointer-events: none;
   z-index: 0;
-  line-height: 1; /* Reset line height for perfect centering */
+  line-height: 1;
+  /* Reset line height for perfect centering */
 }
 
 /* ================= MARKERS (G / N / T) ================= */
@@ -206,9 +242,21 @@
 }
 
 /* Marker Branding */
-.badge-gross { background: #1e293b; color: white; }
-.badge-net { background: #3b82f6; color: white; }
-.badge-target { background: #ffffff; color: #1e293b; border: 2px solid #e2e8f0; }
+.badge-gross {
+  background: #1e293b;
+  color: white;
+}
+
+.badge-net {
+  background: #3b82f6;
+  color: white;
+}
+
+.badge-target {
+  background: #ffffff;
+  color: #1e293b;
+  border: 2px solid #e2e8f0;
+}
 
 /* Rank Badge Design - Positioned precisely top-right of marker */
 .rank-badge {
@@ -226,7 +274,7 @@
   align-items: center;
   justify-content: center;
   border: 1.5px solid white;
-  box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
   z-index: 5;
 }
 
@@ -264,7 +312,7 @@
   margin-bottom: 2px;
 }
 
-.risk-tooltip > div {
+.risk-tooltip>div {
   white-space: nowrap;
   opacity: 0.9;
 }
@@ -313,7 +361,7 @@
   font-weight: 700;
   font-size: 13px;
   margin-bottom: 6px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 4px;
 }
 
@@ -373,7 +421,8 @@
 
 .ranking-item {
   display: flex;
-  flex-direction: column; /* Center stacked layout */
+  flex-direction: column;
+  /* Center stacked layout */
   align-items: center;
   gap: 12px;
   padding: 20px;
@@ -386,7 +435,8 @@
 
 .ranking-item:hover {
   background: #ffffff;
-  transform: translateY(-4px); /* Hover lift instead of slide */
+  transform: translateY(-4px);
+  /* Hover lift instead of slide */
   border-color: #cbd5e1;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
 }
@@ -402,7 +452,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center all items inside including meta */
+  align-items: center;
+  /* Center all items inside including meta */
   gap: 6px;
 }
 
@@ -425,7 +476,8 @@
   font-size: 10px;
   font-weight: 800;
   padding: 4px 12px;
-  border-radius: 20px; /* Pillowier pills */
+  border-radius: 20px;
+  /* Pillowier pills */
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -442,4 +494,3 @@
   color: #475569;
   font-weight: 700;
 }
-

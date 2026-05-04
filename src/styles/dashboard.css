@@ -136,7 +136,8 @@ body {
 
 .sidebar {
   width: 260px;
-  background: #0b1220; /* Modern SaaS dark */
+  background: #0b1220;
+  /* Modern SaaS dark */
   color: white;
   padding: 25px 18px;
   height: calc(100vh - 60px);
@@ -176,12 +177,14 @@ body.sidebar-collapsed .sidebar li {
   margin: 10px auto !important;
   gap: 0 !important;
   border-radius: 12px;
-  background: transparent; /* Inactive items are clean */
+  background: transparent;
+  /* Inactive items are clean */
   transition: all 0.3s ease;
 }
 
 body.sidebar-collapsed .sidebar li.active {
-  background: #1e293b !important; /* ONLY active has background */
+  background: #1e293b !important;
+  /* ONLY active has background */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
@@ -235,7 +238,8 @@ body.sidebar-collapsed .sidebar-toggle {
   cursor: pointer;
   border-radius: 8px;
   margin-bottom: 4px;
-  color: #94a3b8; /* Muted inactive */
+  color: #94a3b8;
+  /* Muted inactive */
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
@@ -253,7 +257,8 @@ body.sidebar-collapsed .sidebar-toggle {
 }
 
 body.sidebar-collapsed .sidebar li:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.08); /* Very subtle hover for collapsed */
+  background: rgba(255, 255, 255, 0.08);
+  /* Very subtle hover for collapsed */
 }
 
 .sidebar li:hover svg {
@@ -261,7 +266,8 @@ body.sidebar-collapsed .sidebar li:hover:not(.active) {
 }
 
 .sidebar li.active {
-  background: #1e293b; /* Darker highlighted background */
+  background: #1e293b;
+  /* Darker highlighted background */
   color: white;
   font-weight: 600;
 }
@@ -317,10 +323,12 @@ body.sidebar-collapsed .sidebar li:hover:not(.active) {
 .pill-btn,
 .add-profile-btn {
   padding: 10px 24px;
-  background: #0f172a; /* Dark pill button */
+  background: #0f172a;
+  /* Dark pill button */
   color: white !important;
   border: none !important;
-  border-radius: 999px; /* Pill style */
+  border-radius: 999px;
+  /* Pill style */
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
@@ -334,7 +342,8 @@ body.sidebar-collapsed .sidebar li:hover:not(.active) {
 .add-risk-btn:hover,
 .pill-btn:hover,
 .add-profile-btn:hover {
-  background: #1e293b; /* Slightly lighter */
+  background: #1e293b;
+  /* Slightly lighter */
   transform: translateY(-1px);
 }
 
@@ -414,29 +423,36 @@ body.sidebar-collapsed .sidebar li:hover:not(.active) {
 .cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 4px;              /* 🔥 LESS GAP */
+  gap: 4px;
+  /* 🔥 LESS GAP */
   margin-bottom: 20px;
 }
+
 .card {
   position: relative;
   background: #ffffff;
 
-  padding: 10px 12px;    /* 🔥 LESS PADDING */
-  height: 75px;          /* 🔥 SMALLER HEIGHT */
+  padding: 10px 12px;
+  /* 🔥 LESS PADDING */
+  height: 75px;
+  /* 🔥 SMALLER HEIGHT */
 
-  border-radius: 6px;    /* 🔥 MORE RECTANGULAR */
+  border-radius: 6px;
+  /* 🔥 MORE RECTANGULAR */
   border: 1px solid #e5e7eb;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
 
-  box-shadow: none;      /* 🔥 REMOVE SHADOW */
+  box-shadow: none;
+  /* 🔥 REMOVE SHADOW */
 }
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); /* restored premium hover */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  /* restored premium hover */
 }
 
 .card h3 {
@@ -463,18 +479,31 @@ body.sidebar-collapsed .sidebar li:hover:not(.active) {
   left: -1px;
   top: -1px;
   bottom: -1px;
-  width: 4px; /* Strong accent */
+  width: 4px;
+  /* Strong accent */
   border-radius: 12px 0 0 12px;
 }
 
 .total-card {
-  background: #eef2ff;   /* soft pastel indigo */
+  background: #eef2ff;
+  /* soft pastel indigo */
 }
 
-.total-card::before { background: #6366f1;  }
-.high-card::before { background: #ef4444; }
-.medium-card::before { background: #f59e0b; }
-.low-card::before { background: #22c55e; }
+.total-card::before {
+  background: #6366f1;
+}
+
+.high-card::before {
+  background: #ef4444;
+}
+
+.medium-card::before {
+  background: #f59e0b;
+}
+
+.low-card::before {
+  background: #22c55e;
+}
 
 /* ================= TABLE ================= */
 
@@ -496,21 +525,24 @@ table {
 th,
 td {
   padding: 16px 12px;
-  border-bottom: 1px solid #f3f4f6; /* Very light subtle border */
+  border-bottom: 1px solid #f3f4f6;
+  /* Very light subtle border */
   text-align: left;
 }
 
 th {
   font-size: 12px;
   font-weight: 600;
-  color: #9ca3af; /* Muted header text */
+  color: #9ca3af;
+  /* Muted header text */
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 td {
   font-size: 14px;
-  color: #374151; /* Clean readable text */
+  color: #374151;
+  /* Clean readable text */
 }
 
 tr:hover td {
@@ -1392,9 +1424,9 @@ canvas {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 48px;         
-  margin: 0;             
-  padding: 0;            
+  height: 48px;
+  margin: 0;
+  padding: 0;
 }
 
 .sidebar-logo img {
@@ -1404,10 +1436,10 @@ canvas {
 }
 
 .sidebar-collapsed .sidebar-logo {
-  background: transparent;   
+  background: transparent;
   width: auto;
   height: auto;
-  margin: 6px auto; 
+  margin: 6px auto;
   border-radius: 0;
 }
 
@@ -1461,7 +1493,8 @@ canvas {
   position: absolute;
   top: 45px;
   right: 0;
-  width: 280px; /* COMPACT WIDTH */
+  width: 280px;
+  /* COMPACT WIDTH */
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
@@ -1475,14 +1508,16 @@ canvas {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 14px; /* TIGHT PADDING */
+  padding: 12px 14px;
+  /* TIGHT PADDING */
   border-bottom: 1px solid #e2e8f0;
   background: #ffffff;
 }
 
 .notif-header h4 {
   margin: 0;
-  font-size: 14px; /* PROPER HEADER SIZE */
+  font-size: 14px;
+  /* PROPER HEADER SIZE */
   font-weight: 600;
   color: #0f172a;
   white-space: nowrap;
@@ -1505,7 +1540,8 @@ canvas {
 }
 
 .notif-body {
-  max-height: 250px; /* COMPACT SCROLL */
+  max-height: 250px;
+  /* COMPACT SCROLL */
   overflow-y: auto;
 }
 
@@ -1527,7 +1563,8 @@ canvas {
 }
 
 .notif-item {
-  padding: 10px 14px; /* TIGHT PADDING */
+  padding: 10px 14px;
+  /* TIGHT PADDING */
   border-bottom: 1px solid #f1f5f9;
   cursor: pointer;
   transition: background 0.2s;
@@ -1554,7 +1591,8 @@ canvas {
 
 .notif-message {
   margin: 0;
-  font-size: 14px; /* SAAS TYPOGRAPHY */
+  font-size: 14px;
+  /* SAAS TYPOGRAPHY */
   font-weight: 500;
   color: #334155;
   line-height: 1.3;
