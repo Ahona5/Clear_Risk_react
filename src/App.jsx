@@ -8,25 +8,28 @@ import Users from "./Users";
 import Activity from "./Activity";
 import RiskDetail from "./RiskDetail";
 import ProtectedRoute from "./ProtectedRoute";
+import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        
-        {/* Standard User Protected Routes */}
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
-        <Route path="/risk-profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/risk/:id" element={<ProtectedRoute><RiskDetail /></ProtectedRoute>} />
-        
-        {/* Admin-Only Protected Routes */}
-        <Route path="/users" element={<ProtectedRoute requireAdmin={true}><Users /></ProtectedRoute>} />
-        <Route path="/activity" element={<ProtectedRoute requireAdmin={true}><Activity /></ProtectedRoute>} />
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          
+          {/* Standard User Protected Routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+          <Route path="/risk-profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/risk/:id" element={<ProtectedRoute><RiskDetail /></ProtectedRoute>} />
+          
+          {/* Admin-Only Protected Routes */}
+          <Route path="/users" element={<ProtectedRoute requireAdmin={true}><Users /></ProtectedRoute>} />
+          <Route path="/activity" element={<ProtectedRoute requireAdmin={true}><Activity /></ProtectedRoute>} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

@@ -25,11 +25,11 @@
 
 .heatmap-container,
 .ranking-container {
-  background: #ffffff;
+  background: var(--bg-card);
   padding: 35px;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-primary);
 }
 
 .heatmap-container {
@@ -61,13 +61,13 @@
 .heatmap-title {
   font-size: 24px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
 .heatmap-subtitle {
   font-size: 15px;
-  color: #64748b;
+  color: var(--text-muted);
   margin-bottom: 24px;
 }
 
@@ -171,25 +171,10 @@
   z-index: 5;
 }
 
-.heatmap-cell.low {
-  background: #22c55e;
-  border: 1.5px solid rgba(0, 0, 0, 0.05);
-}
-
-.heatmap-cell.medium-yellow {
-  background: #facc15;
-  border: 1.5px solid rgba(0, 0, 0, 0.05);
-}
-
-.heatmap-cell.medium-orange {
-  background: #fb923c;
-  border: 1.5px solid rgba(0, 0, 0, 0.05);
-}
-
-.heatmap-cell.critical {
-  background: #ef4444;
-  border: 1.5px solid rgba(0, 0, 0, 0.05);
-}
+.heatmap-cell.low { background: var(--status-low); opacity: 0.85; border: 1px solid rgba(0,0,0,0.1); }
+.heatmap-cell.medium-yellow { background: var(--status-medium); opacity: 0.85; border: 1px solid rgba(0,0,0,0.1); }
+.heatmap-cell.medium-orange { background: var(--status-high); opacity: 0.85; border: 1px solid rgba(0,0,0,0.1); }
+.heatmap-cell.critical { background: var(--status-critical); opacity: 0.85; border: 1px solid rgba(0,0,0,0.1); }
 
 .cell-score-bg {
   position: absolute;
@@ -242,29 +227,17 @@
 }
 
 /* Marker Branding */
-.badge-gross {
-  background: #1e293b;
-  color: white;
-}
-
-.badge-net {
-  background: #3b82f6;
-  color: white;
-}
-
-.badge-target {
-  background: #ffffff;
-  color: #1e293b;
-  border: 2px solid #e2e8f0;
-}
+.badge-gross { background: var(--text-primary); color: var(--bg-card); border: 2px solid var(--text-primary); }
+.badge-net { background: var(--accent-primary); color: var(--text-white); border: 2px solid var(--accent-primary); }
+.badge-target { background: var(--bg-card); color: var(--text-primary); border: 2px solid var(--border-primary); }
 
 /* Rank Badge Design - Positioned precisely top-right of marker */
 .rank-badge {
   position: absolute;
   top: -5px;
   right: -5px;
-  background: #ef4444;
-  color: white;
+  background: var(--status-critical);
+  color: var(--text-white);
   width: 17px;
   height: 17px;
   border-radius: 50%;
@@ -273,7 +246,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid white;
+  border: 1.5px solid var(--bg-card);
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
   z-index: 5;
 }
@@ -378,7 +351,7 @@
   gap: 30px;
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--border-primary);
 }
 
 .legend-item {
@@ -426,25 +399,24 @@
   align-items: center;
   gap: 12px;
   padding: 20px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-app);
+  border: 1px solid var(--border-primary);
   border-radius: 16px;
   transition: all 0.2s ease;
   text-align: center;
 }
 
 .ranking-item:hover {
-  background: #ffffff;
+  background: var(--bg-surface);
   transform: translateY(-4px);
-  /* Hover lift instead of slide */
-  border-color: #cbd5e1;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-md);
 }
 
 .rank-number {
   font-size: 18px;
   font-weight: 900;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-bottom: -4px;
 }
 
@@ -453,7 +425,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Center all items inside including meta */
   gap: 6px;
 }
 
@@ -468,7 +439,7 @@
 .risk-rank-title {
   font-size: 15px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   line-height: 1.4;
 }
 
@@ -477,7 +448,6 @@
   font-weight: 800;
   padding: 4px 12px;
   border-radius: 20px;
-  /* Pillowier pills */
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -485,12 +455,12 @@
 
 .rank-meta {
   font-size: 13px;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-weight: 500;
   text-align: center;
 }
 
 .rank-meta strong {
-  color: #475569;
+  color: var(--text-secondary);
   font-weight: 700;
 }

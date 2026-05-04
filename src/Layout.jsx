@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Menu, Bell, User, LogOut,
-  LayoutDashboard, Folder, ShieldAlert, Users as UsersIcon, FileText, Clock
+import { 
+  Menu, Bell, User, LogOut, 
+  LayoutDashboard, Folder, ShieldAlert, Users as UsersIcon, FileText, Clock,
+  Sun, Moon
 } from "lucide-react";
+import { useTheme } from "./context/ThemeContext";
 
 /* ─── NOTIFICATION DROPDOWN ─── */
 function NotifPanel({ items, onRead, onReadAll }) {
@@ -11,17 +13,17 @@ function NotifPanel({ items, onRead, onReadAll }) {
     <div style={{
       position: "absolute", right: 0, top: "48px", zIndex: 9999,
       width: "320px", minWidth: "320px",
-      background: "#fff", borderRadius: "12px",
+      background: "var(--bg-card)", borderRadius: "12px",
       boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
-      border: "1px solid #e2e8f0", overflow: "hidden",
+      border: "1px solid var(--border-color)", overflow: "hidden",
       display: "flex", flexDirection: "column"
     }}>
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "16px", borderBottom: "1px solid #f1f5f9",
-        background: "#fff", flexShrink: 0
+        padding: "16px", borderBottom: "1px solid var(--border-color)",
+        background: "var(--bg-card)", flexShrink: 0
       }}>
-        <span style={{ fontSize: "14px", fontWeight: 600, color: "#1e293b" }}>Notifications</span>
+        <span style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)" }}>Notifications</span>
         {items.some(n => !n.read) && (
           <button onClick={onReadAll}
             style={{
@@ -35,33 +37,33 @@ function NotifPanel({ items, onRead, onReadAll }) {
           </button>
         )}
       </div>
-      <div style={{ maxHeight: "320px", overflowY: "auto", overflowX: "hidden", background: "#fff" }}>
+      <div style={{ maxHeight: "320px", overflowY: "auto", overflowX: "hidden", background: "var(--bg-card)" }}>
         {items.length === 0 ? (
-          <p style={{ fontSize: "13px", color: "#94a3b8", textAlign: "center", padding: "32px 0", margin: 0 }}>No new notifications</p>
+          <p style={{ fontSize: "13px", color: "var(--text-muted)", textAlign: "center", padding: "32px 0", margin: 0 }}>No new notifications</p>
         ) : items.map(n => (
           <div key={n.id} onClick={() => onRead(n.id)}
             style={{
-              padding: "16px", cursor: "pointer", borderBottom: "1px solid #f8fafc",
-              background: !n.read ? "#f0fbf8" : "#fff",
+              padding: "16px", cursor: "pointer", borderBottom: "1px solid var(--border-subtle)",
+              background: !n.read ? "var(--bg-subtle)" : "var(--bg-card)",
               display: "flex", gap: "12px", alignItems: "flex-start",
               width: "100%", boxSizing: "border-box", transition: "background 0.2s"
             }}
-            onMouseEnter={e => e.currentTarget.style.background = !n.read ? "#e0f2fe" : "#f8fafc"}
-            onMouseLeave={e => e.currentTarget.style.background = !n.read ? "#f0fbf8" : "#fff"}
+            onMouseEnter={e => e.currentTarget.style.background = !n.read ? "var(--bg-hover)" : "var(--bg-hover)"}
+            onMouseLeave={e => e.currentTarget.style.background = !n.read ? "var(--bg-subtle)" : "var(--bg-card)"}
           >
             {!n.read ? (
               <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#3b82f6", flexShrink: 0, marginTop: "6px" }} />
             ) : (
-              <div style={{ width: "8px", height: "8px", flexShrink: 0 }} /> // Placeholder for alignment
+              <div style={{ width: "8px", height: "8px", flexShrink: 0 }} />
             )}
             <div style={{ display: "flex", flexDirection: "column", gap: "4px", flex: 1, minWidth: 0 }}>
               <p style={{
-                fontSize: "13px", color: "#334155", margin: 0,
+                fontSize: "13px", color: "var(--text-primary)", margin: 0,
                 lineHeight: "1.4", wordWrap: "break-word", whiteSpace: "normal"
               }}>
                 {n.message}
               </p>
-              <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>{n.time}</p>
+              <p style={{ fontSize: "11px", color: "var(--text-muted)", margin: 0 }}>{n.time}</p>
             </div>
           </div>
         ))}
@@ -77,18 +79,18 @@ function NavItem({ label, path, icon: Icon, active, badge, collapsed, onClick })
       style={{
         width: "100%", display: "flex", alignItems: "center", gap: 12,
         padding: "10px 12px", borderRadius: 12, fontSize: 14, fontWeight: 600,
-        background: active ? "rgba(59, 130, 246, 0.12)" : "transparent",
-        color: active ? "#2563eb" : "#64748b", border: "none", cursor: "pointer",
+        background: active ? "var(--bg-active)" : "transparent",
+        color: active ? "var(--text-accent)" : "var(--text-muted)", border: "none", cursor: "pointer",
         transition: "all 0.15s", justifyContent: collapsed ? "center" : "flex-start"
       }}
-      onMouseEnter={e => { if(!active) { e.currentTarget.style.background = "rgba(59, 130, 246, 0.05)"; e.currentTarget.style.color = "#1e293b"; } }}
-      onMouseLeave={e => { if(!active) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#64748b"; } }}
+      onMouseEnter={e => { if(!active) { e.currentTarget.style.background = "var(--bg-hover)"; e.currentTarget.style.color = "var(--text-primary)"; } }}
+      onMouseLeave={e => { if(!active) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-muted)"; } }}
     >
-      <Icon size={19} color={active ? "#2563eb" : "inherit"} style={{ flexShrink: 0 }} />
+      <Icon size={19} color={active ? "var(--text-accent)" : "inherit"} style={{ flexShrink: 0 }} />
       {!collapsed && <span style={{ flex: 1, textAlign: "left", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>}
       {!collapsed && badge > 0 && (
         <span style={{
-          background: "#2563eb", color: "#fff", fontSize: 10, fontWeight: 700,
+          background: "var(--text-accent)", color: "#fff", fontSize: 10, fontWeight: 700,
           padding: "2px 6px", borderRadius: 999, flexShrink: 0
         }}>
           {badge}
@@ -101,6 +103,7 @@ function NavItem({ label, path, icon: Icon, active, badge, collapsed, onClick })
 export default function Layout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
   const [showNotifs, setShowNotifs] = useState(false);
 
@@ -161,14 +164,22 @@ export default function Layout({ children }) {
   ].filter(Boolean);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", background: "#f1f5f9", fontFamily: "'Inter','Segoe UI',sans-serif" }}>
+    <div style={{ 
+      display: "flex", 
+      flexDirection: "column", 
+      height: "100vh", 
+      overflow: "hidden", 
+      background: "var(--bg-app)", 
+      color: "var(--text-primary)",
+      fontFamily: "'Inter','Segoe UI',sans-serif" 
+    }}>
       {/* ══════════ TOPBAR ══════════ */}
       <div style={{
-        height: 60, minHeight: 60, background: "#fff",
-        borderBottom: "1px solid #e2e8f0",
+        height: 60, minHeight: 60, background: "var(--bg-card)",
+        borderBottom: "1px solid var(--border-primary)",
         display: "flex", alignItems: "center", justifyContent: "space-between",
         padding: "0 24px", zIndex: 30, flexShrink: 0,
-        boxShadow: "0 1px 4px rgba(0,0,0,0.06)"
+        boxShadow: "var(--shadow-sm)"
       }}>
         {/* Left */}
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -176,7 +187,7 @@ export default function Layout({ children }) {
             onClick={() => setCollapsed(!collapsed)}
             style={{
               width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center",
-              borderRadius: 10, border: "1px solid #e2e8f0", background: "#f8fafc", color: "#64748b",
+              borderRadius: 10, border: "1px solid var(--border-primary)", background: "var(--bg-app)", color: "var(--text-muted)",
               cursor: "pointer"
             }}
           >
@@ -187,13 +198,27 @@ export default function Layout({ children }) {
 
         {/* Right */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, position: "relative" }}>
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            style={{
+              width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center",
+              borderRadius: 10, border: "1px solid var(--border-primary)", background: "var(--bg-app)", color: "var(--text-muted)",
+              cursor: "pointer", transition: "all 0.2s"
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "var(--border-subtle)"}
+            onMouseLeave={e => e.currentTarget.style.background = "var(--bg-app)"}
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+
           {/* Bell */}
           <div style={{ position: "relative" }}>
             <button
               onClick={() => { setShowNotifs(!showNotifs); }}
               style={{
                 width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center",
-                borderRadius: 10, border: "1px solid #e2e8f0", background: "#f8fafc", color: "#64748b",
+                borderRadius: 10, border: "1px solid var(--border-primary)", background: "var(--bg-app)", color: "var(--text-muted)",
                 cursor: "pointer", position: "relative"
               }}
             >
@@ -235,8 +260,8 @@ export default function Layout({ children }) {
                 }
               </div>
               <div style={{ textAlign: "left", display: "none" }} className="sm:block">
-                <p style={{ fontSize: 13, fontWeight: 600, color: "#1e293b", margin: 0, lineHeight: 1 }}>{user.username}</p>
-                <p style={{ fontSize: 11, color: "#94a3b8", margin: 0, marginTop: 2, textTransform: "capitalize" }}>{user.role}</p>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)", margin: 0, lineHeight: 1 }}>{user.username}</p>
+                <p style={{ fontSize: 11, color: "var(--text-muted)", margin: 0, marginTop: 2, textTransform: "capitalize" }}>{user.role}</p>
               </div>
             </button>
           </div>
@@ -248,8 +273,8 @@ export default function Layout({ children }) {
         {/* ── SIDEBAR ── */}
         <div style={{
           width: SIDEBAR_W, minWidth: SIDEBAR_W, flexShrink: 0,
-          background: "#f0f4ff",
-          borderRight: "1px solid #e2e8f0",
+          background: "var(--bg-surface)",
+          borderRight: "1px solid var(--border-primary)",
           overflowY: "auto", overflowX: "hidden",
           transition: "width 0.25s ease",
           display: "flex", flexDirection: "column", gap: 4,

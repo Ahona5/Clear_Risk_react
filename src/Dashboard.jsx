@@ -9,6 +9,7 @@ import {
 import { Line, Bar, Pie } from "react-chartjs-2";
 import Layout from "./Layout";
 import ErrorBoundary from "./ErrorBoundary";
+import { useTheme } from "./context/ThemeContext";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -70,12 +71,14 @@ function AnimatedCounter({ value, duration = 1500 }) {
 
 /* ─── KPI CARD ─── */
 function KpiCard({ label, value, subtext, color, icon: Icon, isLoading }) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const t = THEMES[color] || THEMES.blue;
 
   if (isLoading) {
     return (
       <div style={{
-        background: "#fff", borderRadius: 20, boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
+        background: "var(--bg-card)", borderRadius: 20, boxShadow: "var(--shadow-sm)",
         overflow: "hidden", display: "flex", flexDirection: "column", minHeight: 160,
       }}>
         <div style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column", gap: 16 }}>
@@ -90,9 +93,9 @@ function KpiCard({ label, value, subtext, color, icon: Icon, isLoading }) {
 
   return (
     <div style={{
-      background: "#fff",
+      background: "var(--bg-card)",
       borderRadius: 20,
-      boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
+      boxShadow: "var(--shadow-sm)",
       overflow: "hidden",
       display: "flex",
       flexDirection: "column",
@@ -131,18 +134,18 @@ function KpiCard({ label, value, subtext, color, icon: Icon, isLoading }) {
       <div style={{ padding: "24px 24px 20px", flex: 1, position: "relative", zIndex: 1 }}>
         <p style={{
           fontSize: 10.5, fontWeight: 700, letterSpacing: "0.12em",
-          textTransform: "uppercase", color: "#94a3b8", marginBottom: 12,
+          textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12,
         }}>{label}</p>
         <p style={{
-          fontSize: 46, fontWeight: 800, color: "#0f172a",
+          fontSize: 46, fontWeight: 800, color: "var(--text-primary)",
           lineHeight: 1, marginBottom: 10, letterSpacing: "-1px",
         }}>
           <AnimatedCounter value={value} />
         </p>
-        <p style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>{subtext}</p>
+        <p style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 500 }}>{subtext}</p>
       </div>
 
-      <div style={{ height: 5, background: t.bar, flexShrink: 0 }} />
+      <div style={{ height: 4, background: t.bar, flexShrink: 0, opacity: 0.8 }} />
     </div>
   );
 }
@@ -165,9 +168,9 @@ function RiskModal({ onClose, onSave, profileName, setProfileName, profileOwner,
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          background: "#fff",
+          background: "var(--bg-modal)",
           borderRadius: 20,
-          boxShadow: "0 24px 60px rgba(0,0,0,0.18)",
+          boxShadow: "var(--shadow-md)",
           padding: "32px",
           width: "100%",
           maxWidth: 460,
@@ -184,10 +187,10 @@ function RiskModal({ onClose, onSave, profileName, setProfileName, profileOwner,
         {/* Header row */}
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24 }}>
           <div>
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#0f172a", margin: 0 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
               Create Risk Profile
             </h2>
-            <p style={{ fontSize: 13, color: "#94a3b8", marginTop: 4 }}>
+            <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>
               Fill in the details below to add a new profile
             </p>
           </div>
@@ -195,10 +198,10 @@ function RiskModal({ onClose, onSave, profileName, setProfileName, profileOwner,
             onClick={onClose}
             style={{
               width: 32, height: 32, borderRadius: "50%",
-              background: "#f1f5f9", border: "none", cursor: "pointer",
+              background: "var(--bg-input)", border: "none", cursor: "pointer",
               display: "flex", alignItems: "center", justifyContent: "center",
               flexShrink: 0, marginLeft: 12, marginTop: 2,
-              color: "#64748b", fontSize: 16, fontWeight: 700,
+              color: "var(--text-muted)", fontSize: 16, fontWeight: 700,
             }}
           >
             <X size={15} />
@@ -215,7 +218,7 @@ function RiskModal({ onClose, onSave, profileName, setProfileName, profileOwner,
               <label style={{
                 display: "block", fontSize: 11, fontWeight: 700,
                 letterSpacing: "0.1em", textTransform: "uppercase",
-                color: "#64748b", marginBottom: 8,
+                color: "var(--text-muted)", marginBottom: 8,
               }}>
                 {label}
               </label>
@@ -227,16 +230,16 @@ function RiskModal({ onClose, onSave, profileName, setProfileName, profileOwner,
                 style={{
                   width: "100%", boxSizing: "border-box",
                   padding: "11px 14px",
-                  border: "1.5px solid #e2e8f0",
+                  border: "1px solid var(--border-primary)",
                   borderRadius: 12,
-                  background: "#f8fafc",
-                  fontSize: 14, color: "#0f172a",
+                  background: "var(--bg-app)",
+                  fontSize: 14, color: "var(--text-primary)",
                   outline: "none",
                   transition: "border-color 0.15s",
                   fontFamily: "inherit",
                 }}
-                onFocus={e => e.target.style.borderColor = "#3b82f6"}
-                onBlur={e => e.target.style.borderColor = "#e2e8f0"}
+                onFocus={e => e.target.style.borderColor = "var(--accent-primary)"}
+                onBlur={e => e.target.style.borderColor = "var(--border-primary)"}
               />
             </div>
           ))}
@@ -264,14 +267,14 @@ function RiskModal({ onClose, onSave, profileName, setProfileName, profileOwner,
             onClick={onClose}
             style={{
               flex: 1, padding: "12px",
-              background: "#f1f5f9", color: "#475569",
+              background: "var(--bg-input)", color: "var(--text-secondary)",
               border: "none", borderRadius: 12,
               fontSize: 14, fontWeight: 700, cursor: "pointer",
               transition: "background 0.15s",
               fontFamily: "inherit",
             }}
-            onMouseEnter={e => e.currentTarget.style.background = "#e2e8f0"}
-            onMouseLeave={e => e.currentTarget.style.background = "#f1f5f9"}
+            onMouseEnter={e => e.currentTarget.style.background = "var(--border-subtle)"}
+            onMouseLeave={e => e.currentTarget.style.background = "var(--bg-app)"}
           >
             Cancel
           </button>
@@ -284,6 +287,7 @@ function RiskModal({ onClose, onSave, profileName, setProfileName, profileOwner,
 /* ─── DASHBOARD ─── */
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const [isLoading, setIsLoading] = useState(true);
   const [profiles, setProfiles] = useState([]);
@@ -385,15 +389,11 @@ export default function Dashboard() {
       localStorage.setItem("riskProfiles", JSON.stringify(updatedProfiles));
       setProfiles(updatedProfiles.filter(p => !p.isDeleted));
 
-      addActivityLog(user, "DELETE", `Soft deleted risk profile "${profileToDelete.name}"`, "warning", "critical");
-
       setIsDeleting(false);
       setShowDeleteModal(false);
       setProfileToDelete(null);
     }, 800);
   };
-
-
 
   const saveProfile = () => {
     const isAdmin = user?.role?.toLowerCase() === 'admin' || user?.role?.toLowerCase() === 'moderator';
@@ -411,13 +411,11 @@ export default function Dashboard() {
       );
       localStorage.setItem("riskProfiles", JSON.stringify(upd));
       setProfiles(upd.filter(p => !p.isDeleted));
-      addActivityLog(user, "UPDATE", `Updated risk profile: ${profileName}`, "info", "info");
     } else {
       const p = { name: profileName, owner: profileOwner, trend: "→", risk: "High", date: new Date().toLocaleString() };
       const upd = [...profiles, p];
       localStorage.setItem("riskProfiles", JSON.stringify(upd));
       setProfiles(upd);
-      addActivityLog(user, "CREATE", `Created new risk profile: ${profileName}`, "success", "info");
     }
 
     setProfileName(""); setProfileOwner(""); setShowModal(false); setEditingProfile(null);
@@ -431,7 +429,6 @@ export default function Dashboard() {
     setShowModal(true);
     setActiveMenu(null);
   };
-
 
   const total = profiles.length;
   const high = profiles.filter(p => p.risk === "High").length;
@@ -448,11 +445,11 @@ export default function Dashboard() {
 
   const getLevelStyle = (level) => {
     switch (level) {
-      case "Critical": return { bg: "#fef2f2", color: "#ef4444", dot: "#ef4444" };
-      case "High": return { bg: "#fff7ed", color: "#f97316", dot: "#f97316" };
-      case "Medium": return { bg: "#fffbeb", color: "#f59e0b", dot: "#f59e0b" };
-      case "Low": return { bg: "#f0fdf4", color: "#10b981", dot: "#10b981" };
-      default: return { bg: "#f1f5f9", color: "#64748b", dot: "#94a3b8" };
+      case "Critical": return { bg: "rgba(248, 113, 113, 0.1)", color: "var(--status-critical)", dot: "var(--status-critical)" };
+      case "High": return { bg: "rgba(251, 146, 60, 0.1)", color: "var(--status-high)", dot: "var(--status-high)" };
+      case "Medium": return { bg: "rgba(251, 191, 36, 0.1)", color: "var(--status-medium)", dot: "var(--status-medium)" };
+      case "Low": return { bg: "rgba(52, 211, 153, 0.1)", color: "var(--status-low)", dot: "var(--status-low)" };
+      default: return { bg: "var(--border-subtle)", color: "var(--text-muted)", dot: "var(--text-muted)" };
     }
   };
 
@@ -466,16 +463,17 @@ export default function Dashboard() {
             50% { opacity: 0.5; }
           }
           .skeleton-box {
-            background: #e2e8f0;
+            background: var(--bg-input);
             border-radius: 8px;
             animation: pulse 1.5s infinite ease-in-out;
           }
         `}
-        </style>          {/* ── HEADER CARD ── */}
+        </style>
+        {/* ── HEADER CARD ── */}
         <div style={{
-          background: "#fff",
+          background: "var(--bg-card)",
           borderRadius: 20,
-          boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
+          boxShadow: "var(--shadow-sm)",
           padding: "0",
           marginBottom: 28,
           overflow: "hidden",
@@ -498,20 +496,20 @@ export default function Dashboard() {
             <div>
               <div style={{
                 display: "inline-flex", alignItems: "center", gap: 6,
-                background: "#eff6ff", borderRadius: 999,
+                background: "var(--bg-active)", borderRadius: 999,
                 padding: "3px 10px", marginBottom: 10,
               }}>
-                <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#3b82f6" }} />
-                <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#3b82f6" }}>
+                <div style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--text-accent)" }} />
+                <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-accent)" }}>
                   Admin Console
                 </span>
               </div>
-              <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0f172a", margin: 0, lineHeight: 1.2 }}>
+              <h1 style={{ fontSize: 26, fontWeight: 800, color: "var(--text-primary)", margin: 0, lineHeight: 1.2 }}>
                 My Dashboard
               </h1>
-              <p style={{ fontSize: 13.5, color: "#94a3b8", marginTop: 6, fontWeight: 400 }}>
+              <p style={{ fontSize: 13.5, color: "var(--text-muted)", marginTop: 6, fontWeight: 400 }}>
                 Welcome back,{" "}
-                <span style={{ fontWeight: 700, color: "#475569" }}>{user.username}</span>
+                <span style={{ fontWeight: 700, color: "var(--text-primary)" }}>{user.username}</span>
                 {" "}👋&nbsp; Have a productive day!
               </p>
             </div>
@@ -561,9 +559,9 @@ export default function Dashboard() {
         {pinnedRisks.length > 0 && (
           <div style={{ marginBottom: 28 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-              <Pin size={18} color="#3b82f6" fill="#3b82f6" />
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1e293b", margin: 0 }}>Priority Risks</h2>
-              <span style={{ fontSize: 11, background: "#eff6ff", color: "#3b82f6", padding: "2px 8px", borderRadius: 10, fontWeight: 700 }}>TOP {Math.min(pinnedRisks.length, 5)}</span>
+              <Pin size={18} color="var(--text-accent)" />
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>Priority Risks</h2>
+              <span style={{ fontSize: 11, background: "var(--bg-active)", color: "var(--text-accent)", padding: "2px 8px", borderRadius: 10, fontWeight: 700 }}>TOP {Math.min(pinnedRisks.length, 5)}</span>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
               {pinnedRisks
@@ -578,21 +576,21 @@ export default function Dashboard() {
                 .map(risk => (
                   <div key={risk.riskId}
                     onClick={() => navigate(`/risk-profile/${risk.riskId}`)}
-                    style={{ background: "#fff", borderRadius: 16, border: "1px solid #f1f5f9", padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", transition: "all 0.2s", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = "#3b82f6"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = "#f1f5f9"; e.currentTarget.style.transform = "translateY(0)"; }}
+                    style={{ background: "var(--bg-card)", borderRadius: 16, border: "1px solid var(--border-primary)", padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", transition: "all 0.2s", boxShadow: "var(--shadow-sm)" }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--accent-primary)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border-primary)"; e.currentTarget.style.transform = "translateY(0)"; }}
                   >
                     <div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", marginBottom: 4 }}>{risk.title}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }}>{risk.title}</div>
                       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                         <span style={{ fontSize: 11, fontWeight: 700, color: risk.severity === "Critical" ? "#ef4444" : "#f59e0b" }}>{risk.severity.toUpperCase()}</span>
-                        <span style={{ fontSize: 11, color: "#94a3b8" }}>•</span>
-                        <span style={{ fontSize: 11, color: "#64748b" }}>Owner: {risk.owner}</span>
+                        <span style={{ fontSize: 11, color: "var(--text-muted)" }}>•</span>
+                        <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>Owner: {risk.owner}</span>
                       </div>
                     </div>
                     <div style={{ textAlign: "right" }}>
-                      <div style={{ fontSize: 20, fontWeight: 800, color: "#1e293b" }}>{risk.score}</div>
-                      <div style={{ fontSize: 10, fontWeight: 700, color: "#3b82f6", textTransform: "uppercase" }}>{risk.type}</div>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: "var(--text-primary)" }}>{risk.score}</div>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-accent)", textTransform: "uppercase" }}>{risk.type}</div>
                     </div>
                   </div>
                 ))}
@@ -602,9 +600,9 @@ export default function Dashboard() {
 
         {/* ── RISK PROFILE SUMMARY TABLE ── */}
         <div style={{
-          background: "#fff",
+          background: "var(--bg-card)",
           borderRadius: 20,
-          boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
+          boxShadow: "var(--shadow-sm)",
           overflow: "hidden",
         }}>
           {/* Table header row */}
@@ -613,24 +611,23 @@ export default function Dashboard() {
             alignItems: "center",
             justifyContent: "space-between",
             padding: "18px 24px 16px",
-            borderBottom: "1px solid #f1f5f9",
+            borderBottom: "1px solid var(--border-primary)",
           }}>
             <div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", margin: 0 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
                 Risk Profile Summary
               </h3>
-              <p style={{ fontSize: 12, color: "#94a3b8", marginTop: 3 }}>
+              <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 3 }}>
                 {profiles.length} profile{profiles.length !== 1 ? "s" : ""} total
               </p>
             </div>
-
           </div>
 
           {/* Table */}
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
-                <tr style={{ background: "#f8fafc" }}>
+                <tr style={{ background: "var(--bg-app)" }}>
                   {[
                     { label: "Risk Profile", width: "28%" },
                     { label: "Owner", width: "20%" },
@@ -647,8 +644,8 @@ export default function Dashboard() {
                       fontWeight: 700,
                       letterSpacing: "0.1em",
                       textTransform: "uppercase",
-                      color: "#94a3b8",
-                      borderBottom: "1px solid #f1f5f9",
+                      color: "var(--text-muted)",
+                      borderBottom: "1px solid var(--border-primary)",
                       whiteSpace: "nowrap",
                     }}>{label}</th>
                   ))}
@@ -658,7 +655,7 @@ export default function Dashboard() {
                 {isLoading ? (
                   // Skeleton rows
                   Array.from({ length: 3 }).map((_, i) => (
-                    <tr key={i} style={{ borderBottom: "1px solid #f8fafc" }}>
+                    <tr key={i} style={{ borderBottom: "1px solid var(--border-primary)" }}>
                       <td style={{ padding: "13px 20px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                           <div className="skeleton-box" style={{ width: 34, height: 34, borderRadius: 10 }} />
@@ -677,15 +674,15 @@ export default function Dashboard() {
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
                         <div style={{
                           width: 60, height: 60, borderRadius: "50%",
-                          background: "#f1f5f9",
+                          background: "var(--bg-hover)",
                           display: "flex", alignItems: "center", justifyContent: "center",
                         }}>
-                          <Folder size={28} color="#94a3b8" />
+                          <Folder size={28} color="var(--text-muted)" />
                         </div>
-                        <p style={{ fontSize: 14, fontWeight: 600, color: "#64748b", margin: 0 }}>
+                        <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text-secondary)", margin: 0 }}>
                           No risk profiles yet
                         </p>
-                        <p style={{ fontSize: 12, color: "#94a3b8", margin: 0 }}>
+                        <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>
                           Create your first profile to start tracking risks
                         </p>
                         <button
@@ -693,7 +690,7 @@ export default function Dashboard() {
                           style={{
                             marginTop: 4,
                             display: "inline-flex", alignItems: "center", gap: 6,
-                            background: "#eff6ff", color: "#3b82f6",
+                            background: "var(--bg-active)", color: "var(--text-accent)",
                             border: "none", borderRadius: 999,
                             padding: "8px 18px", fontSize: 13, fontWeight: 700,
                             cursor: "pointer",
@@ -711,7 +708,6 @@ export default function Dashboard() {
                       const profileRisks = allRisks.filter(r => r.profile === p.name);
                       const isEscalated = profileRisks.some(r => r.isEscalated);
 
-                      // DYNAMIC RISK CALCULATION
                       let maxScore = 0;
                       if (profileRisks.length > 0) {
                         maxScore = Math.max(...profileRisks.map(r => (r.impact || 0) * (r.likelihood || 0)));
@@ -722,33 +718,31 @@ export default function Dashboard() {
                       const trendMap = {
                         "↑": { icon: <TrendingUp size={14} />, color: "#ef4444" },
                         "↓": { icon: <TrendingDown size={14} />, color: "#10b981" },
-                        "→": { icon: <Minus size={14} />, color: "#94a3b8" },
+                        "→": { icon: <Minus size={14} />, color: "var(--text-muted)" },
                       };
 
-                      // Calculated trend override
                       const tr = isEscalated ? trendMap["↑"] : (trendMap[p.trend] || trendMap["→"]);
 
                       return (
                         <tr
                           key={i}
                           onClick={() => { localStorage.setItem("selectedProfile", p.name); navigate("/risk-profile"); }}
-                          style={{ cursor: "pointer", transition: "background 0.15s", borderBottom: "1px solid #f8fafc" }}
-                          onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
+                          style={{ cursor: "pointer", transition: "background 0.15s", borderBottom: "1px solid var(--border-primary)" }}
+                          onMouseEnter={e => e.currentTarget.style.background = "var(--bg-app)"}
                           onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                         >
-                          {/* Profile name */}
                           <td style={{ padding: "13px 20px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                               <div style={{
                                 width: 34, height: 34, borderRadius: 10,
-                                background: isEscalated ? "linear-gradient(135deg,#fee2e2,#fecaca)" : "linear-gradient(135deg,#e0e7ff,#c7d2fe)",
+                                background: isEscalated ? "rgba(239, 68, 68, 0.1)" : "var(--bg-active)",
                                 display: "flex", alignItems: "center", justifyContent: "center",
                                 flexShrink: 0,
                               }}>
-                                <Folder size={15} color={isEscalated ? "#ef4444" : "#6366f1"} />
+                                <Folder size={15} color={isEscalated ? "#ef4444" : "var(--text-accent)"} />
                               </div>
                               <div style={{ display: "flex", flexDirection: "column" }}>
-                                <span style={{ fontSize: 14, fontWeight: 600, color: "#0f172a" }}>
+                                <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>
                                   {p.name}
                                 </span>
                                 {isEscalated && (
@@ -759,63 +753,44 @@ export default function Dashboard() {
                               </div>
                             </div>
                           </td>
-
-                          {/* Owner */}
                           <td style={{ padding: "13px 20px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                               <div style={{
                                 width: 26, height: 26, borderRadius: "50%",
-                                background: "linear-gradient(135deg, #3b82f6, #6366f1)",
+                                background: "var(--bg-active)",
                                 display: "flex", alignItems: "center", justifyContent: "center",
-                                color: "#fff", fontSize: 11, fontWeight: 700, flexShrink: 0,
+                                color: "var(--text-accent)", fontSize: 11, fontWeight: 700, flexShrink: 0,
                               }}>
                                 {(p.owner || "?").charAt(0).toUpperCase()}
                               </div>
-                              <span style={{ fontSize: 13, color: "#475569" }}>{p.owner || "—"}</span>
+                              <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>{p.owner || "—"}</span>
                             </div>
                           </td>
-
-                          {/* Trend */}
                           <td style={{ padding: "13px 20px" }}>
-                            <span style={{
-                              display: "inline-flex", alignItems: "center", gap: 4,
-                              color: tr.color, fontWeight: 600, fontSize: 13,
-                            }}>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, color: tr.color, fontWeight: 600, fontSize: 13 }}>
                               {tr.icon}
                             </span>
                           </td>
-
-                          {/* Risk level pill */}
                           <td style={{ padding: "13px 20px" }}>
                             <span style={{
                               display: "inline-flex", alignItems: "center", gap: 5,
                               background: rc.bg, color: rc.color,
                               borderRadius: 999, padding: "4px 10px",
                               fontSize: 11.5, fontWeight: 700,
-                              position: "relative"
                             }}>
                               <span style={{ width: 6, height: 6, borderRadius: "50%", background: rc.dot, flexShrink: 0 }} />
                               {computedLevel}
-                              {profileRisks.length === 0 && (
-                                <div style={{ position: "absolute", top: "100%", left: 0, fontSize: "9px", color: "#94a3b8", whiteSpace: "nowrap", marginTop: "2px" }}>
-                                  Risk level will be calculated once risks are added
-                                </div>
-                              )}
                             </span>
                           </td>
-
-                          {/* Date */}
-                          <td style={{ padding: "13px 20px", fontSize: 12, color: "#94a3b8" }}>
+                          <td style={{ padding: "13px 20px", fontSize: 12, color: "var(--text-muted)" }}>
                             {p.date}
                           </td>
-
-                          {/* Actions */}
                           <td style={{ padding: "13px 20px", textAlign: "right", position: "relative" }}>
                             <div style={{ display: "flex", justifyContent: "flex-end" }}>
                               <button
                                 onClick={(e) => { e.stopPropagation(); setActiveMenu(activeMenu === i ? null : i); }}
-                                style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", padding: "6px", borderRadius: "6px", display: "flex", alignItems: "center", transition: "all 0.2s" }}
-                                onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
+                                style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", padding: "6px", borderRadius: "6px", display: "flex", alignItems: "center", transition: "all 0.2s" }}
+                                onMouseEnter={e => e.currentTarget.style.background = "var(--bg-hover)"}
                                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                               >
                                 <MoreVertical size={16} />
@@ -824,12 +799,12 @@ export default function Dashboard() {
                               {activeMenu === i && (
                                 <div
                                   ref={menuRef}
-                                  style={{ position: "absolute", right: 24, top: 40, background: "#fff", borderRadius: 12, boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", zIndex: 100, minWidth: 160, padding: 6, overflow: "hidden" }}
+                                  style={{ position: "absolute", right: 24, top: 40, background: "var(--bg-card)", borderRadius: 12, boxShadow: "var(--shadow-lg)", border: "1px solid var(--border-primary)", zIndex: 100, minWidth: 160, padding: 6, overflow: "hidden" }}
                                 >
                                   <button
                                     onClick={() => { localStorage.setItem("selectedProfile", p.name); navigate("/risk-profile"); }}
-                                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "#475569", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
-                                    onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
+                                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "none", background: "none", borderRadius: 8, color: "var(--text-primary)", fontSize: 13, fontWeight: 600, cursor: "pointer" }}
+                                    onMouseEnter={e => e.currentTarget.style.background = "var(--bg-app)"}
                                     onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                                   >
                                     <ExternalLink size={14} /> View Details
